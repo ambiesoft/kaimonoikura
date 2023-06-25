@@ -1,12 +1,13 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const upChar = '☝';
-const downChar = '👇';
+const upChar = '↑';
+const downChar = '↓';
 
-let id = 0;
+let id;
 
 /** maruetsu normal */
+id = 0;
 const maruetsuNormal = [
   {
     id: id++,
@@ -36,10 +37,29 @@ const maruetsuNormal = [
     count: 1,
     taxRate: 8,
   },
-  // end of maruetsu */
 ];
 
-const kaimonoItems = ref(maruetsuNormal);
+/** maruetsu normal */
+id = 0;
+const berxNormal = [
+  {
+    id: id++,
+    goods: "エッセルS",
+    price: 79,
+    count: 3,
+    taxRate: 8,
+  },
+  {
+    id: id++,
+    goods: "エッセルSC",
+    price: 79,
+    count: 1,
+    taxRate: 8,
+  },
+];
+
+// const kaimonoItems = ref(maruetsuNormal);
+const kaimonoItems = ref(berxNormal);
 
 function isNumber(evt) {
   evt = (evt) ? evt : window.event;
@@ -61,6 +81,9 @@ function decrementCount(index) {
 }
 
 function incrementDiscountRate(index) {
+  if (!kaimonoItems.value[index].discountRate) {
+    kaimonoItems.value[index].discountRate = 0;
+  }
   kaimonoItems.value[index].discountRate++;
 }
 function decrementDiscountRate(index) {
@@ -74,6 +97,9 @@ function decrementDiscountRate(index) {
 }
 
 function incrementDiscountValue(index) {
+  if (!kaimonoItems.value[index].discountValue) {
+    kaimonoItems.value[index].discountValue = 0;
+  }
   kaimonoItems.value[index].discountValue++;
 }
 function decrementDiscountValue(index) {
@@ -110,8 +136,8 @@ function decrementTaxRate(index) {
   }
   kaimonoItems.value[index].taxRate = setRate;
 }
-function isZeroItem(item) {
-  return getItemSyoukei(item) <= 0;
+function isInvalidItem(item) {
+  return getItemSyoukei(item) <= 0 || item.disabled;
 }
 
 function addItem() {
@@ -130,6 +156,9 @@ function deleteItem(index) {
   kaimonoItems.value.splice(index, 1);
 }
 function getItemSyoukei(item) {
+  if(item.disabled) {
+    return 0;
+  }
   let ret = 0;
   let price = (Number)(item.price);
   let count = (Number)(item.count);
@@ -150,20 +179,7 @@ function getSyoukei() {
 function getZei8() {
   return Math.floor(getSyoukei() * 0.08);
 }
-function getGoukei() {
-  return getSyoukei() + getZei8();
-}
-
-const syoukei = computed(() => {
-  return getSyoukei();
-})
-const zei8 = computed(() => {
-  return getZei8();
-})
-const goukei = computed(() => {
-  return getGoukei();
-})
-const zeis = computed(() => {
+function getZeis() {
   let zeiGotoMap = {};
   kaimonoItems.value.forEach((item) => {
     if (!zeiGotoMap[item.taxRate]) {
@@ -194,17 +210,50 @@ const zeis = computed(() => {
     ret.push(shrinkMap[key]);
   })
   return ret;
+}
+function getGoukei() {
+  let ret = getSyoukei();
+  getZeis().forEach((zei) => {
+    console.log(zei);
+    ret += zei.value;
+  });
+  return ret;
+}
+function getItemMessage(item) {
+  if(item.disabled) {
+    return "無効です";
+  }
+  if(getItemSyoukei(item) < 0) {
+    return "マイナスです";
+  }
+  if(getItemSyoukei(item) ==0) {
+    return "ゼロです";
+  }
+  return "";
+}
+const syoukei = computed(() => {
+  return getSyoukei();
+})
+const zei8 = computed(() => {
+  return getZei8();
+})
+const goukei = computed(() => {
+  return getGoukei();
+})
+const zeis = computed(() => {
+  return getZeis();
 })
 </script>
 
 <template>
   <div class="container">
-    <div class="item" :class="{ emptyitem: isZeroItem(item) }" v-for="(item, index) in kaimonoItems">
+    <div class="container-cell" :class="{ empty_container_cell: isInvalidItem(item) }" v-for="(item, index) in kaimonoItems">
       <div class="cell">
         <div class="setumei">商品</div>
         <div class="goods">
           <input class="stringinput" v-model="item.goods" />
         </div>
+        <div></div>
       </div>
 
       <div class="cell">
@@ -212,6 +261,7 @@ const zeis = computed(() => {
         <div class="price">
           <input class="numberinput" v-model="item.price" @keypress="isNumber($event)" />
         </div>
+        <div></div>
       </div>
 
       <div class="cell">
@@ -271,27 +321,39 @@ const zeis = computed(() => {
       </div>
 
       <div class="cell">
-        <div class="setumei">削除</div>
-        <button @click="deleteItem(index)">❌</button>
+        <div class="setumei">有効</div>
+          <input :id='"check" + index' type="checkbox" @click="item.disabled = !item.disabled" :checked="!item.disabled" />
+          <label :for='"check" + index'></label>
+      </div>
+      <div class="cell">
+          <div class="setumei"></div>
+          <div></div>
+          <div>{{ getItemMessage(item) }}</div>
+      </div>
+      <div class="cell">
+        <div v-if="item.disabled">
+          <div class="setumei">削除</div>
+          <button @click="deleteItem(index)">❌</button>
+        </div>
       </div>
     </div> <!-- end of loop -->
 
-    <div class="item">
+    <div class="container-cell">
       <button @click="addItem">追加</button>
     </div>
 
-    <div class="item">
-      <div class="goukei cell3">
+    <div class="container-cell">
+      <div class="goukei cell3columns">
         小計：{{ syoukei }} 円
       </div>
     </div>
-    <div class="item">
-      <div class="goukei cell3" v-for="(zei, index) in zeis">
+    <div class="container-cell">
+      <div class="goukei cell3columns" v-for="(zei, index) in zeis">
         税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額 {{ zei.value }} 円
       </div>
     </div>
-    <div class="item">
-      <div class="goukei cell3">
+    <div class="container-cell">
+      <div class="goukei cell3columns">
         支払金額：{{ goukei }} 円
       </div>
     </div>
@@ -300,13 +362,14 @@ const zeis = computed(() => {
 
 <style>
 .container {
+  font-family: Arial, Helvetica, sans-serif;
   width: 100%;
   margin: 0;
   padding: 10px;
   display: grid;
 }
 
-.item {
+.container-cell {
   background: steelblue;
   color: #fff;
   font-size: 20px;
@@ -318,19 +381,24 @@ const zeis = computed(() => {
 }
 
 
-.emptyitem {
+.empty_container_cell {
   background: lightcoral;
 }
 
 .cell {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
+
   flex-direction: column;
   text-align: center;
   padding-left: 6px;
 }
 
-.cell3 {
-  grid-column: 1/4;
+.cell3columns {
+grid-column: 1/4;
+}
+.cell2rows {
+grid-row: 1/3;
 }
 
 .setumei {
@@ -346,6 +414,7 @@ input {
 button {
   padding: 0px;
   height: 2em;
+  width: 100%;
 }
 
 .twobutton {
