@@ -5,48 +5,41 @@ const upChar = '☝';
 const downChar = '👇';
 
 let id = 0;
-const kaimonoItems = ref([
+
+/** maruetsu normal */
+const maruetsuNormal = [
   {
     id: id++,
-    goods: "りんご",
-    price: 100,
+    goods: "ファンタ２０００",
+    price: 178,
     count: 1,
-    discountRate: 0,
     taxRate: 8,
   },
   {
     id: id++,
-    goods: "レモン",
+    goods: "アイスまんじゅう",
+    price: 180,
+    count: 1,
+    taxRate: 8,
+  },
+  {
+    id: id++,
+    goods: "爽",
     price: 80,
     count: 1,
-    discountRate: 0,
     taxRate: 8,
   },
   {
     id: id++,
-    goods: "レモン",
-    price: 80,
+    goods: "ソーダフロート",
+    price: 60,
     count: 1,
-    discountRate: 0,
     taxRate: 8,
   },
-  {
-    id: id++,
-    goods: "レモン",
-    price: 80,
-    count: 1,
-    discountRate: 0,
-    taxRate: 8,
-  },
-  {
-    id: id++,
-    goods: "レモン",
-    price: 80,
-    count: 1,
-    discountRate: 0,
-    taxRate: 8,
-  },
-]);
+  // end of maruetsu */
+];
+
+const kaimonoItems = ref(maruetsuNormal);
 
 function isNumber(evt) {
   evt = (evt) ? evt : window.event;
@@ -66,16 +59,33 @@ function decrementCount(index) {
   }
   kaimonoItems.value[index].count--;
 }
+
 function incrementDiscountRate(index) {
   kaimonoItems.value[index].discountRate++;
 }
 function decrementDiscountRate(index) {
-  if (kaimonoItems.value[index].discountRate == 0) {
+  if (!kaimonoItems.value[index].discountRate) {
     return;
   }
-
   kaimonoItems.value[index].discountRate--;
+  if (kaimonoItems.value[index].discountRate == 0) {
+    kaimonoItems.value[index].discountRate = null;
+  }
 }
+
+function incrementDiscountValue(index) {
+  kaimonoItems.value[index].discountValue++;
+}
+function decrementDiscountValue(index) {
+  if (!kaimonoItems.value[index].discountValue) {
+    return;
+  }
+  kaimonoItems.value[index].discountValue--;
+  if (kaimonoItems.value[index].discountValue == 0) {
+    kaimonoItems.value[index].discountValue = null;
+  }
+}
+
 function incrementTaxRate(index) {
   let curRate = kaimonoItems.value[index].taxRate;
   let setRate = 0;
@@ -100,25 +110,18 @@ function decrementTaxRate(index) {
   }
   kaimonoItems.value[index].taxRate = setRate;
 }
-function getItemKei(item) {
-  let price = (Number)(item.price);
-  let count = (Number)(item.count);
-  let taxRate = (Number)(item.taxRate);
-  let discountRate = (Number)(item.discountRate);
-
-  return Math.floor(((price - (price * (discountRate / 100))) * count) * ((100 + taxRate) / 100));
-}
 function isZeroItem(item) {
-  return getItemKei(item) == 0;
+  return getItemSyoukei(item) <= 0;
 }
 
 function addItem() {
   kaimonoItems.value.push({
     id: kaimonoItems.value.length,
     goods: "",
-    price: 0,
+    price: null,
     count: 1,
-    discountRate: 0,
+    discountRate: null,
+    discountValue: null,
     taxRate: 8,
   })
   console.log(kaimonoItems.value);
@@ -126,15 +129,72 @@ function addItem() {
 function deleteItem(index) {
   kaimonoItems.value.splice(index, 1);
 }
-const goukei = computed(() => {
+function getItemSyoukei(item) {
   let ret = 0;
-  kaimonoItems.value.forEach((ki) => {
-    ret += getItemKei(ki);
+  let price = (Number)(item.price);
+  let count = (Number)(item.count);
+  let taxRate = (Number)(item.taxRate);
+  let discountRate = (Number)(item.discountRate);
+
+  // return Math.floor(((price - (price * (discountRate / 100))) * count) * ((100 + taxRate) / 100));
+  return price * count;
+}
+function getSyoukei() {
+  let ret = 0;
+  kaimonoItems.value.forEach((item) => {
+    ret += getItemSyoukei(item);
   })
 
   return ret;
-})
+}
+function getZei8() {
+  return Math.floor(getSyoukei() * 0.08);
+}
+function getGoukei() {
+  return getSyoukei() + getZei8();
+}
 
+const syoukei = computed(() => {
+  return getSyoukei();
+})
+const zei8 = computed(() => {
+  return getZei8();
+})
+const goukei = computed(() => {
+  return getGoukei();
+})
+const zeis = computed(() => {
+  let zeiGotoMap = {};
+  kaimonoItems.value.forEach((item) => {
+    if (!zeiGotoMap[item.taxRate]) {
+      zeiGotoMap[item.taxRate] = [];
+    }
+    zeiGotoMap[item.taxRate].push(getItemSyoukei(item));
+  });
+
+  let shrinkMap = {};
+  Object.keys(zeiGotoMap).forEach(function (key) {
+    // key is taxRate, value is itemSyoukei
+    if (!shrinkMap[key]) {
+      shrinkMap[key] = {
+        ratePercent: key,
+        targetValue: 0,
+        value: 0,
+      };
+    }
+    zeiGotoMap[key].forEach((v) => {
+      shrinkMap[key].targetValue += v;
+    });
+
+  });
+
+  let ret = [];
+  Object.keys(shrinkMap).forEach(function (key) {
+    shrinkMap[key].value = Math.floor(shrinkMap[key].targetValue * (((Number)(shrinkMap[key].ratePercent)) / 100));
+    ret.push(shrinkMap[key]);
+  })
+  return ret;
+})
 </script>
 
 <template>
@@ -181,6 +241,21 @@ const goukei = computed(() => {
       </div>
 
       <div class="cell">
+        <div class="setumei">割引円</div>
+        <div class="discount-value">
+          <input class="numberinput" v-model="item.discountValue" @keypress="isNumber($event)" />
+        </div>
+        <div>
+          <button class="twobutton" @click="decrementDiscountValue(index)">
+            {{ downChar }}
+          </button>
+          <button class="twobutton" @click="incrementDiscountValue(index)">
+            {{ upChar }}
+          </button>
+        </div>
+      </div>
+
+      <div class="cell">
         <div class="setumei">税率％</div>
         <div class="tax-rate">
           <input class="numberinput" v-model="item.taxRate" @keypress="isNumber($event)" />
@@ -199,14 +274,24 @@ const goukei = computed(() => {
         <div class="setumei">削除</div>
         <button @click="deleteItem(index)">❌</button>
       </div>
-    </div>
+    </div> <!-- end of loop -->
 
-    <div class=" item">
+    <div class="item">
       <button @click="addItem">追加</button>
     </div>
 
     <div class="item">
-      <div class="goukei">
+      <div class="goukei cell3">
+        小計：{{ syoukei }} 円
+      </div>
+    </div>
+    <div class="item">
+      <div class="goukei cell3" v-for="(zei, index) in zeis">
+        税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額 {{ zei.value }} 円
+      </div>
+    </div>
+    <div class="item">
+      <div class="goukei cell3">
         支払金額：{{ goukei }} 円
       </div>
     </div>
@@ -228,8 +313,10 @@ const goukei = computed(() => {
   padding: 10px;
   border: skyblue 1px solid;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
+
 
 .emptyitem {
   background: lightcoral;
@@ -240,6 +327,10 @@ const goukei = computed(() => {
   flex-direction: column;
   text-align: center;
   padding-left: 6px;
+}
+
+.cell3 {
+  grid-column: 1/4;
 }
 
 .setumei {
