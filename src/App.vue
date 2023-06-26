@@ -58,8 +58,35 @@ const berxNormal = [
   },
 ];
 
+/** PARLIAMENT */
+id = 0;
+const parliamentNormal = [
+  {
+    id: id++,
+    goods: "パーラメント",
+    price: 620,
+    count: 1,
+    taxRate: TAXRATE_KOMI_TEN,
+  },
+];
+
+const TAXRATE_ZERO = 0;
+const TAXRATE_EIGHT = 8;
+const TAXRATE_TEN = 10;
+const TAXRATE_KOMI_EIGHT = "込8";
+const TAXRATE_KOMI_TEN = "込10";
+
+const TAXRATEVALUES = [
+  TAXRATE_ZERO,
+  TAXRATE_EIGHT,
+  TAXRATE_TEN,
+  TAXRATE_KOMI_EIGHT,
+  TAXRATE_KOMI_TEN,
+];
+
 // const kaimonoItems = ref(maruetsuNormal);
-const kaimonoItems = ref(berxNormal);
+// const kaimonoItems = ref(berxNormal);
+const kaimonoItems = ref(parliamentNormal);
 
 function isNumber(evt) {
   evt = (evt) ? evt : window.event;
@@ -112,32 +139,22 @@ function decrementDiscountValue(index) {
   }
 }
 
-function incrementTaxRate(index) {
+const INCORDEC_INC = 1;
+const INCORDEC_DEC = 2;
+function incrementOrdecrementTaxRate(index, inc_or_dec) {
   let curRate = kaimonoItems.value[index].taxRate;
-  let setRate = 0;
-  if (0 <= curRate && curRate < 8) {
-    setRate = 8;
-  } else if (8 <= curRate && curRate < 10) {
-    setRate = 10;
-  } else {
+  const curIndex = TAXRATEVALUES.findIndex((v) => curRate == v);
+  let newIndex = curIndex + ((inc_or_dec == INCORDEC_INC) ? 1 : -1);
+  if (newIndex >= TAXRATEVALUES.length || newIndex < 0) {
     return;
   }
-  kaimonoItems.value[index].taxRate = setRate;
+  kaimonoItems.value[index].taxRate = TAXRATEVALUES[newIndex];
+}
+function incrementTaxRate(index) {
+  incrementOrdecrementTaxRate(index, INCORDEC_INC);
 }
 function decrementTaxRate(index) {
-  let curRate = kaimonoItems.value[index].taxRate;
-  let setRate = 0;
-  if (10 < curRate) {
-    setRate = 8;
-  } else if (8 < curRate) {
-    setRate = 8;
-  } else {
-    setRate = 0;
-  }
-  kaimonoItems.value[index].taxRate = setRate;
-}
-function isInvalidItem(item) {
-  return getItemSyoukei(item) <= 0 || item.disabled;
+  incrementOrdecrementTaxRate(index, INCORDEC_DEC);
 }
 
 function addItem() {
@@ -150,13 +167,12 @@ function addItem() {
     discountValue: null,
     taxRate: 8,
   })
-  console.log(kaimonoItems.value);
 }
 function deleteItem(index) {
   kaimonoItems.value.splice(index, 1);
 }
 function getItemSyoukei(item) {
-  if(item.disabled) {
+  if (item.disabled) {
     return 0;
   }
   let ret = 0;
@@ -175,9 +191,6 @@ function getSyoukei() {
   })
 
   return ret;
-}
-function getZei8() {
-  return Math.floor(getSyoukei() * 0.08);
 }
 function getZeis() {
   let zeiGotoMap = {};
@@ -199,43 +212,64 @@ function getZeis() {
       };
     }
     zeiGotoMap[key].forEach((v) => {
-      shrinkMap[key].targetValue += v;
+      if (v.ratePercent != TAXRATE_ZERO) {
+        shrinkMap[key].targetValue += v;
+      }
     });
 
   });
 
   let ret = [];
   Object.keys(shrinkMap).forEach(function (key) {
-    shrinkMap[key].value = Math.floor(shrinkMap[key].targetValue * (((Number)(shrinkMap[key].ratePercent)) / 100));
-    ret.push(shrinkMap[key]);
+    if (shrinkMap[key].ratePercent != TAXRATE_ZERO) {
+      let perTaxValue = 0;
+      let perTaxKomiValue = 0;
+      if (shrinkMap[key].ratePercent == TAXRATE_EIGHT || shrinkMap[key].ratePercent == TAXRATE_TEN) {
+        perTaxValue = Math.floor(shrinkMap[key].targetValue * (((Number)(shrinkMap[key].ratePercent)) / 100));
+      } else if (shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ||
+        shrinkMap[key].ratePercent == TAXRATE_KOMI_TEN) {
+        const rate = shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
+        perTaxKomiValue = Math.floor(shrinkMap[key].targetValue / (1 + rate) * rate);
+      } else {
+        console.error("Illegal rate percent");
+      }
+      shrinkMap[key].value = perTaxValue;
+      shrinkMap[key].komivalue = perTaxKomiValue;
+      ret.push(shrinkMap[key]);
+    }
   })
   return ret;
 }
 function getGoukei() {
   let ret = getSyoukei();
   getZeis().forEach((zei) => {
-    console.log(zei);
     ret += zei.value;
   });
   return ret;
 }
 function getItemMessage(item) {
-  if(item.disabled) {
+  if (item.disabled) {
     return "無効です";
   }
-  if(getItemSyoukei(item) < 0) {
+  if (!item.price) {
+    return "価格がゼロです";
+  }
+  if (!item.count) {
+    return "個数がゼロです";
+  }
+  if (getItemSyoukei(item) < 0) {
     return "マイナスです";
   }
-  if(getItemSyoukei(item) ==0) {
+  if (getItemSyoukei(item) == 0) {
     return "ゼロです";
+  }
+  if (TAXRATEVALUES.findIndex((v) => v == item.taxRate) < 0) {
+    return "税の値が不正";
   }
   return "";
 }
 const syoukei = computed(() => {
   return getSyoukei();
-})
-const zei8 = computed(() => {
-  return getZei8();
 })
 const goukei = computed(() => {
   return getGoukei();
@@ -247,7 +281,8 @@ const zeis = computed(() => {
 
 <template>
   <div class="container">
-    <div class="container-cell" :class="{ empty_container_cell: isInvalidItem(item) }" v-for="(item, index) in kaimonoItems">
+    <div class="container-cell" :class="{ empty_container_cell: getItemMessage(item) }"
+      v-for="(item, index) in kaimonoItems">
       <div class="cell">
         <div class="setumei">商品</div>
         <div class="goods">
@@ -322,13 +357,13 @@ const zeis = computed(() => {
 
       <div class="cell">
         <div class="setumei">有効</div>
-          <input :id='"check" + index' type="checkbox" @click="item.disabled = !item.disabled" :checked="!item.disabled" />
-          <label :for='"check" + index'></label>
+        <input :id='"check" + index' type="checkbox" @click="item.disabled = !item.disabled" :checked="!item.disabled" />
+        <label :for='"check" + index'></label>
       </div>
       <div class="cell">
-          <div class="setumei"></div>
-          <div></div>
-          <div>{{ getItemMessage(item) }}</div>
+        <div class="setumei"></div>
+        <div></div>
+        <div>{{ getItemMessage(item) }}</div>
       </div>
       <div class="cell">
         <div v-if="item.disabled">
@@ -347,14 +382,14 @@ const zeis = computed(() => {
         小計：{{ syoukei }} 円
       </div>
     </div>
-    <div class="container-cell">
+    <div class="container-cell" v-if="zeis.length">
       <div class="goukei cell3columns" v-for="(zei, index) in zeis">
-        税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額 {{ zei.value }} 円
+        税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額 {{ zei.value + zei.komivalue }} 円
       </div>
     </div>
     <div class="container-cell">
       <div class="goukei cell3columns">
-        支払金額：{{ goukei }} 円
+        合計：{{ goukei }} 円
       </div>
     </div>
   </div>
@@ -395,10 +430,11 @@ const zeis = computed(() => {
 }
 
 .cell3columns {
-grid-column: 1/4;
+  grid-column: 1/4;
 }
+
 .cell2rows {
-grid-row: 1/3;
+  grid-row: 1/3;
 }
 
 .setumei {
