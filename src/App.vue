@@ -7,6 +7,7 @@ const appVersion = "0.0.2";
 const upChar = "↑";
 const downChar = "↓";
 
+const tapORclick = navigator.userAgent.match(/iPhone|Android.+Mobile/) ? "タップ" : "クリック";
 let id;
 
 /** maruetsu normal */
@@ -353,15 +354,23 @@ const goukei = computed(() => {
 const zeis = computed(() => {
   return getZeis();
 });
-const allItemCount = computed(()=> {
-  let ret=0;
- kaimonoItems.value.forEach((item)=>{
-  ret += item.count;
- })
- return ret;
+const allItemCount = computed(() => {
+  let ret = 0;
+  kaimonoItems.value.forEach((item) => {
+    if (!item.disabled) {
+      ret += item.count;
+    }
+  })
+  return ret;
 });
-const allItemHinCount=computed(()=>{
-return kaimonoItems.value.length;
+const allItemHinCount = computed(() => {
+  let ret = 0;
+  kaimonoItems.value.forEach((item) => {
+    if (!item.disabled) {
+      ret += 1
+    }
+  })
+  return ret;
 });
 function getContainerCellClass(item, index) {
   if (getItemMessage(item)) {
@@ -372,13 +381,15 @@ function getContainerCellClass(item, index) {
 </script>
 
 <template>
-  
   <div class="container">
     <h1>🛒買い物いくら？🛒</h1>
+    <div class="container-cell" v-if="kaimonoItems.length == 0">
+      <p class="cell3columns">追加を{{ tapORclick }}して商品を追加してください</p>
+    </div>
     <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems"
       :key="item.id">
       <div class="cell">
-        <div class="setumei">商品 {{index+1}}</div>
+        <div class="setumei">商品 {{ index + 1 }}</div>
         <div class="goods">
           <input class="stringinput" v-model="item.goods" />
         </div>
@@ -498,7 +509,6 @@ function getContainerCellClass(item, index) {
       {{ appName }} v{{ appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
     </footer>
   </div> <!-- end of container -->
-
 </template>
 
 <style>
@@ -515,6 +525,9 @@ h1 {
   text-align: center;
 }
 
+p {
+  text-align: center;
+}
 
 .container-cell {
   background: white;
