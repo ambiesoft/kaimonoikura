@@ -374,7 +374,7 @@ function getContainerCellClass(item, index) {
       <div class="cell">
         <div class="setumei">価格</div>
         <div class="price">
-          <input class="numberinput" v-model="item.price" @keypress="isNumber($event)" />
+          <input class="numberinput" type="number" v-model="item.price" @keypress="isNumber($event)" />
         </div>
         <div></div>
       </div>
@@ -382,7 +382,7 @@ function getContainerCellClass(item, index) {
       <div class="cell">
         <div class="setumei">個数</div>
         <div class="count">
-          <input class="numberinput" v-model="item.count" @keypress="isNumber($event)" />
+          <input class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
         </div>
         <div>
           <button class="twobutton" @click="decrementCount(index)">
@@ -397,7 +397,7 @@ function getContainerCellClass(item, index) {
       <div class="cell">
         <div class="setumei">割引％</div>
         <div class="discount-rate">
-          <input class="numberinput" v-model="item.discountRate" @keypress="isNumber($event)" />
+          <input class="numberinput" type="number" v-model="item.discountRate" @keypress="isNumber($event)" />
         </div>
         <div>
           <button class="twobutton" @click="decrementDiscountRate(index)">
@@ -412,7 +412,7 @@ function getContainerCellClass(item, index) {
       <div class="cell">
         <div class="setumei">割引円</div>
         <div class="discount-value">
-          <input class="numberinput" v-model="item.discountValue" @keypress="isNumber($event)" />
+          <input class="numberinput" type="number" v-model="item.discountValue" @keypress="isNumber($event)" />
         </div>
         <div>
           <button class="twobutton" @click="decrementDiscountValue(index)">
