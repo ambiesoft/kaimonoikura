@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
-const upChar = '↑';
-const downChar = '↓';
+const upChar = "↑";
+const downChar = "↓";
 
 let id;
 
@@ -70,6 +70,46 @@ const parliamentNormal = [
   },
 ];
 
+/** SeiyuNormal */
+id = 0;
+const seiyuNormal = [
+  {
+    id: id++,
+    goods: "ふくろ",
+    price: 5,
+    count: 1,
+    taxRate: TAXRATE_TEN,
+  },
+  {
+    id: id++,
+    goods: "なっちゃん",
+    price: 199,
+    count: 1,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "牛乳",
+    price: 119,
+    count: 1,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "いちご練乳",
+    price: 198,
+    count: 1,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "Qsメロン",
+    price: 98,
+    count: 2,
+    taxRate: TAXRATE_EIGHT,
+  },
+];
+
 const TAXRATE_ZERO = 0;
 const TAXRATE_EIGHT = 8;
 const TAXRATE_TEN = 10;
@@ -84,15 +124,30 @@ const TAXRATEVALUES = [
   TAXRATE_KOMI_TEN,
 ];
 
+const LOCALSTORAGE_DEFAULT = "defaultls";
+let ls = localStorage.getItem(LOCALSTORAGE_DEFAULT);
+if (ls == "undefined") {
+  ls = undefined;
+}
+const storedArray = ls ? JSON.parse(ls) : [];
 // const kaimonoItems = ref(maruetsuNormal);
 // const kaimonoItems = ref(berxNormal);
-const kaimonoItems = ref(parliamentNormal);
+// const kaimonoItems = ref(parliamentNormal);
+// const kaimonoItems = ref(seiyuNormal);
+const kaimonoItems = ref(storedArray ?? []);
+
+function saveItems(items) {
+  localStorage.setItem(LOCALSTORAGE_DEFAULT, JSON.stringify(items));
+}
+watch(kaimonoItems.value, (newItems) => {
+  saveItems(newItems);
+})
 
 function isNumber(evt) {
-  evt = (evt) ? evt : window.event;
-  var charCode = (evt.which) ? evt.which : evt.keyCode;
-  if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-    evt.preventDefault();;
+  evt = evt ? evt : window.event;
+  var charCode = evt.which ? evt.which : evt.keyCode;
+  if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+    evt.preventDefault();
   } else {
     return true;
   }
@@ -144,7 +199,7 @@ const INCORDEC_DEC = 2;
 function incrementOrdecrementTaxRate(index, inc_or_dec) {
   let curRate = kaimonoItems.value[index].taxRate;
   const curIndex = TAXRATEVALUES.findIndex((v) => curRate == v);
-  let newIndex = curIndex + ((inc_or_dec == INCORDEC_INC) ? 1 : -1);
+  let newIndex = curIndex + (inc_or_dec == INCORDEC_INC ? 1 : -1);
   if (newIndex >= TAXRATEVALUES.length || newIndex < 0) {
     return;
   }
@@ -166,7 +221,15 @@ function addItem() {
     discountRate: null,
     discountValue: null,
     taxRate: 8,
-  })
+  });
+}
+function clearAll() {
+  if (kaimonoItems.value.length == 0) {
+    return;
+  }
+  if (window.confirm('アイテムをすべて削除しますか？')) {
+    kaimonoItems.value.splice(0, kaimonoItems.value.length);
+  }
 }
 function deleteItem(index) {
   kaimonoItems.value.splice(index, 1);
@@ -176,10 +239,10 @@ function getItemSyoukei(item) {
     return 0;
   }
   let ret = 0;
-  let price = (Number)(item.price);
-  let count = (Number)(item.count);
-  let taxRate = (Number)(item.taxRate);
-  let discountRate = (Number)(item.discountRate);
+  let price = Number(item.price);
+  let count = Number(item.count);
+  let taxRate = Number(item.taxRate);
+  let discountRate = Number(item.discountRate);
 
   // return Math.floor(((price - (price * (discountRate / 100))) * count) * ((100 + taxRate) / 100));
   return price * count;
@@ -188,7 +251,7 @@ function getSyoukei() {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
     ret += getItemSyoukei(item);
-  })
+  });
 
   return ret;
 }
@@ -216,7 +279,6 @@ function getZeis() {
         shrinkMap[key].targetValue += v;
       }
     });
-
   });
 
   let ret = [];
@@ -224,12 +286,23 @@ function getZeis() {
     if (shrinkMap[key].ratePercent != TAXRATE_ZERO) {
       let perTaxValue = 0;
       let perTaxKomiValue = 0;
-      if (shrinkMap[key].ratePercent == TAXRATE_EIGHT || shrinkMap[key].ratePercent == TAXRATE_TEN) {
-        perTaxValue = Math.floor(shrinkMap[key].targetValue * (((Number)(shrinkMap[key].ratePercent)) / 100));
-      } else if (shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ||
-        shrinkMap[key].ratePercent == TAXRATE_KOMI_TEN) {
-        const rate = shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
-        perTaxKomiValue = Math.floor(shrinkMap[key].targetValue / (1 + rate) * rate);
+      if (
+        shrinkMap[key].ratePercent == TAXRATE_EIGHT ||
+        shrinkMap[key].ratePercent == TAXRATE_TEN
+      ) {
+        perTaxValue = Math.floor(
+          shrinkMap[key].targetValue *
+          (Number(shrinkMap[key].ratePercent) / 100)
+        );
+      } else if (
+        shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ||
+        shrinkMap[key].ratePercent == TAXRATE_KOMI_TEN
+      ) {
+        const rate =
+          shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
+        perTaxKomiValue = Math.floor(
+          (shrinkMap[key].targetValue / (1 + rate)) * rate
+        );
       } else {
         console.error("Illegal rate percent");
       }
@@ -237,7 +310,7 @@ function getZeis() {
       shrinkMap[key].komivalue = perTaxKomiValue;
       ret.push(shrinkMap[key]);
     }
-  })
+  });
   return ret;
 }
 function getGoukei() {
@@ -251,10 +324,10 @@ function getItemMessage(item) {
   if (item.disabled) {
     return "無効です";
   }
-  if (!item.price) {
+  if (!item.price || item.price == 0) {
     return "価格がゼロです";
   }
-  if (!item.count) {
+  if (!item.count || item.count == 0) {
     return "個数がゼロです";
   }
   if (getItemSyoukei(item) < 0) {
@@ -270,19 +343,26 @@ function getItemMessage(item) {
 }
 const syoukei = computed(() => {
   return getSyoukei();
-})
+});
 const goukei = computed(() => {
   return getGoukei();
-})
+});
 const zeis = computed(() => {
   return getZeis();
-})
+});
+
+function getContainerCellClass(item, index) {
+  if (getItemMessage(item)) {
+    return 'empty_container_cell';
+  }
+  return index % 2 == 0 ? 'even_bg' : 'odd_bg';
+}
 </script>
 
 <template>
   <div class="container">
-    <div class="container-cell" :class="{ empty_container_cell: getItemMessage(item) }"
-      v-for="(item, index) in kaimonoItems">
+    <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems"
+      :key="item.id">
       <div class="cell">
         <div class="setumei">商品</div>
         <div class="goods">
@@ -305,8 +385,12 @@ const zeis = computed(() => {
           <input class="numberinput" v-model="item.count" @keypress="isNumber($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementCount(index)">{{ downChar }}</button>
-          <button class="twobutton" @click="incrementCount(index)">{{ upChar }}</button>
+          <button class="twobutton" @click="decrementCount(index)">
+            {{ downChar }}
+          </button>
+          <button class="twobutton" @click="incrementCount(index)">
+            {{ upChar }}
+          </button>
         </div>
       </div>
 
@@ -357,8 +441,8 @@ const zeis = computed(() => {
 
       <div class="cell">
         <div class="setumei">有効</div>
-        <input :id='"check" + index' type="checkbox" @click="item.disabled = !item.disabled" :checked="!item.disabled" />
-        <label :for='"check" + index'></label>
+        <input :id="'check' + index" type="checkbox" @click="item.disabled = !item.disabled" :checked="!item.disabled" />
+        <label :for="'check' + index"></label>
       </div>
       <div class="cell">
         <div class="setumei"></div>
@@ -371,27 +455,32 @@ const zeis = computed(() => {
           <button @click="deleteItem(index)">❌</button>
         </div>
       </div>
-    </div> <!-- end of loop -->
+    </div>
+    <!-- end of loop -->
 
     <div class="container-cell">
-      <button @click="addItem">追加</button>
+      <button @click="addItem" class="cell3columns">追加</button>
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns">
-        小計：{{ syoukei }} 円
-      </div>
+      <div class="goukei cell3columns">小計：{{ syoukei }} 円</div>
     </div>
     <div class="container-cell" v-if="zeis.length">
       <div class="goukei cell3columns" v-for="(zei, index) in zeis">
-        税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額 {{ zei.value + zei.komivalue }} 円
+        税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額
+        {{ zei.value + zei.komivalue }} 円
       </div>
     </div>
     <div class="container-cell">
-      <div class="goukei cell3columns">
-        合計：{{ goukei }} 円
-      </div>
+      <div class="goukei cell3columns">合計：{{ goukei }} 円</div>
     </div>
+
+    <div class="container-cell">
+      <button @click="clearAll">すべて削除</button>
+      <button @click="clearAll">すべて削除</button>
+      <button @click="clearAll">すべて削除</button>
+    </div>
+
   </div>
 </template>
 
@@ -399,14 +488,17 @@ const zeis = computed(() => {
 .container {
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
-  margin: 0;
+  max-width: 680px;
   padding: 10px;
   display: grid;
+  margin: 0 auto;
 }
 
+
+
 .container-cell {
-  background: steelblue;
-  color: #fff;
+  background: white;
+  /* color: #fff; */
   font-size: 20px;
   padding: 10px;
   border: skyblue 1px solid;
@@ -415,9 +507,24 @@ const zeis = computed(() => {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
+/* .container > :nth-child(odd) {
+  background-color: lightblue;
+}
+
+.container > :nth-child(even) {
+  background-color: lightgray;
+} */
 
 .empty_container_cell {
-  background: lightcoral;
+  background-color: lightcoral;
+}
+
+.even_bg {
+  background-color: lightblue;
+}
+
+.odd_bg {
+  background-color: lightgray;
 }
 
 .cell {
@@ -427,6 +534,10 @@ const zeis = computed(() => {
   flex-direction: column;
   text-align: center;
   padding-left: 6px;
+}
+
+.cell2columns {
+  grid-column: 1/3;
 }
 
 .cell3columns {
