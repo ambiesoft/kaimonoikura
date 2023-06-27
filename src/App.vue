@@ -129,24 +129,47 @@ const TAXRATEVALUES = [
 ];
 
 const LOCALSTORAGE_DEFAULT = "defaultls";
-let ls = localStorage.getItem(LOCALSTORAGE_DEFAULT);
-if (ls == "undefined") {
-  ls = undefined;
-}
-const storedArray = ls ? JSON.parse(ls) : [];
+const loaded = loadItems(LOCALSTORAGE_DEFAULT);
+
 // const kaimonoItems = ref(maruetsuNormal);
 // const kaimonoItems = ref(berxNormal);
 // const kaimonoItems = ref(parliamentNormal);
 // const kaimonoItems = ref(seiyuNormal);
-const kaimonoItems = ref(storedArray ?? []);
+const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 
-function saveItems(items) {
-  localStorage.setItem(LOCALSTORAGE_DEFAULT, JSON.stringify(items));
+
+const STOREPROFILE_NORMAL = "通常";
+const STOREPROFILE_OKSTOREWITHKAIIN = "オーケーストアwith会員カード";
+
+const STOREPROFILES = ref([
+  STOREPROFILE_NORMAL,
+  STOREPROFILE_OKSTOREWITHKAIIN,
+]);
+const selectedStoreProfile = ref(loaded.selectedStoreProfile);
+
+function isOKProfile() {
+  return selectedStoreProfile.value == STOREPROFILE_OKSTOREWITHKAIIN;
+}
+
+function loadItems(storageKey) {
+  let ls = localStorage.getItem(storageKey);
+  if (ls[0] != "{") {
+    ls = undefined;
+  }
+  return ls ? JSON.parse(ls) : {};
+}
+function saveItems() {
+  localStorage.setItem(LOCALSTORAGE_DEFAULT, JSON.stringify({
+    "kaimonoItems": kaimonoItems.value,
+    "selectedStoreProfile": selectedStoreProfile.value,
+  }));
 }
 watch(kaimonoItems.value, (newItems) => {
-  saveItems(newItems);
+  saveItems();
 })
-
+watch(selectedStoreProfile, () => {
+  saveItems();
+})
 function isNumber(evt) {
   evt = evt ? evt : window.event;
   var charCode = evt.which ? evt.which : evt.keyCode;
@@ -254,7 +277,9 @@ function getItemSyoukei(item) {
 function getSyoukei() {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
-    ret += getItemSyoukei(item);
+    if (!item.disabled) {
+      ret += getItemSyoukei(item);
+    }
   });
 
   return ret;
@@ -262,10 +287,12 @@ function getSyoukei() {
 function getZeis() {
   let zeiGotoMap = {};
   kaimonoItems.value.forEach((item) => {
-    if (!zeiGotoMap[item.taxRate]) {
-      zeiGotoMap[item.taxRate] = [];
+    if (!item.disabled) {
+      if (!zeiGotoMap[item.taxRate]) {
+        zeiGotoMap[item.taxRate] = [];
+      }
+      zeiGotoMap[item.taxRate].push(getItemSyoukei(item));
     }
-    zeiGotoMap[item.taxRate].push(getItemSyoukei(item));
   });
 
   let shrinkMap = {};
@@ -278,11 +305,18 @@ function getZeis() {
         value: 0,
       };
     }
+
+
     zeiGotoMap[key].forEach((v) => {
       if (v.ratePercent != TAXRATE_ZERO) {
         shrinkMap[key].targetValue += v;
       }
     });
+
+    // override ok8
+    if (isOKProfile() && key == TAXRATE_EIGHT) {
+      shrinkMap[key].targetValue -= getOk3_100kei();
+    }
   });
 
   let ret = [];
@@ -315,15 +349,10 @@ function getZeis() {
       ret.push(shrinkMap[key]);
     }
   });
+
   return ret;
 }
-function getGoukei() {
-  let ret = getSyoukei();
-  getZeis().forEach((zei) => {
-    ret += zei.value;
-  });
-  return ret;
-}
+
 function getItemMessage(item) {
   if (item.disabled) {
     return "無効です";
@@ -345,15 +374,34 @@ function getItemMessage(item) {
   }
   return "";
 }
+function getOk3_100kei() {
+  if (!isOKProfile()) {
+    console.error("Profile must be 'OKStore'");
+    return 0;
+  }
+  let ret = 0;
+  kaimonoItems.value.forEach((item) => {
+    if (!item.disabled && item.taxRate == TAXRATE_EIGHT) {
+      for (let i = 0; i < item.count; ++i) {
+        ret += Math.floor(item.price * (3 / 103));
+      }
+    }
+  })
+  return ret;
+}
 const syoukei = computed(() => {
   return getSyoukei();
-});
-const goukei = computed(() => {
-  return getGoukei();
 });
 const zeis = computed(() => {
   return getZeis();
 });
+const allZei = computed(() => {
+  let ret = 0;
+  getZeis().forEach((z) => {
+    ret += z.value;
+  })
+  return ret;
+})
 const allItemCount = computed(() => {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
@@ -378,11 +426,23 @@ function getContainerCellClass(item, index) {
   }
   return index % 2 == 0 ? 'even_bg' : 'odd_bg';
 }
+const ok3_100kei = computed(() => {
+  return getOk3_100kei();
+});
+
 </script>
 
 <template>
   <div class="container">
     <h1>🛒買い物いくら？🛒</h1>
+
+    <div class="container-cell">
+      <label for="storeselect">ストアプロファイル</label>
+      <select id="storeselect" v-model="selectedStoreProfile">
+        <option v-for="sp in STOREPROFILES">{{ sp }}</option>
+      </select>
+    </div>
+
     <div class="container-cell" v-if="kaimonoItems.length == 0">
       <p class="cell3columns">追加を{{ tapORclick }}して商品を追加してください</p>
     </div>
@@ -487,16 +547,29 @@ function getContainerCellClass(item, index) {
       <button @click="addItem" class="cell3columns">追加</button>
     </div>
 
-    <div class="container-cell">
-      <div class="goukei cell3columns">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ syoukei }}</div>
+    <div class="container-cell" v-if="isOKProfile()">
+      <div class="goukei cell3columns">割引前合計 ¥{{ syoukei }}</div>
     </div>
+    <div class="container-cell" v-if="isOKProfile()">
+      <div class="goukei cell3columns">F食料品3/103割引 -{{ ok3_100kei }}</div>
+    </div>
+
+    <div class="container-cell">
+      <div class="goukei cell3columns" v-if="isOKProfile()">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{
+        syoukei - ok3_100kei }}</div>
+      <div class="goukei cell3columns" v-else>小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ syoukei }}</div>
+    </div>
+
     <div class="container-cell" v-if="zeis.length">
       <div class="goukei cell3columns" v-for="(zei, index) in zeis">
         税{{ zei.ratePercent }}% 対象額 ¥{{ zei.targetValue }} 税額 ¥{{ zei.value + zei.komivalue }}
       </div>
     </div>
+
     <div class="container-cell">
-      <div class="goukei cell3columns">合計 ¥{{ goukei }}</div>
+      <div class="goukei cell3columns" v-if="isOKProfile()">合計 ¥{{ syoukei - ok3_100kei +
+        allZei }}</div>
+      <div class="goukei cell3columns" v-else>合計 ¥{{ syoukei + allZei }}</div>
     </div>
 
     <div class="container-cell">
