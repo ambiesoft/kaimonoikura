@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
+const appName = "kaimonoikura";
+const appVersion = "0.0.2";
+
 const upChar = "↑";
 const downChar = "↓";
 
@@ -350,7 +353,16 @@ const goukei = computed(() => {
 const zeis = computed(() => {
   return getZeis();
 });
-
+const allItemCount = computed(()=> {
+  let ret=0;
+ kaimonoItems.value.forEach((item)=>{
+  ret += item.count;
+ })
+ return ret;
+});
+const allItemHinCount=computed(()=>{
+return kaimonoItems.value.length;
+});
 function getContainerCellClass(item, index) {
   if (getItemMessage(item)) {
     return 'empty_container_cell';
@@ -360,11 +372,13 @@ function getContainerCellClass(item, index) {
 </script>
 
 <template>
+  
   <div class="container">
+    <h1>🛒買い物いくら？🛒</h1>
     <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems"
       :key="item.id">
       <div class="cell">
-        <div class="setumei">商品</div>
+        <div class="setumei">商品 {{index+1}}</div>
         <div class="goods">
           <input class="stringinput" v-model="item.goods" />
         </div>
@@ -463,16 +477,15 @@ function getContainerCellClass(item, index) {
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns">小計：{{ syoukei }} 円</div>
+      <div class="goukei cell3columns">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ syoukei }}</div>
     </div>
     <div class="container-cell" v-if="zeis.length">
       <div class="goukei cell3columns" v-for="(zei, index) in zeis">
-        税 {{ zei.ratePercent }}％ 対象額 {{ zei.targetValue }}円　税額
-        {{ zei.value + zei.komivalue }} 円
+        税{{ zei.ratePercent }}% 対象額 ¥{{ zei.targetValue }} 税額 ¥{{ zei.value + zei.komivalue }}
       </div>
     </div>
     <div class="container-cell">
-      <div class="goukei cell3columns">合計：{{ goukei }} 円</div>
+      <div class="goukei cell3columns">合計 ¥{{ goukei }}</div>
     </div>
 
     <div class="container-cell">
@@ -481,7 +494,11 @@ function getContainerCellClass(item, index) {
       <button @click="clearAll">すべて削除</button>
     </div>
 
-  </div>
+    <footer>
+      {{ appName }} v{{ appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
+    </footer>
+  </div> <!-- end of container -->
+
 </template>
 
 <style>
@@ -494,6 +511,9 @@ function getContainerCellClass(item, index) {
   margin: 0 auto;
 }
 
+h1 {
+  text-align: center;
+}
 
 
 .container-cell {
@@ -586,6 +606,11 @@ button {
 
 .goukei {
   width: 100%;
+  text-align: right;
+}
+
+footer {
+  padding-top: 10px;
   text-align: right;
 }
 </style>
