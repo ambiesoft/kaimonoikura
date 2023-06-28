@@ -323,11 +323,14 @@ function loadItems(storageKey) {
   }
   return ls ? JSON.parse(ls) : {};
 }
-function saveItems() {
-  localStorage.setItem(LOCALSTORAGE_DEFAULT, JSON.stringify({
+function getSaveJson() {
+  return JSON.stringify({
     "kaimonoItems": kaimonoItems.value,
     "selectedStoreProfile": selectedStoreProfile.value,
-  }));
+  });
+}
+function saveItems() {
+  localStorage.setItem(LOCALSTORAGE_DEFAULT, getSaveJson());
 }
 watch(kaimonoItems.value, (newItems) => {
   saveItems();
@@ -624,6 +627,17 @@ const ok3_100kei = computed(() => {
 const disp_syoukei = computed(() => {
   return isOKProfile() ? syoukei.value - ok3_100kei.value : syoukei.value;
 })
+
+function savelocal() {
+  const jsonString = getSaveJson();
+  const blob = new Blob([jsonString], { type: 'application/json' });
+
+  // ダウンロードリンクを作成
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = 'kaimono.json'; // ダウンロード時のファイル名を指定
+  downloadLink.click();
+}
 </script>
 
 <template>
@@ -770,7 +784,7 @@ const disp_syoukei = computed(() => {
     <div class="container-cell">
       <button @click="clearAll">すべて削除</button>
       <button @click="clearAll">すべて削除</button>
-      <button @click="clearAll">すべて削除</button>
+      <button @click="savelocal">保存</button>
     </div>
 
     <footer>
