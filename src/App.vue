@@ -412,7 +412,7 @@ function addItem() {
     count: 1,
     discountRate: null,
     discountValue: null,
-    taxRate: 8,
+    taxRate: isOKProfile() ? TAXRATE_OKFOODEIGHT : TAXRATE_EIGHT,
   });
 }
 function clearAll() {
