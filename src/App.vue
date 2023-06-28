@@ -217,6 +217,9 @@ function testFunc(name, expect, actual) {
   console.log(message);
 }
 function doTest() {
+  const saveCurrentStoreProfile = selectedStoreProfile.value;
+  const saveCurrentItems = kaimonoItems.value;
+
   okCount = ngCount = 0;
   selectedStoreProfile.value = STOREPROFILE_NORMAL;
   kaimonoItems.value = maruetsuNormal;
@@ -224,14 +227,23 @@ function doTest() {
   testFunc("maruetsuNormal allItemHinCount", 4, allItemHinCount.value);
   testFunc("maruetsuNormal allItemCount", 4, allItemCount.value);
   testFunc("maruetsuNormal disp_syoukei", 498, disp_syoukei.value);
-
   testFunc("maruetsuNormal zeis len", 1, zeis.value.length);
   testFunc("maruetsuNormal zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
   testFunc("maruetsuNormal zeis[0].targetValue", 498, zeis.value[0].targetValue);
   testFunc("maruetsuNormal zeis[0].allvalue()", 39, zeis.value[0].allvalue());
-
   testFunc("okWith10 goukei", 537, goukei.value);
 
+  selectedStoreProfile.value = STOREPROFILE_NORMAL;
+  kaimonoItems.value = berxNormal;
+  testFunc("berxNormal syoukei", 316, syoukei.value);
+  testFunc("berxNormal allItemHinCount", 2, allItemHinCount.value);
+  testFunc("berxNormal allItemCount", 4, allItemCount.value);
+  testFunc("berxNormal disp_syoukei", 316, disp_syoukei.value);
+  testFunc("berxNormal zeis len", 1, zeis.value.length);
+  testFunc("berxNormal zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("berxNormal zeis[0].targetValue", 316, zeis.value[0].targetValue);
+  testFunc("berxNormal zeis[0].allvalue()", 25, zeis.value[0].allvalue());
+  testFunc("berxNormal goukei", 341, goukei.value);
 
   selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
   kaimonoItems.value = okWith10;
@@ -240,7 +252,6 @@ function doTest() {
   testFunc("okWith10 allItemHinCount", 5, allItemHinCount.value);
   testFunc("okWith10 allItemCount", 5, allItemCount.value);
   testFunc("okWith10 disp_syoukei", 881, disp_syoukei.value);
-
   testFunc("okWith10 zeis len", 2, zeis.value.length);
   testFunc("okWith10 zeis[0].ratePercent", "F8", zeis.value[0].ratePercent);
   testFunc("okWith10 zeis[0].targetValue", 341, zeis.value[0].targetValue);
@@ -248,9 +259,7 @@ function doTest() {
   testFunc("okWith10 zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
   testFunc("okWith10 zeis[1].targetValue", 540, zeis.value[1].targetValue);
   testFunc("okWith10 zeis[1].allvalue()", 54, zeis.value[1].allvalue());
-
   testFunc("okWith10 goukei", 962, goukei.value);
-
 
   selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
   kaimonoItems.value = okwithNotF8;
@@ -259,7 +268,6 @@ function doTest() {
   testFunc("okwithNotF8 allItemHinCount", 6, allItemHinCount.value);
   testFunc("okwithNotF8 allItemCount", 6, allItemCount.value);
   testFunc("okwithNotF8 disp_syoukei", 1271, disp_syoukei.value);
-
   testFunc("okwithNotF8 zeis len", 2, zeis.value.length);
   testFunc("okwithNotF8 zeis[0].ratePercent", "F8", zeis.value[0].ratePercent);
   testFunc("okwithNotF8 zeis[0].targetValue", 996, zeis.value[0].targetValue);
@@ -267,10 +275,12 @@ function doTest() {
   testFunc("okwithNotF8 zeis[1].ratePercent", "8", zeis.value[1].ratePercent);
   testFunc("okwithNotF8 zeis[1].targetValue", 275, zeis.value[1].targetValue);
   testFunc("okwithNotF8 zeis[1].allvalue()", 22, zeis.value[1].allvalue());
-
   testFunc("okwithNotF8 goukei", 1372, goukei.value);
 
   console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
+
+  selectedStoreProfile.value = saveCurrentStoreProfile;
+  kaimonoItems.value = saveCurrentItems;
 }
 
 const TAXRATE_ZERO = 0;
@@ -638,6 +648,13 @@ function savelocal() {
   downloadLink.download = 'kaimono.json'; // ダウンロード時のファイル名を指定
   downloadLink.click();
 }
+
+const kakaku_placeholder = computed(() => {
+  if (isOKProfile()) {
+    return "非会員の税抜価格";
+  }
+  return "税抜価格";
+});
 </script>
 
 <template>
@@ -648,8 +665,8 @@ function savelocal() {
     <h1>🛒買い物いくら？🛒</h1>
 
     <div class="container-cell">
-      <div class="cell3columns">
-        <label for="storeselect">会計方式：</label>
+      <div class="cell3columns storeprofile">
+        <label id="label_storeselect" for="storeselect">会計方式：</label>
         <select id="storeselect" v-model="selectedStoreProfile">
           <option v-for="sp in STOREPROFILES">{{ sp }}</option>
         </select>
@@ -664,7 +681,7 @@ function savelocal() {
       <div class="cell">
         <div class="setumei">商品 {{ index + 1 }}</div>
         <div class="goods">
-          <input class="stringinput" v-model="item.goods" />
+          <input class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
         </div>
         <div></div>
       </div>
@@ -672,7 +689,8 @@ function savelocal() {
       <div class="cell">
         <div class="setumei">価格</div>
         <div class="price">
-          <input class="numberinput" type="number" v-model="item.price" @keypress="isNumber($event)" />
+          <input class="numberinput" type="number" :placeholder="kakaku_placeholder" v-model="item.price"
+            @keypress="isNumber($event)" />
         </div>
         <div></div>
       </div>
@@ -823,6 +841,19 @@ p {
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+}
+
+.storeprofile {
+  margin: 0 auto;
+}
+
+#label_storeselect {
+  vertical-align: middle;
+}
+
+#storeselect {
+  height: 100%;
+  vertical-align: middle;
 }
 
 /* .container > :nth-child(odd) {
