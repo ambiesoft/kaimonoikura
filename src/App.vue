@@ -310,7 +310,7 @@ const STOREPROFILES = ref([
   STOREPROFILE_NORMAL,
   STOREPROFILE_OKSTOREWITHKAIIN,
 ]);
-const selectedStoreProfile = ref(loaded.selectedStoreProfile);
+const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? STOREPROFILE_NORMAL);
 
 function isOKProfile() {
   return selectedStoreProfile.value == STOREPROFILE_OKSTOREWITHKAIIN;
@@ -391,7 +391,12 @@ const INCORDEC_DEC = 2;
 function incrementOrdecrementTaxRate(index, inc_or_dec) {
   let curRate = kaimonoItems.value[index].taxRate;
   const curIndex = TAXRATEVALUES.findIndex((v) => curRate == v);
-  let newIndex = curIndex + (inc_or_dec == INCORDEC_INC ? 1 : -1);
+  let incdec = (inc_or_dec == INCORDEC_INC ? 1 : -1);
+  let newIndex = curIndex + incdec;
+  if (!isOKProfile() && newIndex == TAXRATEVALUES.findIndex((v) => v == TAXRATE_OKFOODEIGHT)) {
+    newIndex = newIndex + incdec;
+  }
+
   if (newIndex >= TAXRATEVALUES.length || newIndex < 0) {
     return;
   }
@@ -547,7 +552,10 @@ function getItemMessage(item) {
     return "ゼロです";
   }
   if (TAXRATEVALUES.findIndex((v) => v == item.taxRate) < 0) {
-    return "税の値が不正";
+    return "税の値が不正です";
+  }
+  if (!isOKProfile() && item.taxRate == TAXRATE_OKFOODEIGHT) {
+    return `税率=F8は"${STOREPROFILE_OKSTOREWITHKAIIN}"専用です`;
   }
   return "";
 }
