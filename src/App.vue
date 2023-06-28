@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
+const DEBUGGING = ref(((new URL(location.href)).hostname) == "127.0.0.1" ||
+  (new URL(location.href)).hostname == "localhost");
+
 const appName = "kaimonoikura";
 const appVersion = "0.0.2";
 
@@ -113,30 +116,192 @@ const seiyuNormal = [
     taxRate: TAXRATE_EIGHT,
   },
 ];
+/** OKwith10% */
+id = 0;
+const okWith10 = [
+  {
+    id: id++,
+    goods: "ソーダフロート",
+    price: 60,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "いちごフロート",
+    price: 60,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "ソフフラノメロン",
+    price: 90,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "単1電池",
+    price: 540,
+    count: 1,
+    taxRate: TAXRATE_TEN,
+  },
+  {
+    id: id++,
+    goods: "飴",
+    price: 139,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+];
+/** okwithNotF8 */
+id = 0;
+const okwithNotF8 = [
+  {
+    id: id++,
+    goods: "炭酸ナトリウム",
+    price: 275,
+    count: 1,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "キリマンジャロ",
+    price: 399,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "はくさい",
+    price: 100,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "A抹茶",
+    price: 194,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "ミロ",
+    price: 234,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "バターロール",
+    price: 95,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+];
+
+let okCount = 0;
+let ngCount = 0;
+function testFunc(name, expect, actual) {
+  let message = "testing " + name + " ... ";
+  if (expect === actual) {
+    message += "OK";
+    okCount++;
+  } else {
+    message += "NG";
+    ngCount++;
+  }
+  message += `(expect=${expect}, actual=${actual})`;
+  console.log(message);
+}
+function doTest() {
+  okCount = ngCount = 0;
+  selectedStoreProfile.value = STOREPROFILE_NORMAL;
+  kaimonoItems.value = maruetsuNormal;
+  testFunc("maruetsuNormal syoukei", 498, syoukei.value);
+  testFunc("maruetsuNormal allItemHinCount", 4, allItemHinCount.value);
+  testFunc("maruetsuNormal allItemCount", 4, allItemCount.value);
+  testFunc("maruetsuNormal disp_syoukei", 498, disp_syoukei.value);
+
+  testFunc("maruetsuNormal zeis len", 1, zeis.value.length);
+  testFunc("maruetsuNormal zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("maruetsuNormal zeis[0].targetValue", 498, zeis.value[0].targetValue);
+  testFunc("maruetsuNormal zeis[0].allvalue()", 39, zeis.value[0].allvalue());
+
+  testFunc("okWith10 goukei", 537, goukei.value);
+
+
+  selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
+  kaimonoItems.value = okWith10;
+  testFunc("okWith10 syoukei", 889, syoukei.value);
+  testFunc("okWith10 ok3_100kei", 8, ok3_100kei.value);
+  testFunc("okWith10 allItemHinCount", 5, allItemHinCount.value);
+  testFunc("okWith10 allItemCount", 5, allItemCount.value);
+  testFunc("okWith10 disp_syoukei", 881, disp_syoukei.value);
+
+  testFunc("okWith10 zeis len", 2, zeis.value.length);
+  testFunc("okWith10 zeis[0].ratePercent", "F8", zeis.value[0].ratePercent);
+  testFunc("okWith10 zeis[0].targetValue", 341, zeis.value[0].targetValue);
+  testFunc("okWith10 zeis[0].allvalue()", 27, zeis.value[0].allvalue());
+  testFunc("okWith10 zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+  testFunc("okWith10 zeis[1].targetValue", 540, zeis.value[1].targetValue);
+  testFunc("okWith10 zeis[1].allvalue()", 54, zeis.value[1].allvalue());
+
+  testFunc("okWith10 goukei", 962, goukei.value);
+
+
+  selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
+  kaimonoItems.value = okwithNotF8;
+  testFunc("okwithNotF8 syoukei", 1297, syoukei.value);
+  testFunc("okwithNotF8 ok3_100kei", 26, ok3_100kei.value);
+  testFunc("okwithNotF8 allItemHinCount", 6, allItemHinCount.value);
+  testFunc("okwithNotF8 allItemCount", 6, allItemCount.value);
+  testFunc("okwithNotF8 disp_syoukei", 1271, disp_syoukei.value);
+
+  testFunc("okwithNotF8 zeis len", 2, zeis.value.length);
+  testFunc("okwithNotF8 zeis[0].ratePercent", "F8", zeis.value[0].ratePercent);
+  testFunc("okwithNotF8 zeis[0].targetValue", 996, zeis.value[0].targetValue);
+  testFunc("okwithNotF8 zeis[0].allvalue()", 79, zeis.value[0].allvalue());
+  testFunc("okwithNotF8 zeis[1].ratePercent", "8", zeis.value[1].ratePercent);
+  testFunc("okwithNotF8 zeis[1].targetValue", 275, zeis.value[1].targetValue);
+  testFunc("okwithNotF8 zeis[1].allvalue()", 22, zeis.value[1].allvalue());
+
+  testFunc("okwithNotF8 goukei", 1372, goukei.value);
+
+  console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
+}
 
 const TAXRATE_ZERO = 0;
-const TAXRATE_EIGHT = 8;
-const TAXRATE_TEN = 10;
+const TAXRATE_OKFOODEIGHT = "F8";
+const TAXRATE_EIGHT = "8";
+const TAXRATE_TEN = "10";
 const TAXRATE_KOMI_EIGHT = "込8";
 const TAXRATE_KOMI_TEN = "込10";
 
 const TAXRATEVALUES = [
   TAXRATE_ZERO,
+  TAXRATE_OKFOODEIGHT,
   TAXRATE_EIGHT,
   TAXRATE_TEN,
   TAXRATE_KOMI_EIGHT,
   TAXRATE_KOMI_TEN,
 ];
-
+function getTaxRateIndex(trv) {
+  return TAXRATEVALUES.findIndex((v) => trv == v);
+}
 const LOCALSTORAGE_DEFAULT = "defaultls";
 const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 
+
+const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 // const kaimonoItems = ref(maruetsuNormal);
 // const kaimonoItems = ref(berxNormal);
 // const kaimonoItems = ref(parliamentNormal);
 // const kaimonoItems = ref(seiyuNormal);
-const kaimonoItems = ref(loaded.kaimonoItems ?? []);
-
+// const kaimonoItems = ref(okWith10);
+// const kaimonoItems = ref(okwithNotF8);
 
 const STOREPROFILE_NORMAL = "通常";
 const STOREPROFILE_OKSTOREWITHKAIIN = "オーケーストアwith会員カード";
@@ -153,7 +318,7 @@ function isOKProfile() {
 
 function loadItems(storageKey) {
   let ls = localStorage.getItem(storageKey);
-  if (ls[0] != "{") {
+  if (ls && ls[0] != "{") {
     ls = undefined;
   }
   return ls ? JSON.parse(ls) : {};
@@ -303,9 +468,12 @@ function getZeis() {
         ratePercent: key,
         targetValue: 0,
         value: 0,
+        komivalue: 0,
+        allvalue: function () {
+          return this.value + this.komivalue;
+        },
       };
     }
-
 
     zeiGotoMap[key].forEach((v) => {
       if (v.ratePercent != TAXRATE_ZERO) {
@@ -314,7 +482,7 @@ function getZeis() {
     });
 
     // override ok8
-    if (isOKProfile() && key == TAXRATE_EIGHT) {
+    if (isOKProfile() && key == TAXRATE_OKFOODEIGHT) {
       shrinkMap[key].targetValue -= getOk3_100kei();
     }
   });
@@ -324,25 +492,31 @@ function getZeis() {
     if (shrinkMap[key].ratePercent != TAXRATE_ZERO) {
       let perTaxValue = 0;
       let perTaxKomiValue = 0;
-      if (
-        shrinkMap[key].ratePercent == TAXRATE_EIGHT ||
-        shrinkMap[key].ratePercent == TAXRATE_TEN
-      ) {
-        perTaxValue = Math.floor(
-          shrinkMap[key].targetValue *
-          (Number(shrinkMap[key].ratePercent) / 100)
-        );
-      } else if (
-        shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ||
-        shrinkMap[key].ratePercent == TAXRATE_KOMI_TEN
-      ) {
-        const rate =
-          shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
-        perTaxKomiValue = Math.floor(
-          (shrinkMap[key].targetValue / (1 + rate)) * rate
-        );
-      } else {
-        console.error("Illegal rate percent");
+      let rate;
+      switch (shrinkMap[key].ratePercent) {
+        case TAXRATE_EIGHT:
+        case TAXRATE_OKFOODEIGHT:
+        case TAXRATE_TEN:
+          if (shrinkMap[key].ratePercent == TAXRATE_TEN) {
+            rate = 10 / 100;
+          } else {
+            rate = 8 / 100;
+          }
+          perTaxValue = Math.floor(shrinkMap[key].targetValue * rate);
+          break;
+
+        case TAXRATE_KOMI_EIGHT:
+        case TAXRATE_KOMI_TEN:
+          rate =
+            shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
+          perTaxKomiValue = Math.floor(
+            (shrinkMap[key].targetValue / (1 + rate)) * rate
+          );
+          break;
+
+        default:
+          console.error("Illegal rate percent", key, shrinkMap[key]);
+          break;
       }
       shrinkMap[key].value = perTaxValue;
       shrinkMap[key].komivalue = perTaxKomiValue;
@@ -350,6 +524,9 @@ function getZeis() {
     }
   });
 
+  ret = ret.sort((a, b) => {
+    return getTaxRateIndex(a.ratePercent) - getTaxRateIndex(b.ratePercent);
+  });
   return ret;
 }
 
@@ -381,7 +558,7 @@ function getOk3_100kei() {
   }
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
-    if (!item.disabled && item.taxRate == TAXRATE_EIGHT) {
+    if (!item.disabled && item.taxRate == TAXRATE_OKFOODEIGHT) {
       for (let i = 0; i < item.count; ++i) {
         ret += Math.floor(item.price * (3 / 103));
       }
@@ -420,6 +597,13 @@ const allItemHinCount = computed(() => {
   })
   return ret;
 });
+const goukei = computed(() => {
+  if (isOKProfile()) {
+    return syoukei.value - ok3_100kei.value + allZei.value;
+  } else {
+    return syoukei.value + allZei.value;
+  }
+});
 function getContainerCellClass(item, index) {
   if (getItemMessage(item)) {
     return 'empty_container_cell';
@@ -429,18 +613,25 @@ function getContainerCellClass(item, index) {
 const ok3_100kei = computed(() => {
   return getOk3_100kei();
 });
-
+const disp_syoukei = computed(() => {
+  return isOKProfile() ? syoukei.value - ok3_100kei.value : syoukei.value;
+})
 </script>
 
 <template>
+  <div v-if="DEBUGGING">
+    <button @click="doTest">doTest</button>
+  </div>
   <div class="container">
     <h1>🛒買い物いくら？🛒</h1>
 
     <div class="container-cell">
-      <label for="storeselect">ストアプロファイル</label>
-      <select id="storeselect" v-model="selectedStoreProfile">
-        <option v-for="sp in STOREPROFILES">{{ sp }}</option>
-      </select>
+      <div class="cell3columns">
+        <label for="storeselect">会計方式：</label>
+        <select id="storeselect" v-model="selectedStoreProfile">
+          <option v-for="sp in STOREPROFILES">{{ sp }}</option>
+        </select>
+      </div>
     </div>
 
     <div class="container-cell" v-if="kaimonoItems.length == 0">
@@ -555,21 +746,17 @@ const ok3_100kei = computed(() => {
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns" v-if="isOKProfile()">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{
-        syoukei - ok3_100kei }}</div>
-      <div class="goukei cell3columns" v-else>小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ syoukei }}</div>
+      <div class="goukei cell3columns">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ disp_syoukei }}</div>
     </div>
 
     <div class="container-cell" v-if="zeis.length">
       <div class="goukei cell3columns" v-for="(zei, index) in zeis">
-        税{{ zei.ratePercent }}% 対象額 ¥{{ zei.targetValue }} 税額 ¥{{ zei.value + zei.komivalue }}
+        税{{ zei.ratePercent }}% 対象額 ¥{{ zei.targetValue }} 税額 ¥{{ zei.allvalue() }}
       </div>
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns" v-if="isOKProfile()">合計 ¥{{ syoukei - ok3_100kei +
-        allZei }}</div>
-      <div class="goukei cell3columns" v-else>合計 ¥{{ syoukei + allZei }}</div>
+      <div class="goukei cell3columns">合計 ¥{{ goukei }}</div>
     </div>
 
     <div class="container-cell">
@@ -582,6 +769,9 @@ const ok3_100kei = computed(() => {
       {{ appName }} v{{ appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
     </footer>
   </div> <!-- end of container -->
+  <div v-if="DEBUGGING">
+    <button @click="doTest">doTest</button>
+  </div>
 </template>
 
 <style>
