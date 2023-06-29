@@ -548,7 +548,13 @@ function getZeis() {
   return ret;
 }
 
-function getItemMessage(item) {
+function getItemInfoMessage(item) {
+  return item.message;
+}
+function setItemInfoMessage(item,v) {
+  item.message=v;
+}
+function getItemErrorMessage(item) {
   if (item.disabled) {
     return "無効です";
   }
@@ -571,6 +577,13 @@ function getItemMessage(item) {
     return `税率=F8は"${STOREPROFILE_OKSTOREWITHKAIIN}"専用です`;
   }
   return "";
+}
+function getItemMessage(item) {
+  const error=getItemErrorMessage(item);
+  if(error) {
+    return error;
+  }
+  return getItemInfoMessage(item);
 }
 function getOk3_100kei() {
   if (!isOKProfile()) {
@@ -626,7 +639,7 @@ const goukei = computed(() => {
   }
 });
 function getContainerCellClass(item, index) {
-  if (getItemMessage(item)) {
+  if (getItemErrorMessage(item)) {
     return 'empty_container_cell';
   }
   return index % 2 == 0 ? 'even_bg' : 'odd_bg';
@@ -689,7 +702,7 @@ const kakaku_placeholder = computed(() => {
       <div class="cell">
         <div class="setumei">価格</div>
         <div class="price">
-          <input class="numberinput" type="number" :placeholder="kakaku_placeholder" v-model="item.price"
+          <input class="numberinput" type="number" @focus="setItemInfoMessage(item, kakaku_placeholder)" @blur="setItemInfoMessage(item,null)" :placeholder="kakaku_placeholder" v-model="item.price"
             @keypress="isNumber($event)" />
         </div>
         <div></div>
@@ -761,9 +774,7 @@ const kakaku_placeholder = computed(() => {
         <label :for="'check' + index"></label>
       </div>
       <div class="cell">
-        <div class="setumei"></div>
-        <div></div>
-        <div>{{ getItemMessage(item) }}</div>
+        <div class="setumei cell3rows">{{ getItemMessage(item) }}</div>
       </div>
       <div class="cell">
         <div v-if="item.disabled">
@@ -894,7 +905,12 @@ p {
 }
 
 .cell2rows {
-  grid-row: 1/3;
+grid-row: 1/3;
+}
+.cell3rows {
+grid-row: 1/4;
+align-self: center;
+text-align: center;
 }
 
 .setumei {
