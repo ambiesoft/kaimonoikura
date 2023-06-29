@@ -202,6 +202,138 @@ const okwithNotF8 = [
   },
 ];
 
+/** okWithCashAndDiscount */
+id = 0;
+const okWithCashAndDiscount = [
+  {
+    id: id++,
+    goods: "キルシェ",
+    price: 188,
+    count: 1,
+    taxRate: TAXRATE_TEN,
+  },
+  {
+    id: id++,
+    goods: "ゴミ袋",
+    price: 240,
+    count: 1,
+    taxRate: TAXRATE_ZERO,
+  },
+  {
+    id: id++,
+    goods: "オカメ",
+    price: 66,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "ノーマット",
+    price: 862,
+    count: 1,
+    taxRate: TAXRATE_TEN,
+  },
+  {
+    id: id++,
+    goods: "Nドレダイエット",
+    price: 119,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "カワミツ",
+    price: 98,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "黒豆もやし",
+    price: 30,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "フジッコ",
+    price: 153,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "紀文はんぺん",
+    price: 109,
+    count: 1,
+    discountRate: 10,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "ハウスニンニク",
+    price: 168,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "QPマヨネーズ",
+    price: 149,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "ほねとりフィレ",
+    price: 358,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+  {
+    id: id++,
+    goods: "ニラ",
+    price: 68,
+    count: 1,
+    taxRate: TAXRATE_OKFOODEIGHT,
+  },
+];
+
+/** okDiscountWithID */
+id = 0;
+const okDiscountWithID = [
+  {
+    id: id++,
+    goods: "練乳イチゴ",
+    price: 195,
+    count: 1,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "おかめ納豆",
+    price: 66,
+    count: 1,
+    discountRate: 3,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "キントキ",
+    price: 60,
+    count: 1,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "こしあん",
+    price: 74,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+];
+
 let okCount = 0;
 let ngCount = 0;
 function testFunc(name, expect, actual) {
@@ -277,6 +409,35 @@ function doTest() {
   testFunc("okwithNotF8 zeis[1].allvalue()", 22, zeis.value[1].allvalue());
   testFunc("okwithNotF8 goukei", 1372, goukei.value);
 
+  selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
+  kaimonoItems.value = okWithCashAndDiscount;
+  testFunc("okWithCashAndDiscount syoukei", 2598, syoukei.value);
+  testFunc("okWithCashAndDiscount ok3_100kei", 31, ok3_100kei.value);
+  testFunc("okWithCashAndDiscount allItemHinCount", 13, allItemHinCount.value);
+  testFunc("okWithCashAndDiscount allItemCount", 13, allItemCount.value);
+  testFunc("okWithCashAndDiscount disp_syoukei", 2567, disp_syoukei.value);
+  testFunc("okWithCashAndDiscount zeis len", 2, zeis.value.length);
+  testFunc("okWithCashAndDiscount zeis[0].ratePercent", "F8", zeis.value[0].ratePercent);
+  testFunc("okWithCashAndDiscount zeis[0].targetValue", 1277, zeis.value[0].targetValue);
+  testFunc("okWithCashAndDiscount zeis[0].allvalue()", 102, zeis.value[0].allvalue());
+  testFunc("okWithCashAndDiscount zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+  testFunc("okWithCashAndDiscount zeis[1].targetValue", 1050, zeis.value[1].targetValue);
+  testFunc("okWithCashAndDiscount zeis[1].allvalue()", 105, zeis.value[1].allvalue());
+  testFunc("okWithCashAndDiscount goukei", 2774, goukei.value);
+
+  selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
+  kaimonoItems.value = okDiscountWithID;
+  testFunc("okDiscountWithID syoukei", 391, syoukei.value);
+  testFunc("okDiscountWithID ok3_100kei", 0, ok3_100kei.value);
+  testFunc("okDiscountWithID allItemHinCount", 4, allItemHinCount.value);
+  testFunc("okDiscountWithID allItemCount", 4, allItemCount.value);
+  testFunc("okDiscountWithID disp_syoukei", 391, disp_syoukei.value);
+  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
+  testFunc("okDiscountWithID zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("okDiscountWithID zeis[0].targetValue", 391, zeis.value[0].targetValue);
+  testFunc("okDiscountWithID zeis[0].allvalue()", 31, zeis.value[0].allvalue());
+  testFunc("okDiscountWithID goukei", 422, goukei.value);
+
   console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
@@ -305,13 +466,15 @@ const LOCALSTORAGE_DEFAULT = "defaultls";
 const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 
 
-const kaimonoItems = ref(loaded.kaimonoItems ?? []);
+// const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 // const kaimonoItems = ref(maruetsuNormal);
 // const kaimonoItems = ref(berxNormal);
 // const kaimonoItems = ref(parliamentNormal);
 // const kaimonoItems = ref(seiyuNormal);
 // const kaimonoItems = ref(okWith10);
 // const kaimonoItems = ref(okwithNotF8);
+// const kaimonoItems = ref(okWithCashAndDiscount);
+const kaimonoItems = ref(okDiscountWithID);
 
 const STOREPROFILE_NORMAL = "通常";
 const STOREPROFILE_OKSTOREWITHKAIIN = "オーケーストアwith会員カード";
@@ -452,10 +615,10 @@ function getItemSyoukei(item) {
   let price = Number(item.price);
   let count = Number(item.count);
   let taxRate = Number(item.taxRate);
-  let discountRate = Number(item.discountRate);
+  let discountRate = Number(item.discountRate ?? 0);
 
   // return Math.floor(((price - (price * (discountRate / 100))) * count) * ((100 + taxRate) / 100));
-  return price * count;
+  return (price * count) - Math.floor(price * count * (discountRate / 100));
 }
 function getSyoukei() {
   let ret = 0;
@@ -551,8 +714,8 @@ function getZeis() {
 function getItemInfoMessage(item) {
   return item.message;
 }
-function setItemInfoMessage(item,v) {
-  item.message=v;
+function setItemInfoMessage(item, v) {
+  item.message = v;
 }
 function getItemErrorMessage(item) {
   if (item.disabled) {
@@ -579,8 +742,8 @@ function getItemErrorMessage(item) {
   return "";
 }
 function getItemMessage(item) {
-  const error=getItemErrorMessage(item);
-  if(error) {
+  const error = getItemErrorMessage(item);
+  if (error) {
     return error;
   }
   return getItemInfoMessage(item);
@@ -594,7 +757,9 @@ function getOk3_100kei() {
   kaimonoItems.value.forEach((item) => {
     if (!item.disabled && item.taxRate == TAXRATE_OKFOODEIGHT) {
       for (let i = 0; i < item.count; ++i) {
-        ret += Math.floor(item.price * (3 / 103));
+        const discountValue = Number(item.discountValue ?? 0);
+        const discountRate = Number(item.discountRate ?? 0);
+        ret += Math.floor(Math.floor((item.price - (item.price * (discountRate / 100)))) * (3 / 103));
       }
     }
   })
@@ -702,7 +867,8 @@ const kakaku_placeholder = computed(() => {
       <div class="cell">
         <div class="setumei">価格</div>
         <div class="price">
-          <input class="numberinput" type="number" @focus="setItemInfoMessage(item, kakaku_placeholder)" @blur="setItemInfoMessage(item,null)" :placeholder="kakaku_placeholder" v-model="item.price"
+          <input class="numberinput" type="number" @focus="setItemInfoMessage(item, kakaku_placeholder)"
+            @blur="setItemInfoMessage(item, null)" :placeholder="kakaku_placeholder" v-model="item.price"
             @keypress="isNumber($event)" />
         </div>
         <div></div>
@@ -905,12 +1071,13 @@ p {
 }
 
 .cell2rows {
-grid-row: 1/3;
+  grid-row: 1/3;
 }
+
 .cell3rows {
-grid-row: 1/4;
-align-self: center;
-text-align: center;
+  grid-row: 1/4;
+  align-self: center;
+  text-align: center;
 }
 
 .setumei {
