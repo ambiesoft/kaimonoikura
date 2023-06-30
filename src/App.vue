@@ -334,6 +334,141 @@ const okDiscountWithID = [
   },
 ];
 
+/** aeon1963 */
+id = 0;
+const aeon1963 = [
+  {
+    id: id++,
+    goods: "井村屋　宇治抹茶金時",
+    price: 188,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "TVチョコアイス",
+    price: 398,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "BPまろやかな味わいY",
+    price: 98,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "BPとろけるスライス",
+    price: 188,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "BPバター風味",
+    price: 198,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "塩バターメロンパン",
+    price: 118,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "パスコ　超熟８枚",
+    price: 148,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "お肉屋さんのコロッケ小",
+    price: 120,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "スペシャルサンド",
+    price: 297,
+    count: 1,
+    discountRate: "20:5",
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "TVツナマヨ巻",
+    price: 118,
+    count: 1,
+    discountRate: "10:5",
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "やわらかぶどうぱん",
+    price: 118,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+];
+
+/** aeon1092 */
+id = 0;
+const aeon1092 = [
+  {
+    id: id++,
+    goods: "TV蚊取り線香",
+    price: 468,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_TEN,
+  },
+  {
+    id: id++,
+    goods: "ネオパラエース",
+    price: 578,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_TEN,
+  },
+];
+
+/** marinpia191 */
+id = 0;
+const marinpia191 = [
+  {
+    id: id++,
+    goods: "ほうれん草",
+    price: 98,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+  {
+    id: id++,
+    goods: "にら",
+    price: 88,
+    count: 1,
+    discountRate: 5,
+    taxRate: TAXRATE_EIGHT,
+  },
+];
+
 let okCount = 0;
 let ngCount = 0;
 function testFunc(name, expect, actual) {
@@ -353,7 +488,7 @@ function doTest() {
   const saveCurrentItems = kaimonoItems.value;
 
   okCount = ngCount = 0;
-  selectedStoreProfile.value = STOREPROFILE_NORMAL;
+  selectedStoreProfile.value = STOREPROFILE_WARIBIKI_FLOOR;
   kaimonoItems.value = maruetsuNormal;
   testFunc("maruetsuNormal syoukei", 498, syoukei.value);
   testFunc("maruetsuNormal allItemHinCount", 4, allItemHinCount.value);
@@ -365,7 +500,7 @@ function doTest() {
   testFunc("maruetsuNormal zeis[0].allvalue()", 39, zeis.value[0].allvalue());
   testFunc("okWith10 goukei", 537, goukei.value);
 
-  selectedStoreProfile.value = STOREPROFILE_NORMAL;
+  selectedStoreProfile.value = STOREPROFILE_WARIBIKI_FLOOR;
   kaimonoItems.value = berxNormal;
   testFunc("berxNormal syoukei", 316, syoukei.value);
   testFunc("berxNormal allItemHinCount", 2, allItemHinCount.value);
@@ -438,6 +573,42 @@ function doTest() {
   testFunc("okDiscountWithID zeis[0].allvalue()", 31, zeis.value[0].allvalue());
   testFunc("okDiscountWithID goukei", 422, goukei.value);
 
+  selectedStoreProfile.value = STOREPROFILE_WARIBIKI_CEAL;
+  kaimonoItems.value = aeon1963;
+  testFunc("okDiscountWithID syoukei", 1818, syoukei.value);
+  testFunc("okDiscountWithID allItemHinCount", 11, allItemHinCount.value);
+  testFunc("okDiscountWithID allItemCount", 11, allItemCount.value);
+  testFunc("okDiscountWithID disp_syoukei", 1818, disp_syoukei.value);
+  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
+  testFunc("okDiscountWithID zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("okDiscountWithID zeis[0].targetValue", 1818, zeis.value[0].targetValue);
+  testFunc("okDiscountWithID zeis[0].allvalue()", 145, zeis.value[0].allvalue());
+  testFunc("okDiscountWithID goukei", 1963, goukei.value);
+
+  selectedStoreProfile.value = STOREPROFILE_WARIBIKI_CEAL;
+  kaimonoItems.value = aeon1092;
+  testFunc("okDiscountWithID syoukei", 993, syoukei.value);
+  testFunc("okDiscountWithID allItemHinCount", 2, allItemHinCount.value);
+  testFunc("okDiscountWithID allItemCount", 2, allItemCount.value);
+  testFunc("okDiscountWithID disp_syoukei", 993, disp_syoukei.value);
+  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
+  testFunc("okDiscountWithID zeis[0].ratePercent", "10", zeis.value[0].ratePercent);
+  testFunc("okDiscountWithID zeis[0].targetValue", 993, zeis.value[0].targetValue);
+  testFunc("okDiscountWithID zeis[0].allvalue()", 99, zeis.value[0].allvalue());
+  testFunc("okDiscountWithID goukei", 1092, goukei.value);
+
+  selectedStoreProfile.value = STOREPROFILE_WARIBIKI_ROUND;
+  kaimonoItems.value = marinpia191;
+  testFunc("okDiscountWithID syoukei", 177, syoukei.value);
+  testFunc("okDiscountWithID allItemHinCount", 2, allItemHinCount.value);
+  testFunc("okDiscountWithID allItemCount", 2, allItemCount.value);
+  testFunc("okDiscountWithID disp_syoukei", 177, disp_syoukei.value);
+  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
+  testFunc("okDiscountWithID zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("okDiscountWithID zeis[0].targetValue", 177, zeis.value[0].targetValue);
+  testFunc("okDiscountWithID zeis[0].allvalue()", 14, zeis.value[0].allvalue());
+  testFunc("okDiscountWithID goukei", 191, goukei.value);
+
   console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
@@ -465,8 +636,7 @@ function getTaxRateIndex(trv) {
 const LOCALSTORAGE_DEFAULT = "defaultls";
 const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 
-
-// const kaimonoItems = ref(loaded.kaimonoItems ?? []);
+const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 // const kaimonoItems = ref(maruetsuNormal);
 // const kaimonoItems = ref(berxNormal);
 // const kaimonoItems = ref(parliamentNormal);
@@ -474,21 +644,33 @@ const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 // const kaimonoItems = ref(okWith10);
 // const kaimonoItems = ref(okwithNotF8);
 // const kaimonoItems = ref(okWithCashAndDiscount);
-const kaimonoItems = ref(okDiscountWithID);
+// const kaimonoItems = ref(okDiscountWithID);
+// const kaimonoItems = ref(aeon1963);
+// const kaimonoItems = ref(aeon1092);
+// const kaimonoItems = ref(marinpia191);
 
-const STOREPROFILE_NORMAL = "通常";
+const STOREPROFILE_WARIBIKI_FLOOR = "割引率切り下げ";
+const STOREPROFILE_WARIBIKI_ROUND = "割引率四捨五入";
+const STOREPROFILE_WARIBIKI_CEAL = "割引率切り上げ";
 const STOREPROFILE_OKSTOREWITHKAIIN = "オーケーストアwith会員カード";
 
 const STOREPROFILES = ref([
-  STOREPROFILE_NORMAL,
+  STOREPROFILE_WARIBIKI_FLOOR,
+  STOREPROFILE_WARIBIKI_ROUND,
+  STOREPROFILE_WARIBIKI_CEAL,
   STOREPROFILE_OKSTOREWITHKAIIN,
 ]);
-const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? STOREPROFILE_NORMAL);
+const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? STOREPROFILE_WARIBIKI_FLOOR);
 
 function isOKProfile() {
   return selectedStoreProfile.value == STOREPROFILE_OKSTOREWITHKAIIN;
 }
-
+function isWaribikiCeal() {
+  return selectedStoreProfile.value == STOREPROFILE_WARIBIKI_CEAL;
+}
+function isWaribikiRound() {
+  return selectedStoreProfile.value == STOREPROFILE_WARIBIKI_ROUND;
+}
 function loadItems(storageKey) {
   let ls = localStorage.getItem(storageKey);
   if (ls && ls[0] != "{") {
@@ -520,45 +702,58 @@ function isNumber(evt) {
     return true;
   }
 }
-function incrementCount(index) {
-  kaimonoItems.value[index].count++;
+function isNumberOrComma(evt) {
+  var charCode = evt.which ? evt.which : evt.keyCode;
+  if (charCode == 58) {
+    return true;
+  }
+  return isNumber(evt);
 }
-function decrementCount(index) {
-  if (kaimonoItems.value[index].count == 0) {
+function incrementCount(item) {
+  item.count++;
+}
+function decrementCount(item) {
+  if (item.count == 0) {
     return;
   }
-  kaimonoItems.value[index].count--;
+  item.count--;
 }
 
-function incrementDiscountRate(index) {
-  if (!kaimonoItems.value[index].discountRate) {
-    kaimonoItems.value[index].discountRate = 0;
-  }
-  kaimonoItems.value[index].discountRate++;
-}
-function decrementDiscountRate(index) {
-  if (!kaimonoItems.value[index].discountRate) {
+function incrementDiscountRate(item) {
+  if ((String(item.discountRate)).indexOf(':') >= 0) {
     return;
   }
-  kaimonoItems.value[index].discountRate--;
-  if (kaimonoItems.value[index].discountRate == 0) {
-    kaimonoItems.value[index].discountRate = null;
+  if (!item.discountRate) {
+    item.discountRate = 0;
+  }
+  item.discountRate++;
+}
+function decrementDiscountRate(item) {
+  if ((String(item.discountRate)).indexOf(':') >= 0) {
+    return;
+  }
+  if (!item.discountRate) {
+    return;
+  }
+  item.discountRate--;
+  if (item.discountRate == 0) {
+    item.discountRate = null;
   }
 }
 
-function incrementDiscountValue(index) {
-  if (!kaimonoItems.value[index].discountValue) {
-    kaimonoItems.value[index].discountValue = 0;
+function incrementDiscountValue(item) {
+  if (!item.discountValue) {
+    item.discountValue = 0;
   }
-  kaimonoItems.value[index].discountValue++;
+  item.discountValue++;
 }
-function decrementDiscountValue(index) {
-  if (!kaimonoItems.value[index].discountValue) {
+function decrementDiscountValue(item) {
+  if (!item.discountValue) {
     return;
   }
-  kaimonoItems.value[index].discountValue--;
-  if (kaimonoItems.value[index].discountValue == 0) {
-    kaimonoItems.value[index].discountValue = null;
+  item.discountValue--;
+  if (item.discountValue == 0) {
+    item.discountValue = null;
   }
 }
 
@@ -607,18 +802,38 @@ function clearAll() {
 function deleteItem(index) {
   kaimonoItems.value.splice(index, 1);
 }
+function getDiscountRates(rate) {
+  if (!rate) {
+    return [0];
+  }
+  if (typeof rate == "number") {
+    return [rate];
+  }
+  return rate.split(':').map(Number);
+}
 function getItemSyoukei(item) {
   if (item.disabled) {
     return 0;
   }
-  let ret = 0;
   let price = Number(item.price);
   let count = Number(item.count);
   let taxRate = Number(item.taxRate);
-  let discountRate = Number(item.discountRate ?? 0);
+  let discountRates = getDiscountRates(item.discountRate ?? 0);
 
-  // return Math.floor(((price - (price * (discountRate / 100))) * count) * ((100 + taxRate) / 100));
-  return (price * count) - Math.floor(price * count * (discountRate / 100));
+  let countedPrice = price * count;
+
+  discountRates.forEach((r) => {
+    const d = countedPrice * (r / 100);
+    if (isWaribikiCeal()) {
+      countedPrice -= Math.ceil(d);
+    } else if (isWaribikiRound()) {
+      countedPrice -= Math.round(d);
+    } else {
+      countedPrice -= Math.floor(d);
+    }
+  });
+
+  return countedPrice;
 }
 function getSyoukei() {
   let ret = 0;
@@ -880,10 +1095,10 @@ const kakaku_placeholder = computed(() => {
           <input class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementCount(index)">
+          <button class="twobutton" @click="decrementCount(item)">
             {{ downChar }}
           </button>
-          <button class="twobutton" @click="incrementCount(index)">
+          <button class="twobutton" @click="incrementCount(item)">
             {{ upChar }}
           </button>
         </div>
@@ -892,13 +1107,13 @@ const kakaku_placeholder = computed(() => {
       <div class="cell">
         <div class="setumei">割引％</div>
         <div class="discount-rate">
-          <input class="numberinput" type="number" v-model="item.discountRate" @keypress="isNumber($event)" />
+          <input class="numberinput" v-model="item.discountRate" @keypress="isNumberOrComma($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementDiscountRate(index)">
+          <button class="twobutton" @click="decrementDiscountRate(item)">
             {{ downChar }}
           </button>
-          <button class="twobutton" @click="incrementDiscountRate(index)">
+          <button class="twobutton" @click="incrementDiscountRate(item)">
             {{ upChar }}
           </button>
         </div>
@@ -910,10 +1125,10 @@ const kakaku_placeholder = computed(() => {
           <input class="numberinput" type="number" v-model="item.discountValue" @keypress="isNumber($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementDiscountValue(index)">
+          <button class="twobutton" @click="decrementDiscountValue(item)">
             {{ downChar }}
           </button>
-          <button class="twobutton" @click="incrementDiscountValue(index)">
+          <button class="twobutton" @click="incrementDiscountValue(item)">
             {{ upChar }}
           </button>
         </div>
@@ -982,6 +1197,13 @@ const kakaku_placeholder = computed(() => {
       <button @click="savelocal">保存</button>
     </div>
 
+    <div class="help">
+      <ul>
+        <li>オーケーストアでは会員カードを提示して現金で支払うと3/103割引を受けられる食料品があります。その場合は税率に「F8」を指定してください。このような商品の場合値札には４つの価格が示されています。
+        </li>
+        <li>イオンの割引％は切り上げとなります。また２つの割引がある場合があります。例えば１つめの商品そのものの割引でもう１つは会員割引です。２つが例として２０％、５％の場合は割引％欄に「20:5」と指定してください。</li>
+      </ul>
+    </div>
     <footer>
       {{ appName }} v{{ appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
     </footer>
