@@ -13,6 +13,47 @@ const downChar = "↓";
 const tapORclick = navigator.userAgent.match(/iPhone|Android.+Mobile/) ? "タップ" : "クリック";
 let id;
 
+const HASUU_SYORI_ONCE = 1;
+const HASUU_SYORI_ONEBYONE = 2;
+function computeDiscountValueFromRate(price, count, rates, option = {}) {
+  if (option.computeEach) {
+    option.computeEach = false;
+    let ret = 0;
+    for (let i = 0; i < count; ++i) {
+      ret += computeDiscountValueFromRate(price, 1, rates, option);
+    }
+    return ret;
+  } else {
+    price *= count;
+  }
+
+  let skippedOK = false;
+  let lastRates = [];
+  rates.forEach((r) => {
+    if (option.withoutOK3_103 && r == DISCOUNT_RATE_OK_3_103_N) {
+      if (!skippedOK) {
+        skippedOK = true;
+        return;
+      }
+    }
+    switch (option.hasuuSyori) {
+      case HASUU_SYORI_ONCE:
+        lastRates.push(r);
+        break;
+      case HASUU_SYORI_ONEBYONE:
+        const d = price * r;
+        price -= option.hasuuFunc(d);
+        break;
+      default:
+        console.error("Unknown hasuuSyori");
+    }
+  });
+
+  lastRates.forEach((r) => {
+    price -= option.hasuuFunc(price * r);
+  })
+  return price;
+}
 /** maruetsu normal */
 id = 0;
 const maruetsuNormal = [
@@ -124,21 +165,24 @@ const okWith10 = [
     goods: "ソーダフロート",
     price: 60,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "いちごフロート",
     price: 60,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "ソフフラノメロン",
     price: 90,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
@@ -152,7 +196,8 @@ const okWith10 = [
     goods: "飴",
     price: 139,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
 ];
 /** okwithNotF8 */
@@ -170,35 +215,40 @@ const okwithNotF8 = [
     goods: "キリマンジャロ",
     price: 399,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "はくさい",
     price: 100,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "A抹茶",
     price: 194,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "ミロ",
     price: 234,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "バターロール",
     price: 95,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
 ];
 
@@ -224,7 +274,8 @@ const okWithCashAndDiscount = [
     goods: "オカメ",
     price: 66,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
@@ -238,64 +289,72 @@ const okWithCashAndDiscount = [
     goods: "Nドレダイエット",
     price: 119,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "カワミツ",
     price: 98,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "黒豆もやし",
     price: 30,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "フジッコ",
     price: 153,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "紀文はんぺん",
     price: 109,
     count: 1,
-    discountRate: 10,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: "10:3/103",
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "ハウスニンニク",
     price: 168,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "QPマヨネーズ",
     price: 149,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "ほねとりフィレ",
     price: 358,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
   {
     id: id++,
     goods: "ニラ",
     price: 68,
     count: 1,
-    taxRate: TAXRATE_OKFOODEIGHT,
+    discountRate: DISCOUNT_RATE_OK_3_103_S,
+    taxRate: TAXRATE_EIGHT,
   },
 ];
 
@@ -314,7 +373,7 @@ const okDiscountWithID = [
     goods: "おかめ納豆",
     price: 66,
     count: 1,
-    discountRate: 3,
+    discountRate: "3",
     taxRate: TAXRATE_EIGHT,
   },
   {
@@ -329,7 +388,7 @@ const okDiscountWithID = [
     goods: "こしあん",
     price: 74,
     count: 1,
-    discountRate: 5,
+    discountRate: "5",
     taxRate: TAXRATE_EIGHT,
   },
 ];
@@ -473,7 +532,8 @@ let okCount = 0;
 let ngCount = 0;
 function testFunc(name, expect, actual) {
   let message = "testing " + name + " ... ";
-  if (expect === actual) {
+  let ok = expect === actual;
+  if (ok) {
     message += "OK";
     okCount++;
   } else {
@@ -481,7 +541,7 @@ function testFunc(name, expect, actual) {
     ngCount++;
   }
   message += `(expect=${expect}, actual=${actual})`;
-  console.log(message);
+  ok ? console.log(message) : console.error(message);
 }
 function doTest() {
   const saveCurrentStoreProfile = selectedStoreProfile.value;
@@ -498,7 +558,7 @@ function doTest() {
   testFunc("maruetsuNormal zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
   testFunc("maruetsuNormal zeis[0].targetValue", 498, zeis.value[0].targetValue);
   testFunc("maruetsuNormal zeis[0].allvalue()", 39, zeis.value[0].allvalue());
-  testFunc("okWith10 goukei", 537, goukei.value);
+  testFunc("maruetsuNormal goukei", 537, goukei.value);
 
   selectedStoreProfile.value = STOREPROFILE_WARIBIKI_FLOOR;
   kaimonoItems.value = berxNormal;
@@ -560,7 +620,7 @@ function doTest() {
   testFunc("okWithCashAndDiscount zeis[1].allvalue()", 105, zeis.value[1].allvalue());
   testFunc("okWithCashAndDiscount goukei", 2774, goukei.value);
 
-  selectedStoreProfile.value = STOREPROFILE_OKSTOREWITHKAIIN;
+  selectedStoreProfile.value = STOREPROFILE_WARIBIKI_FLOOR;
   kaimonoItems.value = okDiscountWithID;
   testFunc("okDiscountWithID syoukei", 391, syoukei.value);
   testFunc("okDiscountWithID ok3_100kei", 0, ok3_100kei.value);
@@ -575,39 +635,39 @@ function doTest() {
 
   selectedStoreProfile.value = STOREPROFILE_WARIBIKI_CEAL;
   kaimonoItems.value = aeon1963;
-  testFunc("okDiscountWithID syoukei", 1818, syoukei.value);
-  testFunc("okDiscountWithID allItemHinCount", 11, allItemHinCount.value);
-  testFunc("okDiscountWithID allItemCount", 11, allItemCount.value);
-  testFunc("okDiscountWithID disp_syoukei", 1818, disp_syoukei.value);
-  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
-  testFunc("okDiscountWithID zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
-  testFunc("okDiscountWithID zeis[0].targetValue", 1818, zeis.value[0].targetValue);
-  testFunc("okDiscountWithID zeis[0].allvalue()", 145, zeis.value[0].allvalue());
-  testFunc("okDiscountWithID goukei", 1963, goukei.value);
+  testFunc("aeon1963 syoukei", 1818, syoukei.value);
+  testFunc("aeon1963 allItemHinCount", 11, allItemHinCount.value);
+  testFunc("aeon1963 allItemCount", 11, allItemCount.value);
+  testFunc("aeon1963 disp_syoukei", 1818, disp_syoukei.value);
+  testFunc("aeon1963 zeis len", 1, zeis.value.length);
+  testFunc("aeon1963 zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("aeon1963 zeis[0].targetValue", 1818, zeis.value[0].targetValue);
+  testFunc("aeon1963 zeis[0].allvalue()", 145, zeis.value[0].allvalue());
+  testFunc("aeon1963 goukei", 1963, goukei.value);
 
   selectedStoreProfile.value = STOREPROFILE_WARIBIKI_CEAL;
   kaimonoItems.value = aeon1092;
-  testFunc("okDiscountWithID syoukei", 993, syoukei.value);
-  testFunc("okDiscountWithID allItemHinCount", 2, allItemHinCount.value);
-  testFunc("okDiscountWithID allItemCount", 2, allItemCount.value);
-  testFunc("okDiscountWithID disp_syoukei", 993, disp_syoukei.value);
-  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
-  testFunc("okDiscountWithID zeis[0].ratePercent", "10", zeis.value[0].ratePercent);
-  testFunc("okDiscountWithID zeis[0].targetValue", 993, zeis.value[0].targetValue);
-  testFunc("okDiscountWithID zeis[0].allvalue()", 99, zeis.value[0].allvalue());
-  testFunc("okDiscountWithID goukei", 1092, goukei.value);
+  testFunc("aeon1092 syoukei", 993, syoukei.value);
+  testFunc("aeon1092 allItemHinCount", 2, allItemHinCount.value);
+  testFunc("aeon1092 allItemCount", 2, allItemCount.value);
+  testFunc("aeon1092 disp_syoukei", 993, disp_syoukei.value);
+  testFunc("aeon1092 zeis len", 1, zeis.value.length);
+  testFunc("aeon1092 zeis[0].ratePercent", "10", zeis.value[0].ratePercent);
+  testFunc("aeon1092 zeis[0].targetValue", 993, zeis.value[0].targetValue);
+  testFunc("aeon1092 zeis[0].allvalue()", 99, zeis.value[0].allvalue());
+  testFunc("aeon1092 goukei", 1092, goukei.value);
 
   selectedStoreProfile.value = STOREPROFILE_WARIBIKI_ROUND;
   kaimonoItems.value = marinpia191;
-  testFunc("okDiscountWithID syoukei", 177, syoukei.value);
-  testFunc("okDiscountWithID allItemHinCount", 2, allItemHinCount.value);
-  testFunc("okDiscountWithID allItemCount", 2, allItemCount.value);
-  testFunc("okDiscountWithID disp_syoukei", 177, disp_syoukei.value);
-  testFunc("okDiscountWithID zeis len", 1, zeis.value.length);
-  testFunc("okDiscountWithID zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
-  testFunc("okDiscountWithID zeis[0].targetValue", 177, zeis.value[0].targetValue);
-  testFunc("okDiscountWithID zeis[0].allvalue()", 14, zeis.value[0].allvalue());
-  testFunc("okDiscountWithID goukei", 191, goukei.value);
+  testFunc("marinpia191 syoukei", 177, syoukei.value);
+  testFunc("marinpia191 allItemHinCount", 2, allItemHinCount.value);
+  testFunc("marinpia191 allItemCount", 2, allItemCount.value);
+  testFunc("marinpia191 disp_syoukei", 177, disp_syoukei.value);
+  testFunc("marinpia191 zeis len", 1, zeis.value.length);
+  testFunc("marinpia191 zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("marinpia191 zeis[0].targetValue", 177, zeis.value[0].targetValue);
+  testFunc("marinpia191 zeis[0].allvalue()", 14, zeis.value[0].allvalue());
+  testFunc("marinpia191 goukei", 191, goukei.value);
 
   console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
 
@@ -616,15 +676,14 @@ function doTest() {
 }
 
 const TAXRATE_ZERO = 0;
-const TAXRATE_OKFOODEIGHT = "F8";
 const TAXRATE_EIGHT = "8";
 const TAXRATE_TEN = "10";
 const TAXRATE_KOMI_EIGHT = "込8";
 const TAXRATE_KOMI_TEN = "込10";
+const TAXRATE_EIGHTF8 = "F8";
 
 const TAXRATEVALUES = [
   TAXRATE_ZERO,
-  TAXRATE_OKFOODEIGHT,
   TAXRATE_EIGHT,
   TAXRATE_TEN,
   TAXRATE_KOMI_EIGHT,
@@ -633,6 +692,10 @@ const TAXRATEVALUES = [
 function getTaxRateIndex(trv) {
   return TAXRATEVALUES.findIndex((v) => trv == v);
 }
+
+const DISCOUNT_RATE_OK_3_103_S = "3/103";
+const DISCOUNT_RATE_OK_3_103_N = 3 / 103;
+
 const LOCALSTORAGE_DEFAULT = "defaultls";
 const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 
@@ -664,6 +727,10 @@ const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? STOREPROFILE_WAR
 
 function isOKProfile() {
   return selectedStoreProfile.value == STOREPROFILE_OKSTOREWITHKAIIN;
+}
+function isOK3_103Item(item) {
+  let discountRates = getDiscountRates(item.discountRate ?? 0);
+  return discountRates[discountRates.length - 1] == DISCOUNT_RATE_OK_3_103_N;
 }
 function isWaribikiCeal() {
   return selectedStoreProfile.value == STOREPROFILE_WARIBIKI_CEAL;
@@ -704,7 +771,7 @@ function isNumber(evt) {
 }
 function isNumberOrComma(evt) {
   var charCode = evt.which ? evt.which : evt.keyCode;
-  if (charCode == 58) {
+  if (charCode == 58 || charCode == 47) {
     return true;
   }
   return isNumber(evt);
@@ -764,10 +831,6 @@ function incrementOrdecrementTaxRate(index, inc_or_dec) {
   const curIndex = TAXRATEVALUES.findIndex((v) => curRate == v);
   let incdec = (inc_or_dec == INCORDEC_INC ? 1 : -1);
   let newIndex = curIndex + incdec;
-  if (!isOKProfile() && newIndex == TAXRATEVALUES.findIndex((v) => v == TAXRATE_OKFOODEIGHT)) {
-    newIndex = newIndex + incdec;
-  }
-
   if (newIndex >= TAXRATEVALUES.length || newIndex < 0) {
     return;
   }
@@ -786,9 +849,9 @@ function addItem() {
     goods: "",
     price: null,
     count: 1,
-    discountRate: null,
+    discountRate: isOKProfile() ? "3/103" : null,
     discountValue: null,
-    taxRate: isOKProfile() ? TAXRATE_OKFOODEIGHT : TAXRATE_EIGHT,
+    taxRate: TAXRATE_EIGHT,
   });
 }
 function clearAll() {
@@ -807,39 +870,66 @@ function getDiscountRates(rate) {
     return [0];
   }
   if (typeof rate == "number") {
-    return [rate];
+    return [rate / 100];
   }
-  return rate.split(':').map(Number);
+  if (rate == DISCOUNT_RATE_OK_3_103_S) {
+    return [DISCOUNT_RATE_OK_3_103_N];
+  }
+  let ret = []
+  rate.split(':').map(String).forEach((r) => {
+    if (r == DISCOUNT_RATE_OK_3_103_S) {
+      r = DISCOUNT_RATE_OK_3_103_N;
+    }
+    if (r == DISCOUNT_RATE_OK_3_103_N) {
+      ret.push(DISCOUNT_RATE_OK_3_103_N);
+    } else {
+      ret.push(Number(r) / 100);
+    }
+  })
+  return ret;
 }
-function getItemSyoukei(item) {
+function isComputeEach() {
+  if (isOKProfile()) {
+    return false;
+  }
+  return false;
+}
+function getHasuuFunc() {
+  if (isWaribikiCeal()) {
+    return Math.ceil;
+  } else if (isWaribikiRound()) {
+    return Math.round;
+  } else {
+    return Math.floor;
+  }
+}
+function getHasuuSyori() {
+  if (isOKProfile()) {
+    return HASUU_SYORI_ONCE;
+  }
+  return HASUU_SYORI_ONEBYONE;
+}
+function getItemSyoukei(item, withoutOK3_103) {
   if (item.disabled) {
     return 0;
   }
-  let price = Number(item.price);
-  let count = Number(item.count);
-  let taxRate = Number(item.taxRate);
-  let discountRates = getDiscountRates(item.discountRate ?? 0);
+  const price = Number(item.price);
+  const count = Number(item.count);
+  const taxRate = Number(item.taxRate);
+  const discountRates = getDiscountRates(item.discountRate ?? 0);
 
-  let countedPrice = price * count;
-
-  discountRates.forEach((r) => {
-    const d = countedPrice * (r / 100);
-    if (isWaribikiCeal()) {
-      countedPrice -= Math.ceil(d);
-    } else if (isWaribikiRound()) {
-      countedPrice -= Math.round(d);
-    } else {
-      countedPrice -= Math.floor(d);
-    }
+  return computeDiscountValueFromRate(price, count, discountRates, {
+    withoutOK3_103,
+    computeEach: isComputeEach(),
+    hasuuFunc: getHasuuFunc(),
+    hasuuSyori: getHasuuSyori(),
   });
-
-  return countedPrice;
 }
-function getSyoukei() {
+function getSyoukei(withoutOK3_103, computeEach) {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
     if (!item.disabled) {
-      ret += getItemSyoukei(item);
+      ret += getItemSyoukei(item, withoutOK3_103, computeEach);
     }
   });
 
@@ -849,10 +939,17 @@ function getZeis() {
   let zeiGotoMap = {};
   kaimonoItems.value.forEach((item) => {
     if (!item.disabled) {
-      if (!zeiGotoMap[item.taxRate]) {
-        zeiGotoMap[item.taxRate] = [];
+      let rate = item.taxRate;
+      if (isOK3_103Item(item)) {
+        console.assert(rate == TAXRATE_EIGHT);
+        rate = TAXRATE_EIGHTF8;
       }
-      zeiGotoMap[item.taxRate].push(getItemSyoukei(item));
+
+      if (!zeiGotoMap[rate]) {
+        zeiGotoMap[rate] = [];
+      }
+      // zeiGotoMap[rate].push(getItemSyoukei(item, (rate == TAXRATE_EIGHTF8 ? true : false)));
+      zeiGotoMap[rate].push(getItemSyoukei(item));
     }
   });
 
@@ -870,18 +967,15 @@ function getZeis() {
         },
       };
     }
-
+    // console.log(zeiGotoMap);
     zeiGotoMap[key].forEach((v) => {
       if (v.ratePercent != TAXRATE_ZERO) {
         shrinkMap[key].targetValue += v;
       }
     });
 
-    // override ok8
-    if (isOKProfile() && key == TAXRATE_OKFOODEIGHT) {
-      shrinkMap[key].targetValue -= getOk3_100kei();
-    }
   });
+
 
   let ret = [];
   Object.keys(shrinkMap).forEach(function (key) {
@@ -891,7 +985,7 @@ function getZeis() {
       let rate;
       switch (shrinkMap[key].ratePercent) {
         case TAXRATE_EIGHT:
-        case TAXRATE_OKFOODEIGHT:
+        case TAXRATE_EIGHTF8:
         case TAXRATE_TEN:
           if (shrinkMap[key].ratePercent == TAXRATE_TEN) {
             rate = 10 / 100;
@@ -942,17 +1036,28 @@ function getItemErrorMessage(item) {
   if (!item.count || item.count == 0) {
     return "個数がゼロです";
   }
+  if (!isOKProfile()) {
+    const rates = getDiscountRates(item.discountRate ?? 0);
+    if (rates.findIndex((r) => DISCOUNT_RATE_OK_3_103_N == r) >= 0) {
+      return "3/103割引はオーケーストア専用です";
+    }
+    if (rates.some(r => isNaN(r))) {
+      return "不正な割引率です";
+    }
+    if (rates.findIndex((r) => r >= 1) >= 0) {
+      return "割引率が１００％を超えています";
+    }
+  }
+
   if (getItemSyoukei(item) < 0) {
     return "マイナスです";
   }
   if (getItemSyoukei(item) == 0) {
     return "ゼロです";
   }
+
   if (TAXRATEVALUES.findIndex((v) => v == item.taxRate) < 0) {
     return "税の値が不正です";
-  }
-  if (!isOKProfile() && item.taxRate == TAXRATE_OKFOODEIGHT) {
-    return `税率=F8は"${STOREPROFILE_OKSTOREWITHKAIIN}"専用です`;
   }
   return "";
 }
@@ -963,25 +1068,9 @@ function getItemMessage(item) {
   }
   return getItemInfoMessage(item);
 }
-function getOk3_100kei() {
-  if (!isOKProfile()) {
-    console.error("Profile must be 'OKStore'");
-    return 0;
-  }
-  let ret = 0;
-  kaimonoItems.value.forEach((item) => {
-    if (!item.disabled && item.taxRate == TAXRATE_OKFOODEIGHT) {
-      for (let i = 0; i < item.count; ++i) {
-        const discountValue = Number(item.discountValue ?? 0);
-        const discountRate = Number(item.discountRate ?? 0);
-        ret += Math.floor(Math.floor((item.price - (item.price * (discountRate / 100)))) * (3 / 103));
-      }
-    }
-  })
-  return ret;
-}
+
 const syoukei = computed(() => {
-  return getSyoukei();
+  return getSyoukei(true);
 });
 const zeis = computed(() => {
   return getZeis();
@@ -1012,11 +1101,7 @@ const allItemHinCount = computed(() => {
   return ret;
 });
 const goukei = computed(() => {
-  if (isOKProfile()) {
-    return syoukei.value - ok3_100kei.value + allZei.value;
-  } else {
-    return syoukei.value + allZei.value;
-  }
+  return getSyoukei(false, false) + allZei.value;
 });
 function getContainerCellClass(item, index) {
   if (getItemErrorMessage(item)) {
@@ -1025,10 +1110,17 @@ function getContainerCellClass(item, index) {
   return index % 2 == 0 ? 'even_bg' : 'odd_bg';
 }
 const ok3_100kei = computed(() => {
-  return getOk3_100kei();
+  if (!isOKProfile()) {
+    console.error("Profile must be 'OKStore'");
+    return 0;
+  }
+  return getSyoukei(true) - getSyoukei(false);
 });
 const disp_syoukei = computed(() => {
-  return isOKProfile() ? syoukei.value - ok3_100kei.value : syoukei.value;
+  if (isOKProfile()) {
+    return getSyoukei(false, true);
+  }
+  return syoukei.value;
 })
 
 function savelocal() {
