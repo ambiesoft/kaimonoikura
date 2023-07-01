@@ -5,7 +5,7 @@ const DEBUGGING = ref(((new URL(location.href)).hostname) == "127.0.0.1" ||
   (new URL(location.href)).hostname == "localhost");
 
 const appName = "kaimonoikura";
-const appVersion = "0.0.2";
+const appVersion = __APP_VERSION__;
 
 const upChar = "↑";
 const downChar = "↓";
