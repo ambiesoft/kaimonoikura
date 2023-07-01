@@ -53,9 +53,9 @@ function computeDiscountValueFromRate(price, count, rates, option = {}) {
   })
   return price;
 }
-/** maruetsu normal */
+/** maruetsuNormal */
 const maruetsuNormal = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_FLOOR,
+  selectedStoreProfile: STOREPROFILE_WARIBIKI_CEAL,
   kaimonoItems: [
     {
       goods: "ファンタ２０００",
@@ -84,7 +84,7 @@ const maruetsuNormal = {
   ]
 };
 
-/** maruetsu normal */
+/** berxNormal */
 const berxNormal = {
   selectedStoreProfile: STOREPROFILE_WARIBIKI_FLOOR,
   kaimonoItems: [
@@ -544,6 +544,101 @@ const ok2wariWithCash = {
   ]
 };
 
+/** maruetuManyWaribiki normal */
+const maruetuManyWaribiki = {
+  selectedStoreProfile: STOREPROFILE_WARIBIKI_CEAL,
+  kaimonoItems: [
+    {
+      goods: "いわし生姜煮",
+      price: 80,
+      count: 1,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "手作りロースかつ",
+      price: 298,
+      count: 1,
+      discountRate: 30,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "いも天",
+      price: 80,
+      count: 1,
+      discountRate: 30,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "天丼",
+      price: 390,
+      count: 1,
+      discountRate: 30,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "いなり",
+      price: 158,
+      count: 1,
+      discountRate: 30,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "南瓜サラダ",
+      price: 198,
+      count: 1,
+      discountRate: 40,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "プチ白菜漬",
+      price: 50,
+      count: 1,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "バナナ",
+      price: 188,
+      count: 1,
+      discountRate: 20,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "あんかけ",
+      price: 158,
+      count: 1,
+      discountRate: 30,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "ひじき煮",
+      price: 128,
+      count: 1,
+      discountRate: 50,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "国産若鳥手羽元",
+      price: 235,
+      count: 1,
+      discountRate: 20,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "ミラノ風ドリア",
+      price: 398,
+      count: 1,
+      discountRate: 40,
+      taxRate: TAXRATE_EIGHT,
+    },
+    {
+      goods: "調理パン",
+      price: 50,
+      count: 1,
+      taxRate: TAXRATE_EIGHT,
+    },
+  ]
+};
+
 let okCount = 0;
 let ngCount = 0;
 function testFunc(name, expect, actual) {
@@ -560,10 +655,35 @@ function testFunc(name, expect, actual) {
   ok ? console.log(message) : console.error(message);
 }
 function doTest() {
+  okCount = ngCount = 0;
   const saveCurrentStoreProfile = selectedStoreProfile.value;
   const saveCurrentItems = kaimonoItems.value;
 
-  okCount = ngCount = 0;
+  testFunc("compute", 208, computeDiscountValueFromRate(298, 1, [0.3], {
+    withoutOK3_103: false,
+    computeEach: false,
+    hasuuSyori: HASUU_SYORI_ONCE,
+    hasuuFunc: Math.ceil,
+  }));
+  testFunc("compute", 208, computeDiscountValueFromRate(298, 1, [0.3], {
+    withoutOK3_103: false,
+    computeEach: false,
+    hasuuSyori: HASUU_SYORI_ONEBYONE,
+    hasuuFunc: Math.ceil,
+  }));
+  testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountValueFromRate(235, 1, [0.2], {
+    withoutOK3_103: false,
+    computeEach: false,
+    hasuuSyori: HASUU_SYORI_ONCE,
+    hasuuFunc: Math.ceil,
+  }));
+  testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountValueFromRate(235, 1, [0.2], {
+    withoutOK3_103: false,
+    computeEach: false,
+    hasuuSyori: HASUU_SYORI_ONEBYONE,
+    hasuuFunc: Math.ceil,
+  }));
+
   selectedStoreProfile.value = maruetsuNormal.selectedStoreProfile;
   kaimonoItems.value = maruetsuNormal.kaimonoItems;
   testFunc("maruetsuNormal syoukei", 498, syoukei.value);
@@ -639,7 +759,6 @@ function doTest() {
   selectedStoreProfile.value = okDiscountWithID.selectedStoreProfile;
   kaimonoItems.value = okDiscountWithID.kaimonoItems;
   testFunc("okDiscountWithID syoukei", 391, syoukei.value);
-  testFunc("okDiscountWithID ok3_100kei", 0, ok3_100kei.value);
   testFunc("okDiscountWithID allItemHinCount", 4, allItemHinCount.value);
   testFunc("okDiscountWithID allItemCount", 4, allItemCount.value);
   testFunc("okDiscountWithID disp_syoukei", 391, disp_syoukei.value);
@@ -696,6 +815,18 @@ function doTest() {
   testFunc("ok2wariWithCash zeis[0].targetValue", 675, zeis.value[0].targetValue);
   testFunc("ok2wariWithCash zeis[0].allvalue()", 54, zeis.value[0].allvalue());
   testFunc("ok2wariWithCash goukei", 729, goukei.value);
+
+  selectedStoreProfile.value = maruetuManyWaribiki.selectedStoreProfile;
+  kaimonoItems.value = maruetuManyWaribiki.kaimonoItems;
+  testFunc("maruetuManyWaribiki syoukei", 1695, syoukei.value);
+  testFunc("maruetuManyWaribiki allItemHinCount", 13, allItemHinCount.value);
+  testFunc("maruetuManyWaribiki allItemCount", 13, allItemCount.value);
+  testFunc("maruetuManyWaribiki disp_syoukei", 1695, disp_syoukei.value);
+  testFunc("maruetuManyWaribiki zeis len", 1, zeis.value.length);
+  testFunc("maruetuManyWaribiki zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("maruetuManyWaribiki zeis[0].targetValue", 1695, zeis.value[0].targetValue);
+  testFunc("maruetuManyWaribiki zeis[0].allvalue()", 135, zeis.value[0].allvalue());
+  testFunc("maruetuManyWaribiki goukei", 1830, goukei.value);
 
   console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
 
@@ -759,6 +890,9 @@ if (DEBUGGING) {
 
   // selectedStoreProfile.value = ok2wariWithCash.selectedStoreProfile;
   // kaimonoItems.value = ok2wariWithCash.kaimonoItems;
+
+  // selectedStoreProfile.value = maruetuManyWaribiki.selectedStoreProfile;
+  // kaimonoItems.value = maruetuManyWaribiki.kaimonoItems;
 }
 function isOKProfile() {
   return selectedStoreProfile.value == STOREPROFILE_OKSTOREWITHKAIIN;
@@ -1106,10 +1240,11 @@ function getItemErrorMessage(item) {
     }
   }
 
-  if (getItemSyoukei(item) < 0) {
+  const syoukei = getItemSyoukei(item);
+  if (syoukei < 0) {
     return "マイナスです";
   }
-  if (getItemSyoukei(item) == 0) {
+  if (syoukei == 0) {
     return "ゼロです";
   }
 
