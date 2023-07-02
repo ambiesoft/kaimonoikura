@@ -224,20 +224,18 @@ function doTest() {
   kaimonoItems.value = saveCurrentItems;
 }
 
-
-
 const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_WARIBIKI_FLOOR);
 
-if (DEBUGGING) {
+if (Constants.DEBUGGING) {
   // selectedStoreProfile.value = maruetsuNormal.selectedStoreProfile;
   // kaimonoItems.value = maruetsuNormal.kaimonoItems;
 
   // const kaimonoItems = ref(berxNormal);
 
-  selectedStoreProfile.value = testData.parliamentNormal.selectedStoreProfile;
-  kaimonoItems.value = testData.parliamentNormal.kaimonoItems;
+  // selectedStoreProfile.value = testData.parliamentNormal.selectedStoreProfile;
+  // kaimonoItems.value = testData.parliamentNormal.kaimonoItems;
 
   selectedStoreProfile.value = testData.seiyuNormal.selectedStoreProfile;
   kaimonoItems.value = testData.seiyuNormal.kaimonoItems;
