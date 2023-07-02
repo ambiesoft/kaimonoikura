@@ -12,15 +12,8 @@ export function computeDiscountedPriceFromRate(price, count, rates, option = {})
         price *= count;
     }
 
-    let skippedOK = false;
     let lastRates = [];
     rates.forEach((r) => {
-        if (option.withoutOK3_103 && r == Constants.DISCOUNT_RATE_OK_3_103_N) {
-            if (!skippedOK) {
-                skippedOK = true;
-                return;
-            }
-        }
         switch (option.hasuuSyori) {
             case Constants.HASUU_SYORI_ONCE:
                 lastRates.push(r);

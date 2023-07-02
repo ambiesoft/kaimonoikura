@@ -3,6 +3,8 @@ import { ref, computed, watch } from "vue";
 import Constants from './constants';
 import { computeDiscountedPriceFromRate } from '@/utils';
 import { testFunc, clearTestResult, showTestResult, testData } from '@/debug';
+import { useFileDialog } from '@vueuse/core'
+import { saveAs } from 'file-saver';
 
 const DEBUGGING = ref(Constants.DEBUGGING);
 console.log("DEBUGGING", Constants.DEBUGGING)
@@ -23,25 +25,21 @@ function doTest() {
   clearTestResult();
 
   testFunc("compute", 208, computeDiscountedPriceFromRate(298, 1, [0.3], {
-    withoutOK3_103: false,
     computeEach: false,
     hasuuSyori: Constants.HASUU_SYORI_ONCE,
     hasuuFunc: Math.ceil,
   }));
   testFunc("compute", 208, computeDiscountedPriceFromRate(298, 1, [0.3], {
-    withoutOK3_103: false,
     computeEach: false,
     hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
     hasuuFunc: Math.ceil,
   }));
   testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountedPriceFromRate(235, 1, [0.2], {
-    withoutOK3_103: false,
     computeEach: false,
     hasuuSyori: Constants.HASUU_SYORI_ONCE,
     hasuuFunc: Math.ceil,
   }));
   testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountedPriceFromRate(235, 1, [0.2], {
-    withoutOK3_103: false,
     computeEach: false,
     hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
     hasuuFunc: Math.ceil,
@@ -229,37 +227,26 @@ const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_WARIBIKI_FLOOR);
 
 if (Constants.DEBUGGING) {
-  // selectedStoreProfile.value = maruetsuNormal.selectedStoreProfile;
-  // kaimonoItems.value = maruetsuNormal.kaimonoItems;
-
-  // const kaimonoItems = ref(berxNormal);
-
-  // selectedStoreProfile.value = testData.parliamentNormal.selectedStoreProfile;
-  // kaimonoItems.value = testData.parliamentNormal.kaimonoItems;
-
-  selectedStoreProfile.value = testData.seiyuNormal.selectedStoreProfile;
-  kaimonoItems.value = testData.seiyuNormal.kaimonoItems;
-
-  // const kaimonoItems = ref(okWith10);
-  // const kaimonoItems = ref(okwithNotF8);
-  // const kaimonoItems = ref(okWithCashAndDiscount);
-  // const kaimonoItems = ref(okDiscountWithID);
-  // const kaimonoItems = ref(aeon1963);
-  // const kaimonoItems = ref(aeon1092);
-  // const kaimonoItems = ref(marinpia191);
-
-  // selectedStoreProfile.value = ok2wariWithCash.selectedStoreProfile;
-  // kaimonoItems.value = ok2wariWithCash.kaimonoItems;
-
-  // selectedStoreProfile.value = maruetuManyWaribiki.selectedStoreProfile;
-  // kaimonoItems.value = maruetuManyWaribiki.kaimonoItems;
+  function setItems(loaded) {
+    selectedStoreProfile.value = loaded.selectedStoreProfile;
+    kaimonoItems.value = loaded.kaimonoItems;
+  }
+  // setItems(testData.maruetsuNormal);
+  // setItems(testData.berxNormal);
+  // setItems(testData.parliamentNormal);
+  // setItems(testData.seiyuNormal);
+  // setItems(testData.okWith10);
+  // setItems(testData.okwithNotF8);
+  // setItems(testData.okWithCashAndDiscount);
+  // setItems(testData.okDiscountWithID);
+  // setItems(testData.aeon1963);
+  // setItems(testData.aeon1092);
+  // setItems(testData.marinpia191);
+  // setItems(testData.ok2wariWithCash);
+  // setItems(testData.maruetuManyWaribiki);
 }
 function isOKProfile() {
   return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTOREWITHKAIIN;
-}
-function isOK3_103Item(item) {
-  let discountRates = getDiscountRates(item.discountRate ?? 0);
-  return discountRates[discountRates.length - 1] == Constants.DISCOUNT_RATE_OK_3_103_N;
 }
 function isWaribikiCeal() {
   return selectedStoreProfile.value == Constants.STOREPROFILE_WARIBIKI_CEAL;
@@ -323,7 +310,7 @@ function isNumber(evt) {
 }
 function isNumberOrComma(evt) {
   var charCode = evt.which ? evt.which : evt.keyCode;
-  if (charCode == 58 || charCode == 47) {
+  if (charCode == 58) {
     return true;
   }
   return isNumber(evt);
@@ -416,26 +403,17 @@ function clearAll() {
 function deleteItem(index) {
   kaimonoItems.value.splice(index, 1);
 }
-function getDiscountRates(rate) {
+function getDiscountRates(item) {
+  const rate = item.discountRate;
   if (!rate) {
     return [0];
   }
   if (typeof rate == "number") {
     return [rate / 100];
   }
-  if (rate == Constants.DISCOUNT_RATE_OK_3_103_S) {
-    return [Constants.DISCOUNT_RATE_OK_3_103_N];
-  }
   let ret = []
   rate.split(':').map(String).forEach((r) => {
-    if (r == Constants.DISCOUNT_RATE_OK_3_103_S) {
-      r = Constants.DISCOUNT_RATE_OK_3_103_N;
-    }
-    if (r == Constants.DISCOUNT_RATE_OK_3_103_N) {
-      ret.push(Constants.DISCOUNT_RATE_OK_3_103_N);
-    } else {
-      ret.push(Number(r) / 100);
-    }
+    ret.push(Number(r) / 100);
   })
   return ret;
 }
@@ -467,10 +445,12 @@ function getItemSyoukei(item, withoutOK3_103) {
   const price = Number(item.price);
   const count = Number(item.count);
   const taxRate = Number(item.taxRate);
-  const discountRates = getDiscountRates(item.discountRate ?? 0);
+  let discountRates = getDiscountRates(item);
+  if (item.ok3_103 && !withoutOK3_103) {
+    discountRates.push(Constants.DISCOUNT_RATE_OK_3_103_N);
+  }
 
   return computeDiscountedPriceFromRate(price, count, discountRates, {
-    withoutOK3_103,
     computeEach: isComputeEach(),
     hasuuFunc: getHasuuFunc(),
     hasuuSyori: getHasuuSyori(),
@@ -491,7 +471,7 @@ function getZeis() {
   kaimonoItems.value.forEach((item) => {
     if (!item.disabled) {
       let rate = item.taxRate;
-      if (isOK3_103Item(item)) {
+      if (item.ok3_103) {
         console.assert(rate == Constants.TAXRATE_EIGHT);
         rate = Constants.TAXRATE_EIGHTF8;
       }
@@ -587,11 +567,13 @@ function getItemErrorMessage(item) {
   if (!item.count || item.count == 0) {
     return "個数がゼロです";
   }
-  if (!isOKProfile()) {
-    const rates = getDiscountRates(item.discountRate ?? 0);
-    if (rates.findIndex((r) => Constants.DISCOUNT_RATE_OK_3_103_N == r) >= 0) {
-      return "3/103割引はオーケーストア専用です";
+  if (isOKProfile()) {
+    if (item.taxRate != 8 && item.ok3_103) {
+      return "税率が８％でないのに3/103が有効です"
     }
+  }
+  else {
+    const rates = getDiscountRates(item);
     if (rates.some(r => isNaN(r))) {
       return "不正な割引率です";
     }
@@ -675,15 +657,43 @@ const disp_syoukei = computed(() => {
   return syoukei.value;
 })
 
+const { files: filesFileDialog,
+  open: openFileDialog,
+  reset,
+  onChange: onChangeFileDialog } = useFileDialog()
+function loadlocal() {
+  openFileDialog();
+  onChangeFileDialog((files) => {
+    const file = files[0];
+    let reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function () {
+      const loadedObj = JSON.parse(reader.result);
+      selectedStoreProfile.value = loadedObj.selectedStoreProfile;
+      kaimonoItems.value = loadedObj.kaimonoItems;
+      saveItems();
+    };
+    reader.onerror = function () {
+      console.error(reader.error);
+      alert(reader.error);
+    };
+  })
+}
 function savelocal() {
   const jsonString = getSaveJson();
   const blob = new Blob([jsonString], { type: 'application/json' });
 
-  // ダウンロードリンクを作成
-  const downloadLink = document.createElement('a');
-  downloadLink.href = URL.createObjectURL(blob);
-  downloadLink.download = 'kaimono.json'; // ダウンロード時のファイル名を指定
-  downloadLink.click();
+  // // ダウンロードリンクを作成
+  // const downloadLink = document.createElement('a');
+  // downloadLink.href = URL.createObjectURL(blob);
+  // downloadLink.download = 'kaimono.json'; // ダウンロード時のファイル名を指定
+  // downloadLink.click();
+
+  let filename = prompt("保存するファイル名を入力", 'kaimono');
+  if (!filename) {
+    return;
+  }
+  saveAs(blob, filename);
 }
 
 const kakaku_placeholder = computed(() => {
@@ -793,9 +803,18 @@ const kakaku_placeholder = computed(() => {
       </div>
 
       <div class="cell">
-        <div class="setumei">有効</div>
-        <input :id="'check' + index" type="checkbox" @click="item.disabled = !item.disabled" :checked="!item.disabled" />
-        <label :for="'check' + index"></label>
+        <!-- <div class="setumei">有効</div> -->
+        <div v-if="isOKProfile()">
+          <div class="checklabel">
+            <input :id="'check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103" :checked="item.ok3_103" />
+            <label :for="'check' + index">3/103</label>
+          </div>
+        </div>
+        <div class="checklabel">
+          <input :id="'check' + index" type="checkbox" @click="item.disabled = !item.disabled"
+            :checked="!item.disabled" />
+          <label :for="'check' + index">有効</label>
+        </div>
       </div>
       <div class="cell">
         <div class="setumei cell3rows">{{ getItemMessage(item) }}</div>
@@ -836,15 +855,17 @@ const kakaku_placeholder = computed(() => {
 
     <div class="container-cell">
       <button @click="clearAll">すべて削除</button>
-      <button @click="clearAll">すべて削除</button>
-      <button @click="savelocal">保存</button>
+      <button @click="loadlocal">ロード</button>
+      <button @click="savelocal">セーブ</button>
     </div>
 
     <div class="help">
       <ul>
-        <li>オーケーストアでは会員カードを提示して現金で支払うと3/103割引を受けられる食料品があります。その場合は税率に「F8」を指定してください。このような商品の場合値札には４つの価格が示されています。
+        <li>
+          オーケーストアでは会員カードを提示して現金で支払うと3/103割引を受けられる食料品があります。その場合は「3/103」をチェックしてください。このような商品の場合値札には４つの価格が示されています。価格の欄に入力する値は割引前でかつ税抜きの価格です。通常は４つの価格の打ち左下に表示されている価格です。
         </li>
-        <li>イオンの割引％は切り上げとなります。また２つの割引がある場合があります。例えば１つめの商品そのものの割引でもう１つは会員割引です。２つが例として２０％、５％の場合は割引％欄に「20:5」と指定してください。</li>
+        <li>店舗によって割引（％）の端数の計算方法が違います。「会計方式」から適切なものを選択してください。</li>
+        <li>２つ以上の割引がある場合があります。例えば１つめの商品そのものの割引でもう１つは会員割引などです。２つが例として２０％、５％の場合は「割引％」欄に「20:5」と指定してください。</li>
       </ul>
     </div>
     <footer>
@@ -949,10 +970,21 @@ p {
   font-size: medium;
 }
 
+.checklabel {
+  width: 100%;
+  text-align: left;
+}
+
 input {
   font-size: large;
   padding: 5px;
   width: 100%;
+}
+
+input[type="checkbox"] {
+  font-size: large;
+  width: auto;
+  margin-left: 3px;
 }
 
 button {

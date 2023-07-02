@@ -1,6 +1,6 @@
 {
   "name": "kaimonoikura",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,8 @@
     "publicize": "npm run build && /bin/cp -a -f -v ./dist/. ~/html/virtual/kaimonoikura/"
   },
   "dependencies": {
+    "@vueuse/core": "^10.2.1",
+    "file-saver": "^2.0.5",
     "vue": "^3.3.4"
   },
   "devDependencies": {
