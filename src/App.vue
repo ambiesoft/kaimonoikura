@@ -806,14 +806,15 @@ const kakaku_placeholder = computed(() => {
         <!-- <div class="setumei">有効</div> -->
         <div v-if="isOKProfile()">
           <div class="checklabel">
-            <input :id="'check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103" :checked="item.ok3_103" />
-            <label :for="'check' + index">3/103</label>
+            <input :id="'ok3_103_check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103"
+              :checked="item.ok3_103" />
+            <label :for="'ok3_103_check' + index">3/103</label>
           </div>
         </div>
         <div class="checklabel">
-          <input :id="'check' + index" type="checkbox" @click="item.disabled = !item.disabled"
+          <input :id="'enable_check' + index" type="checkbox" @click="item.disabled = !item.disabled"
             :checked="!item.disabled" />
-          <label :for="'check' + index">有効</label>
+          <label :for="'enable_check' + index">有効</label>
         </div>
       </div>
       <div class="cell">
