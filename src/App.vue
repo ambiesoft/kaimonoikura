@@ -387,7 +387,8 @@ function addItem() {
     goods: "",
     price: null,
     count: 1,
-    discountRate: isOKProfile() ? "3/103" : null,
+    discountRate: null,
+    ok3_103: isOKProfile(),
     discountValue: null,
     taxRate: Constants.TAXRATE_EIGHT,
   });
