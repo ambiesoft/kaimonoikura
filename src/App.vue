@@ -1,691 +1,54 @@
 <script setup>
 import { ref, computed, watch } from "vue";
+import Constants from './constants';
+import { computeDiscountedPriceFromRate } from '@/utils';
+import { testFunc, clearTestResult, showTestResult, testData } from '@/debug';
 
-const DEBUGGING = ref(((new URL(location.href)).hostname) == "127.0.0.1" ||
-  (new URL(location.href)).hostname == "localhost");
+const DEBUGGING = ref(Constants.DEBUGGING);
+console.log("DEBUGGING", Constants.DEBUGGING)
 
-const appName = "kaimonoikura";
-const appVersion = __APP_VERSION__;
 
-const upChar = "↑";
-const downChar = "↓";
-
-const tapORclick = navigator.userAgent.match(/iPhone|Android.+Mobile/) ? "タップ" : "クリック";
-
-const HASUU_SYORI_ONCE = 1;
-const HASUU_SYORI_ONEBYONE = 2;
-function computeDiscountValueFromRate(price, count, rates, option = {}) {
-  if (option.computeEach) {
-    option.computeEach = false;
-    let ret = 0;
-    for (let i = 0; i < count; ++i) {
-      ret += computeDiscountValueFromRate(price, 1, rates, option);
-    }
-    return ret;
-  } else {
-    price *= count;
-  }
-
-  let skippedOK = false;
-  let lastRates = [];
-  rates.forEach((r) => {
-    if (option.withoutOK3_103 && r == DISCOUNT_RATE_OK_3_103_N) {
-      if (!skippedOK) {
-        skippedOK = true;
-        return;
-      }
-    }
-    switch (option.hasuuSyori) {
-      case HASUU_SYORI_ONCE:
-        lastRates.push(r);
-        break;
-      case HASUU_SYORI_ONEBYONE:
-        const d = price * r;
-        price -= option.hasuuFunc(d);
-        break;
-      default:
-        console.error("Unknown hasuuSyori");
-    }
-  });
-
-  lastRates.forEach((r) => {
-    price -= option.hasuuFunc(price * r);
-  })
-  return price;
+function getTaxRateIndex(trv) {
+  return Constants.TAXRATEVALUES.findIndex((v) => trv == v);
 }
-/** maruetsuNormal */
-const maruetsuNormal = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_CEAL,
-  kaimonoItems: [
-    {
-      goods: "ファンタ２０００",
-      price: 178,
-      count: 1,
-      taxRate: 8,
-    },
-    {
-      goods: "アイスまんじゅう",
-      price: 180,
-      count: 1,
-      taxRate: 8,
-    },
-    {
-      goods: "爽",
-      price: 80,
-      count: 1,
-      taxRate: 8,
-    },
-    {
-      goods: "ソーダフロート",
-      price: 60,
-      count: 1,
-      taxRate: 8,
-    },
-  ]
-};
 
-/** berxNormal */
-const berxNormal = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_FLOOR,
-  kaimonoItems: [
-    {
-      goods: "エッセルS",
-      price: 79,
-      count: 3,
-      taxRate: 8,
-    },
-    {
-      goods: "エッセルSC",
-      price: 79,
-      count: 1,
-      taxRate: 8,
-    },
-  ]
-};
 
-/** PARLIAMENT */
-const parliamentNormal = [
-  {
-    goods: "パーラメント",
-    price: 620,
-    count: 1,
-    taxRate: TAXRATE_KOMI_TEN,
-  },
-];
+const LOCALSTORAGE_DEFAULT = "defaultls";
 
-/** SeiyuNormal */
-const seiyuNormal = [
-  {
-    goods: "ふくろ",
-    price: 5,
-    count: 1,
-    taxRate: TAXRATE_TEN,
-  },
-  {
-    goods: "なっちゃん",
-    price: 199,
-    count: 1,
-    taxRate: TAXRATE_EIGHT,
-  },
-  {
-    goods: "牛乳",
-    price: 119,
-    count: 1,
-    taxRate: TAXRATE_EIGHT,
-  },
-  {
-    goods: "いちご練乳",
-    price: 198,
-    count: 1,
-    taxRate: TAXRATE_EIGHT,
-  },
-  {
-    goods: "Qsメロン",
-    price: 98,
-    count: 2,
-    taxRate: TAXRATE_EIGHT,
-  },
-];
-/** OKwith10% */
-const okWith10 = {
-  selectedStoreProfile: STOREPROFILE_OKSTOREWITHKAIIN,
-  kaimonoItems: [
-    {
-      goods: "ソーダフロート",
-      price: 60,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "いちごフロート",
-      price: 60,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ソフフラノメロン",
-      price: 90,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "単1電池",
-      price: 540,
-      count: 1,
-      taxRate: TAXRATE_TEN,
-    },
-    {
-      goods: "飴",
-      price: 139,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-/** okwithNotF8 */
-const okwithNotF8 = {
-  selectedStoreProfile: STOREPROFILE_OKSTOREWITHKAIIN,
-  kaimonoItems: [
-    {
-      goods: "炭酸ナトリウム",
-      price: 275,
-      count: 1,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "キリマンジャロ",
-      price: 399,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "はくさい",
-      price: 100,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "A抹茶",
-      price: 194,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ミロ",
-      price: 234,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "バターロール",
-      price: 95,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
 
-/** okWithCashAndDiscount */
-const okWithCashAndDiscount = {
-  selectedStoreProfile: STOREPROFILE_OKSTOREWITHKAIIN,
-  kaimonoItems: [
-    {
-      goods: "キルシェ",
-      price: 188,
-      count: 1,
-      taxRate: TAXRATE_TEN,
-    },
-    {
-      goods: "ゴミ袋",
-      price: 240,
-      count: 1,
-      taxRate: TAXRATE_ZERO,
-    },
-    {
-      goods: "オカメ",
-      price: 66,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ノーマット",
-      price: 862,
-      count: 1,
-      taxRate: TAXRATE_TEN,
-    },
-    {
-      goods: "Nドレダイエット",
-      price: 119,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "カワミツ",
-      price: 98,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "黒豆もやし",
-      price: 30,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "フジッコ",
-      price: 153,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "紀文はんぺん",
-      price: 109,
-      count: 1,
-      discountRate: "10:3/103",
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ハウスニンニク",
-      price: 168,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "QPマヨネーズ",
-      price: 149,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ほねとりフィレ",
-      price: 358,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ニラ",
-      price: 68,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-
-/** okDiscountWithID */
-const okDiscountWithID = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_FLOOR,
-  kaimonoItems: [
-    {
-      goods: "練乳イチゴ",
-      price: 195,
-      count: 1,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "おかめ納豆",
-      price: 66,
-      count: 1,
-      discountRate: "3",
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "キントキ",
-      price: 60,
-      count: 1,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "こしあん",
-      price: 74,
-      count: 1,
-      discountRate: "5",
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-
-/** aeon1963 */
-const aeon1963 = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_CEAL,
-  kaimonoItems: [
-    {
-      goods: "井村屋　宇治抹茶金時",
-      price: 188,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "TVチョコアイス",
-      price: 398,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "BPまろやかな味わいY",
-      price: 98,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "BPとろけるスライス",
-      price: 188,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "BPバター風味",
-      price: 198,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "塩バターメロンパン",
-      price: 118,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "パスコ　超熟８枚",
-      price: 148,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "お肉屋さんのコロッケ小",
-      price: 120,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "スペシャルサンド",
-      price: 297,
-      count: 1,
-      discountRate: "20:5",
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "TVツナマヨ巻",
-      price: 118,
-      count: 1,
-      discountRate: "10:5",
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "やわらかぶどうぱん",
-      price: 118,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-
-/** aeon1092 */
-const aeon1092 = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_CEAL,
-  kaimonoItems: [
-    {
-      goods: "TV蚊取り線香",
-      price: 468,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_TEN,
-    },
-    {
-      goods: "ネオパラエース",
-      price: 578,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_TEN,
-    },
-  ]
-};
-
-/** marinpia191 */
-const marinpia191 = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_ROUND,
-  kaimonoItems: [
-    {
-      goods: "ほうれん草",
-      price: 98,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "にら",
-      price: 88,
-      count: 1,
-      discountRate: 5,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-
-/** ok2wariWithCash */
-const ok2wariWithCash = {
-  selectedStoreProfile: STOREPROFILE_OKSTOREWITHKAIIN,
-  kaimonoItems: [
-    {
-      goods: "ＣＣレモン",
-      price: 141,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ホームカフェ無糖",
-      price: 178,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "氷菓イチゴ",
-      price: 60,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "イチゴフロート",
-      price: 60,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "コーヒーフロート",
-      price: 60,
-      count: 1,
-      discountRate: DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "Ｙクリームパン",
-      price: 101,
-      count: 1,
-      discountRate: "5:" + DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "Ｙクリームパン",
-      price: 101,
-      count: 1,
-      discountRate: "5:" + DISCOUNT_RATE_OK_3_103_S,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-
-/** maruetuManyWaribiki normal */
-const maruetuManyWaribiki = {
-  selectedStoreProfile: STOREPROFILE_WARIBIKI_CEAL,
-  kaimonoItems: [
-    {
-      goods: "いわし生姜煮",
-      price: 80,
-      count: 1,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "手作りロースかつ",
-      price: 298,
-      count: 1,
-      discountRate: 30,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "いも天",
-      price: 80,
-      count: 1,
-      discountRate: 30,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "天丼",
-      price: 390,
-      count: 1,
-      discountRate: 30,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "いなり",
-      price: 158,
-      count: 1,
-      discountRate: 30,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "南瓜サラダ",
-      price: 198,
-      count: 1,
-      discountRate: 40,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "プチ白菜漬",
-      price: 50,
-      count: 1,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "バナナ",
-      price: 188,
-      count: 1,
-      discountRate: 20,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "あんかけ",
-      price: 158,
-      count: 1,
-      discountRate: 30,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ひじき煮",
-      price: 128,
-      count: 1,
-      discountRate: 50,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "国産若鳥手羽元",
-      price: 235,
-      count: 1,
-      discountRate: 20,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "ミラノ風ドリア",
-      price: 398,
-      count: 1,
-      discountRate: 40,
-      taxRate: TAXRATE_EIGHT,
-    },
-    {
-      goods: "調理パン",
-      price: 50,
-      count: 1,
-      taxRate: TAXRATE_EIGHT,
-    },
-  ]
-};
-
-let okCount = 0;
-let ngCount = 0;
-function testFunc(name, expect, actual) {
-  let message = "testing " + name + " ... ";
-  let ok = expect === actual;
-  if (ok) {
-    message += "OK";
-    okCount++;
-  } else {
-    message += "NG";
-    ngCount++;
-  }
-  message += `(expect=${expect}, actual=${actual})`;
-  ok ? console.log(message) : console.error(message);
-}
 function doTest() {
-  okCount = ngCount = 0;
   const saveCurrentStoreProfile = selectedStoreProfile.value;
   const saveCurrentItems = kaimonoItems.value;
 
-  testFunc("compute", 208, computeDiscountValueFromRate(298, 1, [0.3], {
+  clearTestResult();
+
+  testFunc("compute", 208, computeDiscountedPriceFromRate(298, 1, [0.3], {
     withoutOK3_103: false,
     computeEach: false,
-    hasuuSyori: HASUU_SYORI_ONCE,
+    hasuuSyori: Constants.HASUU_SYORI_ONCE,
     hasuuFunc: Math.ceil,
   }));
-  testFunc("compute", 208, computeDiscountValueFromRate(298, 1, [0.3], {
+  testFunc("compute", 208, computeDiscountedPriceFromRate(298, 1, [0.3], {
     withoutOK3_103: false,
     computeEach: false,
-    hasuuSyori: HASUU_SYORI_ONEBYONE,
+    hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
     hasuuFunc: Math.ceil,
   }));
-  testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountValueFromRate(235, 1, [0.2], {
+  testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountedPriceFromRate(235, 1, [0.2], {
     withoutOK3_103: false,
     computeEach: false,
-    hasuuSyori: HASUU_SYORI_ONCE,
+    hasuuSyori: Constants.HASUU_SYORI_ONCE,
     hasuuFunc: Math.ceil,
   }));
-  testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountValueFromRate(235, 1, [0.2], {
+  testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountedPriceFromRate(235, 1, [0.2], {
     withoutOK3_103: false,
     computeEach: false,
-    hasuuSyori: HASUU_SYORI_ONEBYONE,
+    hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
     hasuuFunc: Math.ceil,
   }));
 
-  selectedStoreProfile.value = maruetsuNormal.selectedStoreProfile;
-  kaimonoItems.value = maruetsuNormal.kaimonoItems;
+  selectedStoreProfile.value = testData.maruetsuNormal.selectedStoreProfile;
+  kaimonoItems.value = testData.maruetsuNormal.kaimonoItems;
   testFunc("maruetsuNormal syoukei", 498, syoukei.value);
   testFunc("maruetsuNormal allItemHinCount", 4, allItemHinCount.value);
   testFunc("maruetsuNormal allItemCount", 4, allItemCount.value);
@@ -696,8 +59,8 @@ function doTest() {
   testFunc("maruetsuNormal zeis[0].allvalue()", 39, zeis.value[0].allvalue());
   testFunc("maruetsuNormal goukei", 537, goukei.value);
 
-  selectedStoreProfile.value = berxNormal.selectedStoreProfile;
-  kaimonoItems.value = berxNormal.kaimonoItems;
+  selectedStoreProfile.value = testData.berxNormal.selectedStoreProfile;
+  kaimonoItems.value = testData.berxNormal.kaimonoItems;
   testFunc("berxNormal syoukei", 316, syoukei.value);
   testFunc("berxNormal allItemHinCount", 2, allItemHinCount.value);
   testFunc("berxNormal allItemCount", 4, allItemCount.value);
@@ -708,8 +71,35 @@ function doTest() {
   testFunc("berxNormal zeis[0].allvalue()", 25, zeis.value[0].allvalue());
   testFunc("berxNormal goukei", 341, goukei.value);
 
-  selectedStoreProfile.value = okWith10.selectedStoreProfile;
-  kaimonoItems.value = okWith10.kaimonoItems;
+  selectedStoreProfile.value = testData.parliamentNormal.selectedStoreProfile;
+  kaimonoItems.value = testData.parliamentNormal.kaimonoItems;
+  testFunc("parliamentNormal syoukei", 620, syoukei.value);
+  testFunc("parliamentNormal allItemHinCount", 1, allItemHinCount.value);
+  testFunc("parliamentNormal allItemCount", 1, allItemCount.value);
+  testFunc("parliamentNormal disp_syoukei", 620, disp_syoukei.value);
+  testFunc("parliamentNormal zeis len", 1, zeis.value.length);
+  testFunc("parliamentNormal zeis[0].ratePercent", "込10", zeis.value[0].ratePercent);
+  testFunc("parliamentNormal zeis[0].targetValue", 620, zeis.value[0].targetValue);
+  testFunc("parliamentNormal zeis[0].allvalue()", 56, zeis.value[0].allvalue());
+  testFunc("parliamentNormal goukei", 620, goukei.value);
+
+  selectedStoreProfile.value = testData.seiyuNormal.selectedStoreProfile;
+  kaimonoItems.value = testData.seiyuNormal.kaimonoItems;
+  testFunc("seiyuNormal syoukei", 717, syoukei.value);
+  testFunc("seiyuNormal allItemHinCount", 5, allItemHinCount.value);
+  testFunc("seiyuNormal allItemCount", 6, allItemCount.value);
+  testFunc("seiyuNormal disp_syoukei", 717, disp_syoukei.value);
+  testFunc("seiyuNormal zeis len", 2, zeis.value.length);
+  testFunc("seiyuNormal zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("seiyuNormal zeis[0].targetValue", 712, zeis.value[0].targetValue);
+  testFunc("seiyuNormal zeis[0].allvalue()", 56, zeis.value[0].allvalue());
+  testFunc("seiyuNormal zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+  testFunc("seiyuNormal zeis[1].targetValue", 5, zeis.value[1].targetValue);
+  testFunc("seiyuNormal zeis[1].allvalue()", 0, zeis.value[1].allvalue());
+  testFunc("seiyuNormal goukei", 773, goukei.value);
+
+  selectedStoreProfile.value = testData.okWith10.selectedStoreProfile;
+  kaimonoItems.value = testData.okWith10.kaimonoItems;
   testFunc("okWith10 syoukei", 889, syoukei.value);
   testFunc("okWith10 ok3_100kei", 8, ok3_100kei.value);
   testFunc("okWith10 allItemHinCount", 5, allItemHinCount.value);
@@ -724,8 +114,8 @@ function doTest() {
   testFunc("okWith10 zeis[1].allvalue()", 54, zeis.value[1].allvalue());
   testFunc("okWith10 goukei", 962, goukei.value);
 
-  selectedStoreProfile.value = okwithNotF8.selectedStoreProfile;
-  kaimonoItems.value = okwithNotF8.kaimonoItems;
+  selectedStoreProfile.value = testData.okwithNotF8.selectedStoreProfile;
+  kaimonoItems.value = testData.okwithNotF8.kaimonoItems;
   testFunc("okwithNotF8 syoukei", 1297, syoukei.value);
   testFunc("okwithNotF8 ok3_100kei", 26, ok3_100kei.value);
   testFunc("okwithNotF8 allItemHinCount", 6, allItemHinCount.value);
@@ -740,8 +130,8 @@ function doTest() {
   testFunc("okwithNotF8 zeis[1].allvalue()", 22, zeis.value[1].allvalue());
   testFunc("okwithNotF8 goukei", 1372, goukei.value);
 
-  selectedStoreProfile.value = okWithCashAndDiscount.selectedStoreProfile;
-  kaimonoItems.value = okWithCashAndDiscount.kaimonoItems;
+  selectedStoreProfile.value = testData.okWithCashAndDiscount.selectedStoreProfile;
+  kaimonoItems.value = testData.okWithCashAndDiscount.kaimonoItems;
   testFunc("okWithCashAndDiscount syoukei", 2598, syoukei.value);
   testFunc("okWithCashAndDiscount ok3_100kei", 31, ok3_100kei.value);
   testFunc("okWithCashAndDiscount allItemHinCount", 13, allItemHinCount.value);
@@ -756,8 +146,8 @@ function doTest() {
   testFunc("okWithCashAndDiscount zeis[1].allvalue()", 105, zeis.value[1].allvalue());
   testFunc("okWithCashAndDiscount goukei", 2774, goukei.value);
 
-  selectedStoreProfile.value = okDiscountWithID.selectedStoreProfile;
-  kaimonoItems.value = okDiscountWithID.kaimonoItems;
+  selectedStoreProfile.value = testData.okDiscountWithID.selectedStoreProfile;
+  kaimonoItems.value = testData.okDiscountWithID.kaimonoItems;
   testFunc("okDiscountWithID syoukei", 391, syoukei.value);
   testFunc("okDiscountWithID allItemHinCount", 4, allItemHinCount.value);
   testFunc("okDiscountWithID allItemCount", 4, allItemCount.value);
@@ -768,8 +158,8 @@ function doTest() {
   testFunc("okDiscountWithID zeis[0].allvalue()", 31, zeis.value[0].allvalue());
   testFunc("okDiscountWithID goukei", 422, goukei.value);
 
-  selectedStoreProfile.value = aeon1963.selectedStoreProfile;
-  kaimonoItems.value = aeon1963.kaimonoItems;
+  selectedStoreProfile.value = testData.aeon1963.selectedStoreProfile;
+  kaimonoItems.value = testData.aeon1963.kaimonoItems;
   testFunc("aeon1963 syoukei", 1818, syoukei.value);
   testFunc("aeon1963 allItemHinCount", 11, allItemHinCount.value);
   testFunc("aeon1963 allItemCount", 11, allItemCount.value);
@@ -780,8 +170,8 @@ function doTest() {
   testFunc("aeon1963 zeis[0].allvalue()", 145, zeis.value[0].allvalue());
   testFunc("aeon1963 goukei", 1963, goukei.value);
 
-  selectedStoreProfile.value = aeon1092.selectedStoreProfile;
-  kaimonoItems.value = aeon1092.kaimonoItems;
+  selectedStoreProfile.value = testData.aeon1092.selectedStoreProfile;
+  kaimonoItems.value = testData.aeon1092.kaimonoItems;
   testFunc("aeon1092 syoukei", 993, syoukei.value);
   testFunc("aeon1092 allItemHinCount", 2, allItemHinCount.value);
   testFunc("aeon1092 allItemCount", 2, allItemCount.value);
@@ -792,8 +182,8 @@ function doTest() {
   testFunc("aeon1092 zeis[0].allvalue()", 99, zeis.value[0].allvalue());
   testFunc("aeon1092 goukei", 1092, goukei.value);
 
-  selectedStoreProfile.value = marinpia191.selectedStoreProfile;
-  kaimonoItems.value = marinpia191.kaimonoItems;
+  selectedStoreProfile.value = testData.marinpia191.selectedStoreProfile;
+  kaimonoItems.value = testData.marinpia191.kaimonoItems;
   testFunc("marinpia191 syoukei", 177, syoukei.value);
   testFunc("marinpia191 allItemHinCount", 2, allItemHinCount.value);
   testFunc("marinpia191 allItemCount", 2, allItemCount.value);
@@ -804,8 +194,8 @@ function doTest() {
   testFunc("marinpia191 zeis[0].allvalue()", 14, zeis.value[0].allvalue());
   testFunc("marinpia191 goukei", 191, goukei.value);
 
-  selectedStoreProfile.value = ok2wariWithCash.selectedStoreProfile;
-  kaimonoItems.value = ok2wariWithCash.kaimonoItems;
+  selectedStoreProfile.value = testData.ok2wariWithCash.selectedStoreProfile;
+  kaimonoItems.value = testData.ok2wariWithCash.kaimonoItems;
   testFunc("ok2wariWithCash syoukei", 691, syoukei.value);
   testFunc("ok2wariWithCash allItemHinCount", 7, allItemHinCount.value);
   testFunc("ok2wariWithCash allItemCount", 7, allItemCount.value);
@@ -816,8 +206,8 @@ function doTest() {
   testFunc("ok2wariWithCash zeis[0].allvalue()", 54, zeis.value[0].allvalue());
   testFunc("ok2wariWithCash goukei", 729, goukei.value);
 
-  selectedStoreProfile.value = maruetuManyWaribiki.selectedStoreProfile;
-  kaimonoItems.value = maruetuManyWaribiki.kaimonoItems;
+  selectedStoreProfile.value = testData.maruetuManyWaribiki.selectedStoreProfile;
+  kaimonoItems.value = testData.maruetuManyWaribiki.kaimonoItems;
   testFunc("maruetuManyWaribiki syoukei", 1695, syoukei.value);
   testFunc("maruetuManyWaribiki allItemHinCount", 13, allItemHinCount.value);
   testFunc("maruetuManyWaribiki allItemCount", 13, allItemCount.value);
@@ -828,58 +218,30 @@ function doTest() {
   testFunc("maruetuManyWaribiki zeis[0].allvalue()", 135, zeis.value[0].allvalue());
   testFunc("maruetuManyWaribiki goukei", 1830, goukei.value);
 
-  console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
+  showTestResult();
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
   kaimonoItems.value = saveCurrentItems;
 }
 
-const TAXRATE_ZERO = 0;
-const TAXRATE_EIGHT = "8";
-const TAXRATE_TEN = "10";
-const TAXRATE_KOMI_EIGHT = "込8";
-const TAXRATE_KOMI_TEN = "込10";
-const TAXRATE_EIGHTF8 = "F8";
 
-const TAXRATEVALUES = [
-  TAXRATE_ZERO,
-  TAXRATE_EIGHT,
-  TAXRATE_TEN,
-  TAXRATE_KOMI_EIGHT,
-  TAXRATE_KOMI_TEN,
-];
-function getTaxRateIndex(trv) {
-  return TAXRATEVALUES.findIndex((v) => trv == v);
-}
-
-const DISCOUNT_RATE_OK_3_103_S = "3/103";
-const DISCOUNT_RATE_OK_3_103_N = 3 / 103;
-
-const LOCALSTORAGE_DEFAULT = "defaultls";
-
-const STOREPROFILE_WARIBIKI_FLOOR = "割引率切り下げ";
-const STOREPROFILE_WARIBIKI_ROUND = "割引率四捨五入";
-const STOREPROFILE_WARIBIKI_CEAL = "割引率切り上げ";
-const STOREPROFILE_OKSTOREWITHKAIIN = "オーケーストアwith会員カード";
-
-const STOREPROFILES = ref([
-  STOREPROFILE_WARIBIKI_FLOOR,
-  STOREPROFILE_WARIBIKI_ROUND,
-  STOREPROFILE_WARIBIKI_CEAL,
-  STOREPROFILE_OKSTOREWITHKAIIN,
-]);
 
 const loaded = loadItems(LOCALSTORAGE_DEFAULT);
 const kaimonoItems = ref(loaded.kaimonoItems ?? []);
-const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? STOREPROFILE_WARIBIKI_FLOOR);
+const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_WARIBIKI_FLOOR);
 
 if (DEBUGGING) {
   // selectedStoreProfile.value = maruetsuNormal.selectedStoreProfile;
   // kaimonoItems.value = maruetsuNormal.kaimonoItems;
 
   // const kaimonoItems = ref(berxNormal);
-  // const kaimonoItems = ref(parliamentNormal);
-  // const kaimonoItems = ref(seiyuNormal);
+
+  selectedStoreProfile.value = testData.parliamentNormal.selectedStoreProfile;
+  kaimonoItems.value = testData.parliamentNormal.kaimonoItems;
+
+  selectedStoreProfile.value = testData.seiyuNormal.selectedStoreProfile;
+  kaimonoItems.value = testData.seiyuNormal.kaimonoItems;
+
   // const kaimonoItems = ref(okWith10);
   // const kaimonoItems = ref(okwithNotF8);
   // const kaimonoItems = ref(okWithCashAndDiscount);
@@ -895,17 +257,17 @@ if (DEBUGGING) {
   // kaimonoItems.value = maruetuManyWaribiki.kaimonoItems;
 }
 function isOKProfile() {
-  return selectedStoreProfile.value == STOREPROFILE_OKSTOREWITHKAIIN;
+  return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTOREWITHKAIIN;
 }
 function isOK3_103Item(item) {
   let discountRates = getDiscountRates(item.discountRate ?? 0);
-  return discountRates[discountRates.length - 1] == DISCOUNT_RATE_OK_3_103_N;
+  return discountRates[discountRates.length - 1] == Constants.DISCOUNT_RATE_OK_3_103_N;
 }
 function isWaribikiCeal() {
-  return selectedStoreProfile.value == STOREPROFILE_WARIBIKI_CEAL;
+  return selectedStoreProfile.value == Constants.STOREPROFILE_WARIBIKI_CEAL;
 }
 function isWaribikiRound() {
-  return selectedStoreProfile.value == STOREPROFILE_WARIBIKI_ROUND;
+  return selectedStoreProfile.value == Constants.STOREPROFILE_WARIBIKI_ROUND;
 }
 function loadItems(storageKey) {
   let ls = localStorage.getItem(storageKey);
@@ -1020,13 +382,13 @@ const INCORDEC_INC = 1;
 const INCORDEC_DEC = 2;
 function incrementOrdecrementTaxRate(index, inc_or_dec) {
   let curRate = kaimonoItems.value[index].taxRate;
-  const curIndex = TAXRATEVALUES.findIndex((v) => curRate == v);
+  const curIndex = Constants.TAXRATEVALUES.findIndex((v) => curRate == v);
   let incdec = (inc_or_dec == INCORDEC_INC ? 1 : -1);
   let newIndex = curIndex + incdec;
-  if (newIndex >= TAXRATEVALUES.length || newIndex < 0) {
+  if (newIndex >= Constants.TAXRATEVALUES.length || newIndex < 0) {
     return;
   }
-  kaimonoItems.value[index].taxRate = TAXRATEVALUES[newIndex];
+  kaimonoItems.value[index].taxRate = Constants.TAXRATEVALUES[newIndex];
 }
 function incrementTaxRate(index) {
   incrementOrdecrementTaxRate(index, INCORDEC_INC);
@@ -1042,7 +404,7 @@ function addItem() {
     count: 1,
     discountRate: isOKProfile() ? "3/103" : null,
     discountValue: null,
-    taxRate: TAXRATE_EIGHT,
+    taxRate: Constants.TAXRATE_EIGHT,
   });
 }
 function clearAll() {
@@ -1063,16 +425,16 @@ function getDiscountRates(rate) {
   if (typeof rate == "number") {
     return [rate / 100];
   }
-  if (rate == DISCOUNT_RATE_OK_3_103_S) {
-    return [DISCOUNT_RATE_OK_3_103_N];
+  if (rate == Constants.DISCOUNT_RATE_OK_3_103_S) {
+    return [Constants.DISCOUNT_RATE_OK_3_103_N];
   }
   let ret = []
   rate.split(':').map(String).forEach((r) => {
-    if (r == DISCOUNT_RATE_OK_3_103_S) {
-      r = DISCOUNT_RATE_OK_3_103_N;
+    if (r == Constants.DISCOUNT_RATE_OK_3_103_S) {
+      r = Constants.DISCOUNT_RATE_OK_3_103_N;
     }
-    if (r == DISCOUNT_RATE_OK_3_103_N) {
-      ret.push(DISCOUNT_RATE_OK_3_103_N);
+    if (r == Constants.DISCOUNT_RATE_OK_3_103_N) {
+      ret.push(Constants.DISCOUNT_RATE_OK_3_103_N);
     } else {
       ret.push(Number(r) / 100);
     }
@@ -1096,9 +458,9 @@ function getHasuuFunc() {
 }
 function getHasuuSyori() {
   if (isOKProfile()) {
-    return HASUU_SYORI_ONCE;
+    return Constants.HASUU_SYORI_ONCE;
   }
-  return HASUU_SYORI_ONEBYONE;
+  return Constants.HASUU_SYORI_ONEBYONE;
 }
 function getItemSyoukei(item, withoutOK3_103) {
   if (item.disabled) {
@@ -1109,7 +471,7 @@ function getItemSyoukei(item, withoutOK3_103) {
   const taxRate = Number(item.taxRate);
   const discountRates = getDiscountRates(item.discountRate ?? 0);
 
-  return computeDiscountValueFromRate(price, count, discountRates, {
+  return computeDiscountedPriceFromRate(price, count, discountRates, {
     withoutOK3_103,
     computeEach: isComputeEach(),
     hasuuFunc: getHasuuFunc(),
@@ -1132,14 +494,14 @@ function getZeis() {
     if (!item.disabled) {
       let rate = item.taxRate;
       if (isOK3_103Item(item)) {
-        console.assert(rate == TAXRATE_EIGHT);
-        rate = TAXRATE_EIGHTF8;
+        console.assert(rate == Constants.TAXRATE_EIGHT);
+        rate = Constants.TAXRATE_EIGHTF8;
       }
 
       if (!zeiGotoMap[rate]) {
         zeiGotoMap[rate] = [];
       }
-      // zeiGotoMap[rate].push(getItemSyoukei(item, (rate == TAXRATE_EIGHTF8 ? true : false)));
+      // zeiGotoMap[rate].push(getItemSyoukei(item, (rate == Constants.TAXRATE_EIGHTF8 ? true : false)));
       zeiGotoMap[rate].push(getItemSyoukei(item));
     }
   });
@@ -1160,7 +522,7 @@ function getZeis() {
     }
     // console.log(zeiGotoMap);
     zeiGotoMap[key].forEach((v) => {
-      if (v.ratePercent != TAXRATE_ZERO) {
+      if (v.ratePercent != Constants.TAXRATE_ZERO) {
         shrinkMap[key].targetValue += v;
       }
     });
@@ -1170,15 +532,15 @@ function getZeis() {
 
   let ret = [];
   Object.keys(shrinkMap).forEach(function (key) {
-    if (shrinkMap[key].ratePercent != TAXRATE_ZERO) {
+    if (shrinkMap[key].ratePercent != Constants.TAXRATE_ZERO) {
       let perTaxValue = 0;
       let perTaxKomiValue = 0;
       let rate;
       switch (shrinkMap[key].ratePercent) {
-        case TAXRATE_EIGHT:
-        case TAXRATE_EIGHTF8:
-        case TAXRATE_TEN:
-          if (shrinkMap[key].ratePercent == TAXRATE_TEN) {
+        case Constants.TAXRATE_EIGHT:
+        case Constants.TAXRATE_EIGHTF8:
+        case Constants.TAXRATE_TEN:
+          if (shrinkMap[key].ratePercent == Constants.TAXRATE_TEN) {
             rate = 10 / 100;
           } else {
             rate = 8 / 100;
@@ -1186,10 +548,10 @@ function getZeis() {
           perTaxValue = Math.floor(shrinkMap[key].targetValue * rate);
           break;
 
-        case TAXRATE_KOMI_EIGHT:
-        case TAXRATE_KOMI_TEN:
+        case Constants.TAXRATE_KOMI_EIGHT:
+        case Constants.TAXRATE_KOMI_TEN:
           rate =
-            shrinkMap[key].ratePercent == TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
+            shrinkMap[key].ratePercent == Constants.TAXRATE_KOMI_EIGHT ? 0.08 : 0.1;
           perTaxKomiValue = Math.floor(
             (shrinkMap[key].targetValue / (1 + rate)) * rate
           );
@@ -1229,7 +591,7 @@ function getItemErrorMessage(item) {
   }
   if (!isOKProfile()) {
     const rates = getDiscountRates(item.discountRate ?? 0);
-    if (rates.findIndex((r) => DISCOUNT_RATE_OK_3_103_N == r) >= 0) {
+    if (rates.findIndex((r) => Constants.DISCOUNT_RATE_OK_3_103_N == r) >= 0) {
       return "3/103割引はオーケーストア専用です";
     }
     if (rates.some(r => isNaN(r))) {
@@ -1248,7 +610,7 @@ function getItemErrorMessage(item) {
     return "ゼロです";
   }
 
-  if (TAXRATEVALUES.findIndex((v) => v == item.taxRate) < 0) {
+  if (Constants.TAXRATEVALUES.findIndex((v) => v == item.taxRate) < 0) {
     return "税の値が不正です";
   }
   return "";
@@ -1345,13 +707,13 @@ const kakaku_placeholder = computed(() => {
       <div class="cell3columns storeprofile">
         <label id="label_storeselect" for="storeselect">会計方式：</label>
         <select id="storeselect" v-model="selectedStoreProfile">
-          <option v-for="sp in STOREPROFILES">{{ sp }}</option>
+          <option v-for="sp in Constants.STOREPROFILES">{{ sp }}</option>
         </select>
       </div>
     </div>
 
     <div class="container-cell" v-if="kaimonoItems.length == 0">
-      <p class="cell3columns">追加を{{ tapORclick }}して商品を追加してください</p>
+      <p class="cell3columns">追加を{{ Constants.tapORclick }}して商品を追加してください</p>
     </div>
     <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems">
       <div class="cell">
@@ -1379,10 +741,10 @@ const kakaku_placeholder = computed(() => {
         </div>
         <div>
           <button class="twobutton" @click="decrementCount(item)">
-            {{ downChar }}
+            {{ Constants.downChar }}
           </button>
           <button class="twobutton" @click="incrementCount(item)">
-            {{ upChar }}
+            {{ Constants.upChar }}
           </button>
         </div>
       </div>
@@ -1394,10 +756,10 @@ const kakaku_placeholder = computed(() => {
         </div>
         <div>
           <button class="twobutton" @click="decrementDiscountRate(item)">
-            {{ downChar }}
+            {{ Constants.downChar }}
           </button>
           <button class="twobutton" @click="incrementDiscountRate(item)">
-            {{ upChar }}
+            {{ Constants.upChar }}
           </button>
         </div>
       </div>
@@ -1409,10 +771,10 @@ const kakaku_placeholder = computed(() => {
         </div>
         <div>
           <button class="twobutton" @click="decrementDiscountValue(item)">
-            {{ downChar }}
+            {{ Constants.downChar }}
           </button>
           <button class="twobutton" @click="incrementDiscountValue(item)">
-            {{ upChar }}
+            {{ Constants.upChar }}
           </button>
         </div>
       </div>
@@ -1424,10 +786,10 @@ const kakaku_placeholder = computed(() => {
         </div>
         <div>
           <button class="twobutton" @click="decrementTaxRate(index)">
-            {{ downChar }}
+            {{ Constants.downChar }}
           </button>
           <button class="twobutton" @click="incrementTaxRate(index)">
-            {{ upChar }}
+            {{ Constants.upChar }}
           </button>
         </div>
       </div>
@@ -1488,7 +850,7 @@ const kakaku_placeholder = computed(() => {
       </ul>
     </div>
     <footer>
-      {{ appName }} v{{ appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
+      {{ Constants.appName }} v{{ Constants.appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
     </footer>
   </div> <!-- end of container -->
   <div v-if="DEBUGGING">
