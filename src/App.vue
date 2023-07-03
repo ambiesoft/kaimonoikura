@@ -216,6 +216,21 @@ function doTest() {
   testFunc("maruetuManyWaribiki zeis[0].allvalue()", 135, zeis.value[0].allvalue());
   testFunc("maruetuManyWaribiki goukei", 1830, goukei.value);
 
+  selectedStoreProfile.value = testData.okFunabashiKeiba.selectedStoreProfile;
+  kaimonoItems.value = testData.okFunabashiKeiba.kaimonoItems;
+  testFunc("okFunabashiKeiba syoukei", 7136, syoukei.value);
+  testFunc("okFunabashiKeiba allItemHinCount", 16, allItemHinCount.value);
+  testFunc("okFunabashiKeiba allItemCount", 21, allItemCount.value);
+  testFunc("okFunabashiKeiba disp_syoukei", 6947, disp_syoukei.value);
+  testFunc("okFunabashiKeiba zeis len", 2, zeis.value.length);
+  testFunc("okFunabashiKeiba zeis[0].ratePercent", "F8", zeis.value[0].ratePercent);
+  testFunc("okFunabashiKeiba zeis[0].targetValue", 6669, zeis.value[0].targetValue);
+  testFunc("okFunabashiKeiba zeis[0].allvalue()", 533, zeis.value[0].allvalue());
+  testFunc("okFunabashiKeiba zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+  testFunc("okFunabashiKeiba zeis[1].targetValue", 278, zeis.value[1].targetValue);
+  testFunc("okFunabashiKeiba zeis[1].allvalue()", 27, zeis.value[1].allvalue());
+  testFunc("okFunabashiKeiba goukei", 7507, goukei.value);
+
   showTestResult();
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
@@ -244,6 +259,7 @@ if (Constants.DEBUGGING) {
   // setItems(testData.marinpia191);
   // setItems(testData.ok2wariWithCash);
   // setItems(testData.maruetuManyWaribiki);
+  // setItems(testData.okFunabashiKeiba);
 }
 function isOKProfile() {
   return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTOREWITHKAIIN;
@@ -424,12 +440,14 @@ function getDiscountRates(item) {
 }
 function isComputeEach() {
   if (isOKProfile()) {
-    return false;
+    return true;
   }
   return false;
 }
 function getHasuuFunc() {
-  if (isWaribikiCeal()) {
+  if (isOKProfile()) {
+    return Math.floor;
+  } else if (isWaribikiCeal()) {
     return Math.ceil;
   } else if (isWaribikiRound()) {
     return Math.round;
@@ -461,11 +479,11 @@ function getItemSyoukei(item, withoutOK3_103) {
     hasuuSyori: getHasuuSyori(),
   });
 }
-function getSyoukei(withoutOK3_103, computeEach) {
+function getSyoukei(withoutOK3_103) {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
     if (!item.disabled) {
-      ret += getItemSyoukei(item, withoutOK3_103, computeEach);
+      ret += getItemSyoukei(item, withoutOK3_103);
     }
   });
 
@@ -484,7 +502,6 @@ function getZeis() {
       if (!zeiGotoMap[rate]) {
         zeiGotoMap[rate] = [];
       }
-      // zeiGotoMap[rate].push(getItemSyoukei(item, (rate == Constants.TAXRATE_EIGHTF8 ? true : false)));
       zeiGotoMap[rate].push(getItemSyoukei(item));
     }
   });
@@ -640,7 +657,7 @@ const allItemHinCount = computed(() => {
   return ret;
 });
 const goukei = computed(() => {
-  return getSyoukei(false, false) + allZei.value;
+  return getSyoukei(false) + allZei.value;
 });
 function getContainerCellClass(item, index) {
   if (getItemErrorMessage(item)) {
@@ -657,7 +674,7 @@ const ok3_100kei = computed(() => {
 });
 const disp_syoukei = computed(() => {
   if (isOKProfile()) {
-    return getSyoukei(false, true);
+    return getSyoukei(false);
   }
   return syoukei.value;
 })
