@@ -249,9 +249,10 @@ function doTest() {
   kaimonoItems.value = saveCurrentItems;
 }
 
-const loaded = loadItems(LOCALSTORAGE_DEFAULT);
+const loaded = loadFromLocalStorage(LOCALSTORAGE_DEFAULT);
 const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_WARIBIKI_FLOOR);
+const memo = ref(loaded.memo);
 
 if (Constants.DEBUGGING) {
   function setItems(loaded) {
@@ -282,7 +283,7 @@ function isWaribikiCeal() {
 function isWaribikiRound() {
   return selectedStoreProfile.value == Constants.STOREPROFILE_WARIBIKI_ROUND;
 }
-function loadItems(storageKey) {
+function loadFromLocalStorage(storageKey) {
   let ls = localStorage.getItem(storageKey);
   if (ls && ls[0] != "{") {
     ls = undefined;
@@ -316,16 +317,20 @@ function getSaveJson() {
   return JSON.stringify({
     "kaimonoItems": kaimonoItems.value,
     "selectedStoreProfile": selectedStoreProfile.value,
+    "memo": memo.value,
   });
 }
-function saveItems() {
+function saveonLocalStorage() {
   localStorage.setItem(LOCALSTORAGE_DEFAULT, getSaveJson());
 }
 watch(kaimonoItems.value, (newItems) => {
-  saveItems();
+  saveonLocalStorage();
 })
 watch(selectedStoreProfile, () => {
-  saveItems();
+  saveonLocalStorage();
+})
+watch(memo, () => {
+  saveonLocalStorage();
 })
 function isNumber(evt) {
   evt = evt ? evt : window.event;
@@ -435,11 +440,12 @@ function addItem(event) {
   });
 }
 function clearAll() {
-  if (kaimonoItems.value.length == 0) {
+  if (kaimonoItems.value.length == 0 && !memo.value) {
     return;
   }
   if (window.confirm('アイテムをすべて削除しますか？')) {
     kaimonoItems.value.splice(0, kaimonoItems.value.length);
+    memo.value = null;
   }
 }
 function deleteItem(index) {
@@ -704,7 +710,7 @@ const disp_syoukei = computed(() => {
 })
 
 
-function loadlocal() {
+function loadlocalFile() {
   const { files: filesFileDialog,
     open: openFileDialog,
     reset: resetFileDialog,
@@ -731,7 +737,8 @@ function loadlocal() {
         }
         selectedStoreProfile.value = loadedObj.selectedStoreProfile;
         kaimonoItems.value = loadedObj.kaimonoItems;
-        saveItems();
+        memo.value = loadedObj.memo;
+        saveonLocalStorage();
       } catch (error) {
         console.error(error);
         alert("JSONの解析に失敗しました\n\n" + error);
@@ -747,7 +754,7 @@ function loadlocal() {
     };
   })
 }
-function savelocal() {
+function savelocalFile() {
   const jsonString = getSaveJson();
   const blob = new Blob([jsonString], { type: 'application/json' });
 
@@ -774,6 +781,10 @@ const nameRefs = ref([])
 const kakakuRefs = ref([])
 const addButtonRef = ref()
 onMounted(() => console.log("onMounted"));
+
+function onMemoChange() {
+  console.log(memo.value);
+}
 </script>
 
 <template>
@@ -927,9 +938,15 @@ onMounted(() => console.log("onMounted"));
     </div>
 
     <div class="container-cell">
+      <div class="goukei cell3columns">
+        <textarea v-model="memo" @change="onMemoChange" id="t_message" name="message" placeholder="メモを記入"></textarea>
+      </div>
+    </div>
+
+    <div class="container-cell">
       <button @click="clearAll">すべて削除</button>
-      <button @click="loadlocal">ロード</button>
-      <button @click="savelocal">セーブ</button>
+      <button @click="loadlocalFile">ロード</button>
+      <button @click="savelocalFile">セーブ</button>
     </div>
 
     <div class="help">
@@ -1094,6 +1111,11 @@ button {
 .goukei {
   width: 100%;
   text-align: right;
+}
+
+#t_message {
+  width: 100%;
+  height: 5em;
 }
 
 .help {
