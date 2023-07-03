@@ -767,6 +767,62 @@ export const testData = {
             }
         ],
     },
+
+    okNoCash3Pepsi103Checked: {
+        "kaimonoItems": [
+            {
+                "goods": "ホームカフェ無糖",
+                "price": 178,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": true,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "あずきバー",
+                "price": 189,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": true,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "ペプシ",
+                "price": 75,
+                "count": 3,
+                "discountRate": null,
+                "ok3_103": true,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "爽メロンソーダ",
+                "price": 80,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": true,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "爽バニラ",
+                "price": 80,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": true,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            }
+        ],
+        "selectedStoreProfile": "割引率切り下げ"
+    },
 };
 
 let okCount = 0;

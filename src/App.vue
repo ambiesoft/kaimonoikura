@@ -231,6 +231,18 @@ function doTest() {
   testFunc("okFunabashiKeiba zeis[1].allvalue()", 27, zeis.value[1].allvalue());
   testFunc("okFunabashiKeiba goukei", 7507, goukei.value);
 
+  selectedStoreProfile.value = testData.okNoCash3Pepsi103Checked.selectedStoreProfile;
+  kaimonoItems.value = testData.okNoCash3Pepsi103Checked.kaimonoItems;
+  testFunc("okNoCash3Pepsi103Checked syoukei", 752, syoukei.value);
+  testFunc("okNoCash3Pepsi103Checked allItemHinCount", 5, allItemHinCount.value);
+  testFunc("okNoCash3Pepsi103Checked allItemCount", 7, allItemCount.value);
+  testFunc("okNoCash3Pepsi103Checked disp_syoukei", 752, disp_syoukei.value);
+  testFunc("okNoCash3Pepsi103Checked zeis len", 1, zeis.value.length);
+  testFunc("okNoCash3Pepsi103Checked zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("okNoCash3Pepsi103Checked zeis[0].targetValue", 752, zeis.value[0].targetValue);
+  testFunc("okNoCash3Pepsi103Checked zeis[0].allvalue()", 60, zeis.value[0].allvalue());
+  testFunc("okNoCash3Pepsi103Checked goukei", 812, goukei.value);
+
   showTestResult();
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
@@ -470,6 +482,9 @@ function getHasuuSyori() {
   }
   return Constants.HASUU_SYORI_ONEBYONE;
 }
+function isItemOk3_103(item) {
+  return isOKProfile() && item.ok3_103;
+}
 function getItemSyoukei(item, withoutOK3_103) {
   if (item.disabled) {
     return 0;
@@ -478,7 +493,7 @@ function getItemSyoukei(item, withoutOK3_103) {
   const count = Number(item.count);
   const taxRate = Number(item.taxRate);
   let discountRates = getDiscountRates(item);
-  if (item.ok3_103 && !withoutOK3_103) {
+  if (isItemOk3_103(item) && !withoutOK3_103) {
     discountRates.push(Constants.DISCOUNT_RATE_OK_3_103_N);
   }
 
@@ -503,7 +518,7 @@ function getZeis() {
   kaimonoItems.value.forEach((item) => {
     if (!item.disabled) {
       let rate = item.taxRate;
-      if (item.ok3_103) {
+      if (isItemOk3_103(item)) {
         console.assert(rate == Constants.TAXRATE_EIGHT);
         rate = Constants.TAXRATE_EIGHTF8;
       }
@@ -599,7 +614,7 @@ function getItemErrorMessage(item) {
     return "個数がゼロです";
   }
   if (isOKProfile()) {
-    if (item.taxRate != 8 && item.ok3_103) {
+    if (item.taxRate != 8 && isItemOk3_103(item)) {
       return "税率が８％でないのに3/103が有効です"
     }
   }
