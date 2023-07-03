@@ -360,7 +360,8 @@ function decrementCount(item, index) {
   item.count--;
 }
 
-function incrementDiscountRate(item) {
+function incrementDiscountRate(item, index) {
+  discountRateRefs.value[index].focus();
   if ((String(item.discountRate)).indexOf(':') >= 0) {
     return;
   }
@@ -369,7 +370,8 @@ function incrementDiscountRate(item) {
   }
   item.discountRate++;
 }
-function decrementDiscountRate(item) {
+function decrementDiscountRate(item, index) {
+  discountRateRefs.value[index].focus();
   if ((String(item.discountRate)).indexOf(':') >= 0) {
     return;
   }
@@ -382,13 +384,15 @@ function decrementDiscountRate(item) {
   }
 }
 
-function incrementDiscountValue(item) {
+function incrementDiscountValue(item, index) {
+  discountValueRefs.value[index].focus();
   if (!item.discountValue) {
     item.discountValue = 0;
   }
   item.discountValue++;
 }
-function decrementDiscountValue(item) {
+function decrementDiscountValue(item, index) {
+  discountValueRefs.value[index].focus();
   if (!item.discountValue) {
     return;
   }
@@ -401,6 +405,8 @@ function decrementDiscountValue(item) {
 const INCORDEC_INC = 1;
 const INCORDEC_DEC = 2;
 function incrementOrdecrementTaxRate(index, inc_or_dec) {
+  taxRateRefs.value[index].focus();
+
   let curRate = kaimonoItems.value[index].taxRate;
   const curIndex = Constants.TAXRATEVALUES.findIndex((v) => curRate == v);
   let incdec = (inc_or_dec == INCORDEC_INC ? 1 : -1);
@@ -782,6 +788,9 @@ const kakaku_placeholder = computed(() => {
 const nameRefs = ref([])
 const kakakuRefs = ref([])
 const countRefs = ref([])
+const discountRateRefs = ref([])
+const discountValueRefs = ref([])
+const taxRateRefs = ref([])
 const addButtonRef = ref()
 onMounted(() => console.log("onMounted"));
 
@@ -846,13 +855,14 @@ function onMemoChange() {
       <div class="cell">
         <div class="setumei">割引％</div>
         <div class="discount-rate">
-          <input class="numberinput" v-model="item.discountRate" @keypress="isNumberOrComma($event)" />
+          <input ref="discountRateRefs" class="numberinput" v-model="item.discountRate"
+            @keypress="isNumberOrComma($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementDiscountRate(item)">
+          <button class="twobutton" @click="decrementDiscountRate(item, index)">
             {{ Constants.downChar }}
           </button>
-          <button class="twobutton" @click="incrementDiscountRate(item)">
+          <button class="twobutton" @click="incrementDiscountRate(item, index)">
             {{ Constants.upChar }}
           </button>
         </div>
@@ -861,13 +871,14 @@ function onMemoChange() {
       <div class="cell">
         <div class="setumei">割引円</div>
         <div class="discount-value">
-          <input class="numberinput" type="number" v-model="item.discountValue" @keypress="isNumber($event)" />
+          <input ref="discountValueRefs" class="numberinput" type="number" v-model="item.discountValue"
+            @keypress="isNumber($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementDiscountValue(item)">
+          <button class="twobutton" @click="decrementDiscountValue(item, index)">
             {{ Constants.downChar }}
           </button>
-          <button class="twobutton" @click="incrementDiscountValue(item)">
+          <button class="twobutton" @click="incrementDiscountValue(item, index)">
             {{ Constants.upChar }}
           </button>
         </div>
@@ -876,7 +887,7 @@ function onMemoChange() {
       <div class="cell">
         <div class="setumei">税率％</div>
         <div class="tax-rate">
-          <input class="numberinput" v-model="item.taxRate" @keypress="isNumber($event)" />
+          <input ref="taxRateRefs" class="numberinput" v-model="item.taxRate" @keypress="isNumber($event)" />
         </div>
         <div>
           <button class="twobutton" @click="decrementTaxRate(index)">
