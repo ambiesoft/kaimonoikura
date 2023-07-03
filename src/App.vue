@@ -408,9 +408,11 @@ function addItem(event) {
     discountValue: null,
     taxRate: Constants.TAXRATE_EIGHT,
   });
-  const buttonWidth = addButtonRef.value.offsetWidth;
-  const clickPositionX = event.clientX;
-  const isLeftClick = clickPositionX < buttonWidth / 3;
+  const buttonRect = addButtonRef.value.getBoundingClientRect();
+  const buttonPosWidth = buttonRect.right - buttonRect.left;
+  const clickPositionX = event.clientX - buttonRect.left;
+  const left1_3PosWidth = buttonPosWidth / 3;
+  const isLeftClick = clickPositionX < left1_3PosWidth;
 
   nextTick(() => {
     if (isLeftClick) {
@@ -419,7 +421,6 @@ function addItem(event) {
       kakakuRefs.value[kakakuRefs.value.length - 1].focus();
     }
   });
-
 }
 function clearAll() {
   if (kaimonoItems.value.length == 0) {
