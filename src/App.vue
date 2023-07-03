@@ -398,7 +398,7 @@ function decrementTaxRate(index) {
   incrementOrdecrementTaxRate(index, INCORDEC_DEC);
 }
 
-function addItem() {
+function addItem(event) {
   kaimonoItems.value.push({
     goods: "",
     price: null,
@@ -408,8 +408,16 @@ function addItem() {
     discountValue: null,
     taxRate: Constants.TAXRATE_EIGHT,
   });
+  const buttonWidth = addButtonRef.value.offsetWidth;
+  const clickPositionX = event.clientX;
+  const isLeftClick = clickPositionX < buttonWidth / 3;
+
   nextTick(() => {
-    kakakuRefs.value[kakakuRefs.value.length - 1].focus();
+    if (isLeftClick) {
+      nameRefs.value[nameRefs.value.length - 1].focus();
+    } else {
+      kakakuRefs.value[kakakuRefs.value.length - 1].focus();
+    }
   });
 
 }
@@ -746,7 +754,9 @@ const kakaku_placeholder = computed(() => {
   }
   return "税抜価格";
 });
+const nameRefs = ref([])
 const kakakuRefs = ref([])
+const addButtonRef = ref()
 onMounted(() => console.log("onMounted"));
 </script>
 
@@ -773,7 +783,7 @@ onMounted(() => console.log("onMounted"));
       <div class="cell">
         <div class="setumei">商品 {{ index + 1 }}</div>
         <div class="goods">
-          <input class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
+          <input ref="nameRefs" class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
         </div>
         <div></div>
       </div>
@@ -876,7 +886,7 @@ onMounted(() => console.log("onMounted"));
     <!-- end of loop -->
 
     <div class="container-cell">
-      <button @click="addItem" class="cell3columns">追加</button>
+      <button ref="addButtonRef" @click="addItem" class="cell3columns">追加</button>
     </div>
 
     <div class="container-cell" v-if="isOKProfile()">
