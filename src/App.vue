@@ -662,25 +662,47 @@ const disp_syoukei = computed(() => {
   return syoukei.value;
 })
 
-const { files: filesFileDialog,
-  open: openFileDialog,
-  reset,
-  onChange: onChangeFileDialog } = useFileDialog()
+
 function loadlocal() {
+  const { files: filesFileDialog,
+    open: openFileDialog,
+    reset: resetFileDialog,
+    onChange: onChangeFileDialog } = useFileDialog()
+  resetFileDialog();
   openFileDialog();
+
   onChangeFileDialog((files) => {
     const file = files[0];
     let reader = new FileReader();
     reader.readAsText(file);
-    reader.onload = function () {
-      const loadedObj = JSON.parse(reader.result);
-      selectedStoreProfile.value = loadedObj.selectedStoreProfile;
-      kaimonoItems.value = loadedObj.kaimonoItems;
-      saveItems();
+    reader.onload = () => {
+      try {
+        if (reader.result.trim() === "") {
+          alert("ファイルが空です。");
+          return;
+        }
+        const loadedObj = JSON.parse(reader.result);
+        console.log("onload-afterParse", loadedObj);
+        if (!loadedObj.selectedStoreProfile &&
+          !loadedObj.kaimonoItems) {
+          alert("ファイルにデータがありません。");
+          return;
+        }
+        selectedStoreProfile.value = loadedObj.selectedStoreProfile;
+        kaimonoItems.value = loadedObj.kaimonoItems;
+        saveItems();
+      } catch (error) {
+        console.error(error);
+        alert("JSONの解析に失敗しました\n\n" + error);
+      }
     };
     reader.onerror = function () {
       console.error(reader.error);
       alert(reader.error);
+    };
+    reader.onloadend = function () {
+      console.log("onloadend");
+      resetFileDialog();
     };
   })
 }
