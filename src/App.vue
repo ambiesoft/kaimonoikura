@@ -348,10 +348,12 @@ function isNumberOrComma(evt) {
   }
   return isNumber(evt);
 }
-function incrementCount(item) {
+function incrementCount(item, index) {
+  countRefs.value[index].focus();
   item.count++;
 }
-function decrementCount(item) {
+function decrementCount(item, index) {
+  countRefs.value[index].focus();
   if (item.count == 0) {
     return;
   }
@@ -779,6 +781,7 @@ const kakaku_placeholder = computed(() => {
 });
 const nameRefs = ref([])
 const kakakuRefs = ref([])
+const countRefs = ref([])
 const addButtonRef = ref()
 onMounted(() => console.log("onMounted"));
 
@@ -828,13 +831,13 @@ function onMemoChange() {
       <div class="cell">
         <div class="setumei">個数</div>
         <div class="count">
-          <input class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
+          <input ref="countRefs" class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
         </div>
         <div>
-          <button class="twobutton" @click="decrementCount(item)">
+          <button class="twobutton" @click="decrementCount(item, index)">
             {{ Constants.downChar }}
           </button>
-          <button class="twobutton" @click="incrementCount(item)">
+          <button class="twobutton" @click="incrementCount(item, index)">
             {{ Constants.upChar }}
           </button>
         </div>
