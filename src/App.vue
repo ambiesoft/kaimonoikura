@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, nextTick } from "vue";
 import Constants from './constants';
 import { computeDiscountedPriceFromRate } from '@/utils';
 import { testFunc, clearTestResult, showTestResult, testData } from '@/debug';
@@ -392,6 +392,10 @@ function addItem() {
     discountValue: null,
     taxRate: Constants.TAXRATE_EIGHT,
   });
+  nextTick(() => {
+    kakakuRefs.value[kakakuRefs.value.length - 1].focus();
+  });
+
 }
 function clearAll() {
   if (kaimonoItems.value.length == 0) {
@@ -703,6 +707,8 @@ const kakaku_placeholder = computed(() => {
   }
   return "税抜価格";
 });
+const kakakuRefs = ref([])
+onMounted(() => console.log("onMounted"));
 </script>
 
 <template>
@@ -736,7 +742,7 @@ const kakaku_placeholder = computed(() => {
       <div class="cell">
         <div class="setumei">価格</div>
         <div class="price">
-          <input class="numberinput" type="number" @focus="setItemInfoMessage(item, kakaku_placeholder)"
+          <input ref="kakakuRefs" class="numberinput" type="number" @focus="setItemInfoMessage(item, kakaku_placeholder)"
             @blur="setItemInfoMessage(item, null)" :placeholder="kakaku_placeholder" v-model="item.price"
             @keypress="isNumber($event)" />
         </div>
