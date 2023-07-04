@@ -804,12 +804,12 @@ function onMemoChange() {
     <button @click="doTest">doTest</button>
   </div>
   <div class="container">
-    <h1>🛒買い物いくら？🛒</h1>
+    <h1>🛒買い物いくら🛒</h1>
 
     <div class="container-cell">
       <div class="cell3columns storeprofile">
-        <label id="label_storeselect" for="storeselect">会計方式：</label>
-        <select id="storeselect" v-model="selectedStoreProfile">
+        <label class="label_storeselect" for="storeselect_top">会計方式：</label>
+        <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
           <option v-for="sp in Constants.STOREPROFILES">{{ sp }}</option>
         </select>
       </div>
@@ -930,6 +930,15 @@ function onMemoChange() {
       <button ref="addButtonRef" @click="addItem" class="cell3columns">追加</button>
     </div>
 
+    <div class="container-cell">
+      <div class="cell3columns storeprofile">
+        <label class="label_storeselect" for="storeselect_bottom">会計方式：</label>
+        <select id="storeselect_bottom" class="storeselect" v-model="selectedStoreProfile">
+          <option v-for="sp in Constants.STOREPROFILES">{{ sp }}</option>
+        </select>
+      </div>
+    </div>
+
     <div class="container-cell" v-if="isOKProfile()">
       <div class="goukei cell3columns">割引前合計 ¥{{ syoukei }}</div>
     </div>
@@ -1019,11 +1028,11 @@ p {
   margin: 0 auto;
 }
 
-#label_storeselect {
+.label_storeselect {
   vertical-align: middle;
 }
 
-#storeselect {
+.storeselect {
   height: 100%;
   vertical-align: middle;
 }
