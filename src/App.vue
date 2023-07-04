@@ -243,6 +243,33 @@ function doTest() {
   testFunc("okNoCash3Pepsi103Checked zeis[0].allvalue()", 60, zeis.value[0].allvalue());
   testFunc("okNoCash3Pepsi103Checked goukei", 812, goukei.value);
 
+
+  // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
+  const syouhinnsuu = 2;
+  let allLoopCount = 0;
+  [[0], [0.3], [3 / 103], [3 / 103, 0.3], [3 / 103, 0.5]].forEach(rate => {
+    [false, true].forEach(compeach => {
+      [Math.ceil, Math.round, Math.floor].forEach(func => {
+        for (let i = 1; i < 10000; ++i) {
+          allLoopCount++;
+          testFunc(`Result with price=${i}, rate=${rate}, each=${compeach}, hasuuFunc=${func}`,
+            computeDiscountedPriceFromRate(i, syouhinnsuu, rate, {
+              computeEach: compeach,
+              hasuuSyori: Constants.HASUU_SYORI_ONCE,
+              hasuuFunc: func,
+            }),
+            computeDiscountedPriceFromRate(i, syouhinnsuu, rate, {
+              computeEach: compeach,
+              hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
+              hasuuFunc: func,
+            })
+          );
+        }
+      });
+    });
+  });
+  console.log("All Loop Count", allLoopCount);
+
   showTestResult();
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
