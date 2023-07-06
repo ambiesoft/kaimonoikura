@@ -9,14 +9,15 @@ import { saveAs } from 'file-saver';
 const DEBUGGING = ref(Constants.DEBUGGING);
 console.log("DEBUGGING", Constants.DEBUGGING)
 
+const DISCOUNTRATE_SEPARATOR = ' ';
+const LOCALSTORAGE_DEFAULT = "defaultls";
 
+function formatSpace(s) {
+  return s.replace(/　/g, ' ');
+}
 function getTaxRateIndex(trv) {
   return Constants.TAXRATEVALUES.findIndex((v) => trv == v);
 }
-
-
-const LOCALSTORAGE_DEFAULT = "defaultls";
-
 
 function doTest() {
   const saveCurrentStoreProfile = selectedStoreProfile.value;
@@ -245,30 +246,32 @@ function doTest() {
 
 
   // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
-  const syouhinnsuu = 2;
-  let allLoopCount = 0;
-  [[0], [0.3], [3 / 103], [3 / 103, 0.3], [3 / 103, 0.5]].forEach(rate => {
-    [false, true].forEach(compeach => {
-      [Math.ceil, Math.round, Math.floor].forEach(func => {
-        for (let i = 1; i < 10000; ++i) {
-          allLoopCount++;
-          testFunc(`Result with price=${i}, rate=${rate}, each=${compeach}, hasuuFunc=${func}`,
-            computeDiscountedPriceFromRate(i, syouhinnsuu, rate, {
-              computeEach: compeach,
-              hasuuSyori: Constants.HASUU_SYORI_ONCE,
-              hasuuFunc: func,
-            }),
-            computeDiscountedPriceFromRate(i, syouhinnsuu, rate, {
-              computeEach: compeach,
-              hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
-              hasuuFunc: func,
-            })
-          );
-        }
+  if (false) {
+    const syouhinnsuu = 2;
+    let allLoopCount = 0;
+    [[0], [0.3], [3 / 103], [3 / 103, 0.3], [3 / 103, 0.5]].forEach(rate => {
+      [false, true].forEach(compeach => {
+        [Math.ceil, Math.round, Math.floor].forEach(func => {
+          for (let i = 1; i < 10000; ++i) {
+            allLoopCount++;
+            testFunc(`Result with price=${i}, rate=${rate}, each=${compeach}, hasuuFunc=${func}`,
+              computeDiscountedPriceFromRate(i, syouhinnsuu, rate, {
+                computeEach: compeach,
+                hasuuSyori: Constants.HASUU_SYORI_ONCE,
+                hasuuFunc: func,
+              }),
+              computeDiscountedPriceFromRate(i, syouhinnsuu, rate, {
+                computeEach: compeach,
+                hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
+                hasuuFunc: func,
+              })
+            );
+          }
+        });
       });
     });
-  });
-  console.log("All Loop Count", allLoopCount);
+    console.log("All Loop Count", allLoopCount);
+  }
 
   showTestResult();
 
@@ -292,7 +295,7 @@ if (Constants.DEBUGGING) {
   // setItems(testData.seiyuNormal);
   // setItems(testData.okWith10);
   // setItems(testData.okwithNotF8);
-  // setItems(testData.okWithCashAndDiscount);
+  setItems(testData.okWithCashAndDiscount);
   // setItems(testData.okDiscountWithID);
   // setItems(testData.aeon1963);
   // setItems(testData.aeon1092);
@@ -368,9 +371,9 @@ function isNumber(evt) {
     return true;
   }
 }
-function isNumberOrComma(evt) {
+function isNumberOrSpace(evt) {
   var charCode = evt.which ? evt.which : evt.keyCode;
-  if (charCode == 58) {
+  if (charCode == 0x20) {
     return true;
   }
   return isNumber(evt);
@@ -495,7 +498,7 @@ function getDiscountRates(item) {
     return [rate / 100];
   }
   let ret = []
-  rate.split(':').map(String).forEach((r) => {
+  formatSpace(rate).split(DISCOUNTRATE_SEPARATOR).map(String).forEach((r) => {
     ret.push(Number(r) / 100);
   })
   return ret;
@@ -754,7 +757,13 @@ function loadlocalFile() {
   openFileDialog();
 
   onChangeFileDialog((files) => {
+    const TENMEGA = 10 * 1024 * 1024;
     const file = files[0];
+    if (file.size > TENMEGA) {
+      if (!confirm(`${file.name} のサイズは１０Mバイト以上あります。本当に読み込みますか？`)) {
+        return;
+      }
+    }
     let reader = new FileReader();
     reader.readAsText(file);
     reader.onload = () => {
@@ -899,7 +908,7 @@ function onMemoChange() {
         <div class="setumei">割引％</div>
         <div class="discount-rate">
           <input ref="discountRateRefs" class="numberinput" inputmode="decimal" v-model="item.discountRate"
-            @keypress="isNumberOrComma($event)" />
+            @keypress="isNumberOrSpace($event)" />
         </div>
         <div>
           <button class="twobutton" @click="decrementDiscountRate(item, index)">
@@ -1006,7 +1015,7 @@ function onMemoChange() {
           店舗によって割引（％）の端数の計算方法が違います。「会計方式」から適切なものを選択してください。
         </li>
         <li>
-          ２つ以上の割引がある場合があります。例えば１つめの商品そのものの割引でもう１つは会員割引などです。２つが例として２０％、５％の場合は「割引％」欄に「20:5」と指定してください。
+          ２つ以上の割引がある場合があります。例えば１つめの商品そのものの割引でもう１つは会員割引などです。２つが例として２０％、５％の場合は「割引％」欄に「20 5」と２つの値をスペースで区切って指定してください。
         </li>
         <li>
           オーケーストアでは会員カードを提示して現金で支払うと3/103割引を受けられる食料品があります。その場合は「3/103」をチェックしてください。このような商品の場合値札には４つの価格が示されています。価格の欄に入力する値は割引前でかつ税抜きの価格です。通常は４つの価格の打ち左下に表示されている価格です。

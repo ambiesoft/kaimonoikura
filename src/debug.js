@@ -385,14 +385,14 @@ export const testData = {
                 goods: "スペシャルサンド",
                 price: 297,
                 count: 1,
-                discountRate: "20:5",
+                discountRate: "20　5 ",
                 taxRate: Constants.TAXRATE_EIGHT,
             },
             {
                 goods: "TVツナマヨ巻",
                 price: 118,
                 count: 1,
-                discountRate: "10:5",
+                discountRate: "10 5",
                 taxRate: Constants.TAXRATE_EIGHT,
             },
             {
