@@ -880,22 +880,6 @@ function onMemoChange() {
       </div>
 
       <div class="cell">
-        <div class="setumei">割引％</div>
-        <div class="discount-rate">
-          <input ref="discountRateRefs" class="numberinput" v-model="item.discountRate"
-            @keypress="isNumberOrComma($event)" />
-        </div>
-        <div>
-          <button class="twobutton" @click="decrementDiscountRate(item, index)">
-            {{ Constants.downChar }}
-          </button>
-          <button class="twobutton" @click="incrementDiscountRate(item, index)">
-            {{ Constants.upChar }}
-          </button>
-        </div>
-      </div>
-
-      <div class="cell">
         <div class="setumei">割引円</div>
         <div class="discount-value">
           <input ref="discountValueRefs" class="numberinput" type="number" v-model="item.discountValue"
@@ -906,6 +890,22 @@ function onMemoChange() {
             {{ Constants.downChar }}
           </button>
           <button class="twobutton" @click="incrementDiscountValue(item, index)">
+            {{ Constants.upChar }}
+          </button>
+        </div>
+      </div>
+
+      <div class="cell">
+        <div class="setumei">割引％</div>
+        <div class="discount-rate">
+          <input ref="discountRateRefs" class="numberinput" inputmode="decimal" v-model="item.discountRate"
+            @keypress="isNumberOrComma($event)" />
+        </div>
+        <div>
+          <button class="twobutton" @click="decrementDiscountRate(item, index)">
+            {{ Constants.downChar }}
+          </button>
+          <button class="twobutton" @click="incrementDiscountRate(item, index)">
             {{ Constants.upChar }}
           </button>
         </div>
