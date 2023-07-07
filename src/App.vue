@@ -283,6 +283,7 @@ const loaded = loadFromLocalStorage(LOCALSTORAGE_DEFAULT);
 const kaimonoItems = ref(loaded.kaimonoItems ?? []);
 const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_WARIBIKI_FLOOR);
 const memo = ref(loaded.memo);
+const keisanki = ref(loaded.keisanki);
 
 if (Constants.DEBUGGING) {
   function setItems(loaded) {
@@ -295,7 +296,7 @@ if (Constants.DEBUGGING) {
   // setItems(testData.seiyuNormal);
   // setItems(testData.okWith10);
   // setItems(testData.okwithNotF8);
-  setItems(testData.okWithCashAndDiscount);
+  // setItems(testData.okWithCashAndDiscount);
   // setItems(testData.okDiscountWithID);
   // setItems(testData.aeon1963);
   // setItems(testData.aeon1092);
@@ -348,7 +349,14 @@ function getSaveJson() {
     "kaimonoItems": kaimonoItems.value,
     "selectedStoreProfile": selectedStoreProfile.value,
     "memo": memo.value,
+    "keisanki": keisanki.value,
   });
+}
+function applyObject(obj) {
+  selectedStoreProfile.value = obj.selectedStoreProfile;
+  kaimonoItems.value = obj.kaimonoItems;
+  memo.value = obj.memo;
+  keisanki.value = obj.keisanki;
 }
 function saveonLocalStorage() {
   localStorage.setItem(LOCALSTORAGE_DEFAULT, getSaveJson());
@@ -478,12 +486,13 @@ function addItem(event) {
   });
 }
 function clearAll() {
-  if (kaimonoItems.value.length == 0 && !memo.value) {
+  if (kaimonoItems.value.length == 0 && !memo.value && !keisanki.value) {
     return;
   }
   if (window.confirm('アイテムをすべて削除しますか？')) {
     kaimonoItems.value.splice(0, kaimonoItems.value.length);
     memo.value = null;
+    keisanki.value = null;
   }
 }
 function deleteItem(index) {
@@ -536,16 +545,33 @@ function getItemSyoukei(item, withoutOK3_103) {
   const price = Number(item.price);
   const count = Number(item.count);
   const taxRate = Number(item.taxRate);
-  let discountRates = getDiscountRates(item);
-  if (isItemOk3_103(item) && !withoutOK3_103) {
-    discountRates.push(Constants.DISCOUNT_RATE_OK_3_103_N);
+  const discountValue = Number(item.discountValue ?? 0);
+
+  const TODO_CURRENTLY_YENFIRST_RATELAST = true;
+
+  const yenWaribikiFunc = (price) => {
+    return price - discountValue;
   }
 
-  return computeDiscountedPriceFromRate(price, count, discountRates, {
-    computeEach: isComputeEach(),
-    hasuuFunc: getHasuuFunc(),
-    hasuuSyori: getHasuuSyori(),
-  });
+  const rateWaribikiFunc = (price) => {
+    let discountRates = getDiscountRates(item);
+    if (isItemOk3_103(item) && !withoutOK3_103) {
+      discountRates.push(Constants.DISCOUNT_RATE_OK_3_103_N);
+    }
+
+    return computeDiscountedPriceFromRate(price, count, discountRates, {
+      computeEach: isComputeEach(),
+      hasuuFunc: getHasuuFunc(),
+      hasuuSyori: getHasuuSyori(),
+    });
+  };
+
+  if (TODO_CURRENTLY_YENFIRST_RATELAST) {
+    return rateWaribikiFunc(yenWaribikiFunc(price));
+  } else {
+    return yenWaribikiFunc(rateWaribikiFunc(price));
+  }
+  console.error("Nazo");
 }
 function getSyoukei(withoutOK3_103) {
   let ret = 0;
@@ -779,9 +805,7 @@ function loadlocalFile() {
           alert("ファイルにデータがありません。");
           return;
         }
-        selectedStoreProfile.value = loadedObj.selectedStoreProfile;
-        kaimonoItems.value = loadedObj.kaimonoItems;
-        memo.value = loadedObj.memo;
+        applyObject(loadedObj);
         saveonLocalStorage();
       } catch (error) {
         console.error(error);
@@ -833,7 +857,28 @@ onMounted(() => console.log("onMounted"));
 function onMemoChange() {
   console.log(memo.value);
 }
+
+const keisanAnswer = computed(() => {
+  if (!keisanki.value) {
+    return;
+  }
+
+  try {
+    return "=" + eval(keisanki.value);
+  } catch (error) {
+    console.error(error);
+    return "計算式が不正です";
+  }
+});
+watch(keisanki, () => {
+  saveonLocalStorage();
+})
+
 </script>
+
+
+
+
 
 <template>
   <div v-if="DEBUGGING">
@@ -999,6 +1044,14 @@ function onMemoChange() {
     <div class="container-cell">
       <div class="goukei cell3columns">
         <textarea v-model="memo" @change="onMemoChange" id="t_message" name="message" placeholder="メモを記入"></textarea>
+      </div>
+    </div>
+    <div class="container-cell">
+      <div class="goukei cell3columns">
+        <input v-model="keisanki" placeholder="Javascript計算機　例：(123 + 10) * 0.05" />
+      </div>
+      <div class="keisanKekka">
+        {{ keisanAnswer }}
       </div>
     </div>
 
@@ -1175,6 +1228,10 @@ button {
 #t_message {
   width: 100%;
   height: 5em;
+}
+
+.keisanKekka {
+  padding-top: 3px;
 }
 
 .help {
