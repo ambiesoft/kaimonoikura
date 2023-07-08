@@ -931,7 +931,6 @@ watch(keisanki, () => {
           <div class="goods">
             <input ref="nameRefs" class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
           </div>
-          <div></div>
         </div>
 
         <div class="cell">
@@ -941,7 +940,6 @@ watch(keisanki, () => {
               @focus="setItemInfoMessage(item, kakaku_placeholder)" @blur="setItemInfoMessage(item, null)"
               :placeholder="kakaku_placeholder" v-model="item.price" @keypress="isNumber($event)" />
           </div>
-          <div></div>
         </div>
 
         <div class="cell">
@@ -1189,8 +1187,6 @@ p {
 .cell {
   display: grid;
   grid-template-columns: 1fr;
-
-  flex-direction: column;
   text-align: center;
   padding-left: 6px;
 }
@@ -1215,6 +1211,15 @@ p {
 
 .setumei {
   font-size: medium;
+}
+
+.goods {
+  /* TODO: why 100? */
+  grid-row: span 100;
+}
+
+.price {
+  grid-row: span 100;
 }
 
 .checklabel {
