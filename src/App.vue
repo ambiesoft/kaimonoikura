@@ -880,6 +880,9 @@ function formatForEval(s) {
   if (s.indexOf('"') >= 0) {
     return "";
   }
+  if (s.indexOf('`') >= 0) {
+    return "";
+  }
   return s;
 }
 const keisanAnswer = computed(() => {
