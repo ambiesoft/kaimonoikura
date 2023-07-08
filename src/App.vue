@@ -293,7 +293,7 @@ function doTest() {
 
 const loaded = loadFromLocalStorage(LOCALSTORAGE_DEFAULT);
 const kaimonoItems = ref(loaded.kaimonoItems ?? []);
-const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_WARIBIKI_FLOOR);
+const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_DEFAULT);
 const memo = ref(loaded.memo);
 const keisanki = ref(loaded.keisanki);
 
@@ -317,15 +317,13 @@ if (Constants.DEBUGGING) {
   // setItems(testData.maruetuManyWaribiki);
   // setItems(testData.okFunabashiKeiba);
 }
-function isOKProfile() {
+function isOKWithKaiinProfile() {
   return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTOREWITHKAIIN;
 }
-function isWaribikiCeal() {
-  return selectedStoreProfile.value == Constants.STOREPROFILE_WARIBIKI_CEAL;
+function isOKWithoutKaiinProfile() {
+  return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTORE;
 }
-function isWaribikiRound() {
-  return selectedStoreProfile.value == Constants.STOREPROFILE_WARIBIKI_ROUND;
-}
+
 function loadFromLocalStorage(storageKey) {
   let ls = localStorage.getItem(storageKey);
   if (ls && ls[0] != "{") {
@@ -350,7 +348,7 @@ function isValidKaimonoitems(kis) {
   if (!kis.selectedStoreProfile) {
     return true;
   }
-  if (typeof kis.selectedStoreProfile != "string") {
+  if (typeof kis.selectedStoreProfile != "object") {
     return false;
   }
   return true;
@@ -479,7 +477,7 @@ function addItem(event) {
     price: null,
     count: 1,
     discountRate: null,
-    ok3_103: isOKProfile(),
+    ok3_103: isOKWithKaiinProfile(),
     discountValue: null,
     taxRate: Constants.TAXRATE_EIGHT,
   });
@@ -525,30 +523,22 @@ function getDiscountRates(item) {
   return ret;
 }
 function isComputeEach() {
-  if (isOKProfile()) {
-    return true;
-  }
-  return false;
+  return selectedStoreProfile.value.computeEach;
 }
 function getHasuuFunc() {
-  if (isOKProfile()) {
-    return Math.floor;
-  } else if (isWaribikiCeal()) {
-    return Math.ceil;
-  } else if (isWaribikiRound()) {
-    return Math.round;
-  } else {
-    return Math.floor;
+  switch (selectedStoreProfile.value.discountProfile) {
+    case Constants.DISCOUNT_PROFILE_CEAL: return Math.ceil;
+    case Constants.DISCOUNT_PROFILE_ROUND: return Math.round;
+    case Constants.DISCOUNT_PROFILE_FLOOR: return Math.floor;
   }
+  console.error("Invalid discountProfile", selectedStoreProfile.value);
+  console.error("Invalid discountProfile", selectedStoreProfile.value.discountProfile);
 }
 function getHasuuSyori() {
-  if (isOKProfile()) {
-    return Constants.HASUU_SYORI_ONCE;
-  }
-  return Constants.HASUU_SYORI_ONEBYONE;
+  return selectedStoreProfile.value.hasuuSyori;
 }
 function isItemOk3_103(item) {
-  return isOKProfile() && item.ok3_103;
+  return isOKWithKaiinProfile() && item.ok3_103;
 }
 function getItemSyoukei(item, withoutOK3_103) {
   if (item.disabled) {
@@ -695,7 +685,7 @@ function getItemErrorMessage(item) {
   if (!item.count || item.count == 0) {
     return "個数がゼロです";
   }
-  if (isOKProfile()) {
+  if (isOKWithoutKaiinProfile()) {
     if (item.taxRate != 8 && isItemOk3_103(item)) {
       return "税率が８％でないのに3/103が有効です"
     }
@@ -772,14 +762,14 @@ function getContainerCellClass(item, index) {
   return index % 2 == 0 ? 'even_bg' : 'odd_bg';
 }
 const ok3_100kei = computed(() => {
-  if (!isOKProfile()) {
+  if (!isOKWithKaiinProfile()) {
     console.error("Profile must be 'OKStore'");
     return 0;
   }
   return getSyoukei(true) - getSyoukei(false);
 });
 const disp_syoukei = computed(() => {
-  if (isOKProfile()) {
+  if (isOKWithKaiinProfile()) {
     return getSyoukei(false);
   }
   return syoukei.value;
@@ -852,7 +842,7 @@ function savelocalFile() {
 }
 
 const kakaku_placeholder = computed(() => {
-  if (isOKProfile()) {
+  if (isOKWithKaiinProfile() || isOKWithoutKaiinProfile()) {
     return "非会員の税抜価格";
   }
   return "税抜価格";
@@ -918,7 +908,7 @@ watch(keisanki, () => {
       <div class="cell3columns storeprofile">
         <label class="label_storeselect" for="storeselect_top">会計方式：</label>
         <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
-          <option v-for="sp in Constants.STOREPROFILES">{{ sp }}</option>
+          <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
         </select>
       </div>
     </div>
@@ -1009,7 +999,7 @@ watch(keisanki, () => {
 
         <div class="cell">
           <!-- <div class="setumei">有効</div> -->
-          <div v-if="isOKProfile()">
+          <div v-if="isOKWithKaiinProfile()">
             <div class="checklabel">
               <input :id="'ok3_103_check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103"
                 :checked="item.ok3_103" />
@@ -1041,41 +1031,41 @@ watch(keisanki, () => {
 
     <div class="container-cell">
       <div class="cell3columns storeprofile">
-        <label class="label_storeselect" for="storeselect_bottom">会計方式：</label>
-        <select id="storeselect_bottom" class="storeselect" v-model="selectedStoreProfile">
-          <option v-for="sp in Constants.STOREPROFILES">{{ sp }}</option>
+        <label class="label_storeselect" for="storeselect_top">会計方式：</label>
+        <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
+          <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
         </select>
       </div>
     </div>
 
-    <div class="container-cell" v-if="isOKProfile()">
-      <div class="goukei cell3columns">割引前合計 ¥{{ syoukei }}</div>
+    <div class="container-cell" v-if="isOKWithKaiinProfile()">
+      <div class="kei cell3columns">割引前合計 ¥{{ syoukei }}</div>
     </div>
-    <div class="container-cell" v-if="isOKProfile()">
-      <div class="goukei cell3columns">F食料品3/103割引 -{{ ok3_100kei }}</div>
+    <div class="container-cell" v-if="isOKWithKaiinProfile()">
+      <div class="kei cell3columns">F食料品3/103割引 -{{ ok3_100kei }}</div>
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ disp_syoukei }}</div>
+      <div class="kei cell3columns">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ disp_syoukei }}</div>
     </div>
 
     <div class="container-cell" v-if="zeis.length">
-      <div class="goukei cell3columns" v-for="(zei, index) in zeis">
+      <div class="kei cell3columns" v-for="(zei, index) in zeis">
         税{{ zei.ratePercent }}% 対象額 ¥{{ zei.targetValue }} 税額 ¥{{ zei.allvalue() }}
       </div>
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns">合計 ¥{{ goukei }}</div>
+      <div class="kei goukei cell3columns">合計 ¥{{ goukei }}</div>
     </div>
 
     <div class="container-cell">
-      <div class="goukei cell3columns">
+      <div class="cell3columns">
         <textarea v-model="memo" @change="onMemoChange" id="t_message" name="message" placeholder="メモを記入"></textarea>
       </div>
     </div>
     <div class="container-cell">
-      <div class="goukei cell3columns">
+      <div class="cell3columns">
         <input v-model="keisanki" placeholder="Javascript計算機　例：(123 + 10) * 0.05" />
       </div>
       <div class="keisanKekka">
@@ -1268,9 +1258,13 @@ button {
   width: 16px;
 }
 
-.goukei {
+.kei {
   width: 100%;
   text-align: right;
+}
+
+.goukei {
+  font-size: x-large;
 }
 
 #t_message {

@@ -28,10 +28,9 @@ const _c = {
     TAXRATE_KOMI_TEN: "込10",
     TAXRATE_EIGHTF8: "F8",
 
-    STOREPROFILE_WARIBIKI_FLOOR: "割引率切り下げ",
-    STOREPROFILE_WARIBIKI_ROUND: "割引率四捨五入",
-    STOREPROFILE_WARIBIKI_CEAL: "割引率切り上げ",
-    STOREPROFILE_OKSTOREWITHKAIIN: "オーケーストアwith会員カード",
+    DISCOUNT_PROFILE_FLOOR: "割引率切り下げ",
+    DISCOUNT_PROFILE_ROUND: "割引率四捨五入",
+    DISCOUNT_PROFILE_CEAL: "割引率切り上げ",
 
 };
 
@@ -42,12 +41,59 @@ _c.TAXRATEVALUES = [
     _c.TAXRATE_KOMI_EIGHT,
     _c.TAXRATE_KOMI_TEN,
 ];
+_c.DISCOUNT_PROFILES = [
+    _c.DISCOUNT_PROFILE_FLOOR,
+    _c.DISCOUNT_PROFILE_ROUND,
+    _c.DISCOUNT_PROFILE_CEAL,
+]
+
+_c.STOREPROFILE_DEFAULT = {
+    name: "デフォルト",
+    discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
+    computeEach: false,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
+_c.STOREPROFILE_AEON = {
+    name: "イオン",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: false,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
+_c.STOREPROFILE_OKSTORE = {
+    name: "オーケーストア",
+    discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
+    computeEach: true,
+    hasuuSyori: _c.HASUU_SYORI_ONCE,
+}
+_c.STOREPROFILE_OKSTOREWITHKAIIN = {
+    name: "オーケーストアwith会員カード",
+    discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
+    computeEach: true,
+    hasuuSyori: _c.HASUU_SYORI_ONCE,
+}
+_c.STOREPROFILE_MARINEPIA = {
+    name: "マリンピア",
+    discountProfile: _c.DISCOUNT_PROFILE_ROUND,
+    computeEach: false,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
+_c.STOREPROFILE_MARUETSU = {
+    name: "マルエツ",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: false,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
+
 _c.STOREPROFILES = [
-    _c.STOREPROFILE_WARIBIKI_FLOOR,
-    _c.STOREPROFILE_WARIBIKI_ROUND,
-    _c.STOREPROFILE_WARIBIKI_CEAL,
+
+
+    _c.STOREPROFILE_DEFAULT,
+    _c.STOREPROFILE_OKSTORE,
     _c.STOREPROFILE_OKSTOREWITHKAIIN,
+    _c.STOREPROFILE_MARINEPIA,
+    _c.STOREPROFILE_MARUETSU,
 ];
+
 const deepFreeze = (object) => {
     Object.freeze(object);
 

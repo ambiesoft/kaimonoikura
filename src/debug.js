@@ -4,7 +4,7 @@ import { computeDiscountedPriceFromRate } from '@/utils';
 export const testData = {
     /** maruetsuNormal */
     maruetsuNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_CEAL,
+        selectedStoreProfile: Constants.STOREPROFILE_MARUETSU,
         kaimonoItems: [
             {
                 goods: "ファンタ２０００",
@@ -36,7 +36,7 @@ export const testData = {
 
     /** berxNormal */
     berxNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_FLOOR,
+        selectedStoreProfile: Constants.STOREPROFILE_DEFAULT,
         kaimonoItems: [
             {
                 goods: "エッセルS",
@@ -56,7 +56,7 @@ export const testData = {
 
     /** PARLIAMENT */
     parliamentNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_FLOOR,
+        selectedStoreProfile: Constants.STOREPROFILE_DEFAULT,
         kaimonoItems: [
             {
                 goods: "パーラメント",
@@ -69,7 +69,7 @@ export const testData = {
 
     /** SeiyuNormal */
     seiyuNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_FLOOR,
+        selectedStoreProfile: Constants.STOREPROFILE_DEFAULT,
         kaimonoItems: [
             {
                 goods: "ふくろ",
@@ -290,7 +290,7 @@ export const testData = {
 
     /** okDiscountWithID */
     okDiscountWithID: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_FLOOR,
+        selectedStoreProfile: Constants.STOREPROFILE_OKSTORE,
         kaimonoItems: [
             {
                 goods: "練乳イチゴ",
@@ -323,7 +323,7 @@ export const testData = {
 
     /** aeon1963 */
     aeon1963: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_CEAL,
+        selectedStoreProfile: Constants.STOREPROFILE_AEON,
         kaimonoItems: [
             {
                 goods: "井村屋　宇治抹茶金時",
@@ -407,7 +407,7 @@ export const testData = {
 
     /** aeon1092 */
     aeon1092: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_CEAL,
+        selectedStoreProfile: Constants.STOREPROFILE_AEON,
         kaimonoItems: [
             {
                 goods: "TV蚊取り線香",
@@ -428,7 +428,7 @@ export const testData = {
 
     /** marinpia191 */
     marinpia191: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_ROUND,
+        selectedStoreProfile: Constants.STOREPROFILE_MARINEPIA,
         kaimonoItems: [
             {
                 goods: "ほうれん草",
@@ -507,7 +507,7 @@ export const testData = {
 
     /** maruetuManyWaribiki normal */
     maruetuManyWaribiki: {
-        selectedStoreProfile: Constants.STOREPROFILE_WARIBIKI_CEAL,
+        selectedStoreProfile: Constants.STOREPROFILE_MARUETSU,
         kaimonoItems: [
             {
                 goods: "いわし生姜煮",
@@ -769,6 +769,7 @@ export const testData = {
     },
 
     okNoCash3Pepsi103Checked: {
+        selectedStoreProfile: Constants.STOREPROFILE_OKSTORE,
         "kaimonoItems": [
             {
                 "goods": "ホームカフェ無糖",
@@ -821,7 +822,6 @@ export const testData = {
                 "message": null
             }
         ],
-        "selectedStoreProfile": "割引率切り下げ"
     },
 
 
@@ -910,7 +910,6 @@ export const testData = {
                 "message": null
             }
         ],
-        "selectedStoreProfile": "割引率切り下げ",
         "memo": null,
         "keisanki": null
     },
