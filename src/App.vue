@@ -256,6 +256,18 @@ function doTest() {
   testFunc("itoyokado1 zeis[0].allvalue()", 99, zeis.value[0].allvalue());
   testFunc("itoyokado1 goukei", 1342, goukei.value);
 
+  selectedStoreProfile.value = testData.maruetsuManyDiscount.selectedStoreProfile;
+  kaimonoItems.value = testData.maruetsuManyDiscount.kaimonoItems;
+  testFunc("maruetsuManyDiscount syoukei", 1491, syoukei.value);
+  testFunc("maruetsuManyDiscount allItemHinCount", 15, allItemHinCount.value);
+  testFunc("maruetsuManyDiscount allItemCount", 15, allItemCount.value);
+  testFunc("maruetsuManyDiscount disp_syoukei", 1491, disp_syoukei.value);
+  testFunc("maruetsuManyDiscount zeis len", 1, zeis.value.length);
+  testFunc("maruetsuManyDiscount zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("maruetsuManyDiscount zeis[0].targetValue", 1491, zeis.value[0].targetValue);
+  testFunc("maruetsuManyDiscount zeis[0].allvalue()", 119, zeis.value[0].allvalue());
+  testFunc("maruetsuManyDiscount goukei", 1610, goukei.value);
+
 
   // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
   if (false) {

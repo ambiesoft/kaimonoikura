@@ -913,7 +913,169 @@ export const testData = {
         "memo": null,
         "keisanki": null
     },
+
+    /** maruetsuManyDiscount */
+    maruetsuManyDiscount: {
+        selectedStoreProfile: Constants.STOREPROFILE_MARUETSU,
+
+        "kaimonoItems": [
+            {
+                "goods": "おいしいYG",
+                "price": 139,
+                "count": 1,
+                "discountRate": "20",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "えびくるみ",
+                "price": 60,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "金平ごぼう",
+                "price": 128,
+                "count": 1,
+                "discountRate": "30",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "岩もずく",
+                "price": 60,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "巻きずし",
+                "price": 258,
+                "count": 1,
+                "discountRate": "40",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "いも天",
+                "price": 80,
+                "count": 1,
+                "discountRate": "20",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "コロッケ",
+                "price": 138,
+                "count": 1,
+                "discountRate": "20",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "おいしいはんぺん",
+                "price": 99,
+                "count": 1,
+                "discountRate": "20",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "大きなおむすび",
+                "price": 158,
+                "count": 1,
+                "discountRate": "20",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "おにぎり",
+                "price": 118,
+                "count": 1,
+                "discountRate": "20",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "食卓ロール",
+                "price": 189,
+                "count": 1,
+                "discountRate": 30,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "くるみあんぱん",
+                "price": 109,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "クリームツイスト",
+                "price": 99,
+                "count": 1,
+                "discountRate": "30",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "白あんぱん",
+                "price": 109,
+                "count": 1,
+                "discountRate": "30",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "玉ねぎ",
+                "price": 177,
+                "count": 1,
+                "discountRate": "0",
+                "ok3_103": false,
+                "discountValue": 19,
+                "taxRate": "8",
+                "message": null
+            }
+        ],
+
+        "memo": null,
+        "keisanki": null
+    },
 };
+
 let okCount = 0;
 let ngCount = 0;
 let firstError;
