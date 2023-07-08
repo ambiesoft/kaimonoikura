@@ -923,112 +923,115 @@ watch(keisanki, () => {
     <div class="container-cell" v-if="kaimonoItems.length == 0">
       <p class="cell3columns">追加を{{ Constants.tapORclick }}して商品を追加してください</p>
     </div>
-    <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems">
-      <div class="cell">
-        <div class="setumei">商品 {{ index + 1 }}</div>
-        <div class="goods">
-          <input ref="nameRefs" class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
+    <transition-group name="fade">
+      <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems"
+        :key="item">
+        <div class="cell">
+          <div class="setumei">商品 {{ index + 1 }}</div>
+          <div class="goods">
+            <input ref="nameRefs" class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
+          </div>
+          <div></div>
         </div>
-        <div></div>
-      </div>
 
-      <div class="cell">
-        <div class="setumei">価格</div>
-        <div class="price">
-          <input ref="kakakuRefs" class="numberinput" type="number" @focus="setItemInfoMessage(item, kakaku_placeholder)"
-            @blur="setItemInfoMessage(item, null)" :placeholder="kakaku_placeholder" v-model="item.price"
-            @keypress="isNumber($event)" />
+        <div class="cell">
+          <div class="setumei">価格</div>
+          <div class="price">
+            <input ref="kakakuRefs" class="numberinput" type="number"
+              @focus="setItemInfoMessage(item, kakaku_placeholder)" @blur="setItemInfoMessage(item, null)"
+              :placeholder="kakaku_placeholder" v-model="item.price" @keypress="isNumber($event)" />
+          </div>
+          <div></div>
         </div>
-        <div></div>
-      </div>
 
-      <div class="cell">
-        <div class="setumei">個数</div>
-        <div class="count">
-          <input ref="countRefs" class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
-        </div>
-        <div>
-          <button class="twobutton" @click="decrementCount(item, index)">
-            {{ Constants.downChar }}
-          </button>
-          <button class="twobutton" @click="incrementCount(item, index)">
-            {{ Constants.upChar }}
-          </button>
-        </div>
-      </div>
-
-      <div class="cell">
-        <div class="setumei">割引円</div>
-        <div class="discount-value">
-          <input ref="discountValueRefs" class="numberinput" type="number" v-model="item.discountValue"
-            @keypress="isNumber($event)" />
-        </div>
-        <div>
-          <button class="twobutton" @click="decrementDiscountValue(item, index)">
-            {{ Constants.downChar }}
-          </button>
-          <button class="twobutton" @click="incrementDiscountValue(item, index)">
-            {{ Constants.upChar }}
-          </button>
-        </div>
-      </div>
-
-      <div class="cell">
-        <div class="setumei">割引％</div>
-        <div class="discount-rate">
-          <input ref="discountRateRefs" class="numberinput" inputmode="decimal" v-model="item.discountRate"
-            @keypress="isNumberOrSpace($event)" />
-        </div>
-        <div>
-          <button class="twobutton" @click="decrementDiscountRate(item, index)">
-            {{ Constants.downChar }}
-          </button>
-          <button class="twobutton" @click="incrementDiscountRate(item, index)">
-            {{ Constants.upChar }}
-          </button>
-        </div>
-      </div>
-
-      <div class="cell">
-        <div class="setumei">税率％</div>
-        <div class="tax-rate">
-          <input ref="taxRateRefs" class="numberinput" v-model="item.taxRate" @keypress="isNumber($event)" />
-        </div>
-        <div>
-          <button class="twobutton" @click="decrementTaxRate(index)">
-            {{ Constants.downChar }}
-          </button>
-          <button class="twobutton" @click="incrementTaxRate(index)">
-            {{ Constants.upChar }}
-          </button>
-        </div>
-      </div>
-
-      <div class="cell">
-        <!-- <div class="setumei">有効</div> -->
-        <div v-if="isOKProfile()">
-          <div class="checklabel">
-            <input :id="'ok3_103_check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103"
-              :checked="item.ok3_103" />
-            <label :for="'ok3_103_check' + index">3/103</label>
+        <div class="cell">
+          <div class="setumei">個数</div>
+          <div class="count">
+            <input ref="countRefs" class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
+          </div>
+          <div>
+            <button class="twobutton" @click="decrementCount(item, index)">
+              {{ Constants.downChar }}
+            </button>
+            <button class="twobutton" @click="incrementCount(item, index)">
+              {{ Constants.upChar }}
+            </button>
           </div>
         </div>
-        <div class="checklabel">
-          <input :id="'enable_check' + index" type="checkbox" @click="item.disabled = !item.disabled"
-            :checked="!item.disabled" />
-          <label :for="'enable_check' + index">有効</label>
+
+        <div class="cell">
+          <div class="setumei">割引円</div>
+          <div class="discount-value">
+            <input ref="discountValueRefs" class="numberinput" type="number" v-model="item.discountValue"
+              @keypress="isNumber($event)" />
+          </div>
+          <div>
+            <button class="twobutton" @click="decrementDiscountValue(item, index)">
+              {{ Constants.downChar }}
+            </button>
+            <button class="twobutton" @click="incrementDiscountValue(item, index)">
+              {{ Constants.upChar }}
+            </button>
+          </div>
+        </div>
+
+        <div class="cell">
+          <div class="setumei">割引％</div>
+          <div class="discount-rate">
+            <input ref="discountRateRefs" class="numberinput" inputmode="decimal" v-model="item.discountRate"
+              @keypress="isNumberOrSpace($event)" />
+          </div>
+          <div>
+            <button class="twobutton" @click="decrementDiscountRate(item, index)">
+              {{ Constants.downChar }}
+            </button>
+            <button class="twobutton" @click="incrementDiscountRate(item, index)">
+              {{ Constants.upChar }}
+            </button>
+          </div>
+        </div>
+
+        <div class="cell">
+          <div class="setumei">税率％</div>
+          <div class="tax-rate">
+            <input ref="taxRateRefs" class="numberinput" v-model="item.taxRate" @keypress="isNumber($event)" />
+          </div>
+          <div>
+            <button class="twobutton" @click="decrementTaxRate(index)">
+              {{ Constants.downChar }}
+            </button>
+            <button class="twobutton" @click="incrementTaxRate(index)">
+              {{ Constants.upChar }}
+            </button>
+          </div>
+        </div>
+
+        <div class="cell">
+          <!-- <div class="setumei">有効</div> -->
+          <div v-if="isOKProfile()">
+            <div class="checklabel">
+              <input :id="'ok3_103_check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103"
+                :checked="item.ok3_103" />
+              <label :for="'ok3_103_check' + index">3/103</label>
+            </div>
+          </div>
+          <div class="checklabel">
+            <input :id="'enable_check' + index" type="checkbox" @click="item.disabled = !item.disabled"
+              :checked="!item.disabled" />
+            <label :for="'enable_check' + index">有効</label>
+          </div>
+        </div>
+        <div class="cell">
+          <div class="setumei cell3rows">{{ getItemMessage(item) }}</div>
+        </div>
+        <div class="cell">
+          <div v-if="item.disabled">
+            <div class="setumei">削除</div>
+            <button @click="deleteItem(index)">❌</button>
+          </div>
         </div>
       </div>
-      <div class="cell">
-        <div class="setumei cell3rows">{{ getItemMessage(item) }}</div>
-      </div>
-      <div class="cell">
-        <div v-if="item.disabled">
-          <div class="setumei">削除</div>
-          <button @click="deleteItem(index)">❌</button>
-        </div>
-      </div>
-    </div>
+    </transition-group>
     <!-- end of loop -->
 
     <div class="container-cell">
@@ -1116,6 +1119,19 @@ watch(keisanki, () => {
   padding: 10px;
   display: grid;
   margin: 0 auto;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  /* transition: opacity 0.5s; */
+  transition: all 0.5s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+  /* opacity: 0; */
+  opacity: 0;
+  transform: translateX(30px);
 }
 
 h1 {
