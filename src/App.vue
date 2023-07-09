@@ -408,10 +408,10 @@ if (Constants.DEBUGGING) {
   // setItems(testData.okFunabashiKeiba);
 }
 function isOKWithKaiinProfile() {
-  return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTOREWITHKAIIN;
+  return selectedStoreProfile.value.name == Constants.STOREPROFILE_OKSTOREWITHKAIIN.name;
 }
 function isOKWithoutKaiinProfile() {
-  return selectedStoreProfile.value == Constants.STOREPROFILE_OKSTORE;
+  return selectedStoreProfile.value.name == Constants.STOREPROFILE_OKSTORE.name;
 }
 
 function loadFromLocalStorage(storageKey) {
