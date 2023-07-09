@@ -323,18 +323,69 @@ function doTest() {
   kaimonoItems.value = saveCurrentItems;
 }
 
-const CCC = {
-  name: "カスタム",
-  discountProfile: Constants.DISCOUNT_PROFILE_CEAL,
-  computeEach: Constants.COMPUTE_EACH_FALSE,
-  hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
-};
+const kaimonoItems = ref();
+const customStoreProfile = ref();
+const selectedStoreProfile = ref();
+const memo = ref();
+const keisanki = ref();
+
+function createDefaultStoreProfile() {
+  return {
+    name: Constants.CUSTOM_STOREPROFILE_NAME,
+    discountProfile: Constants.STOREPROFILE_UNIMPLEMENTED.discountProfile,
+    computeEach: Constants.STOREPROFILE_UNIMPLEMENTED.computeEach,
+    hasuuSyori: Constants.STOREPROFILE_UNIMPLEMENTED.hasuuSyori,
+  }
+}
+function applyObject(obj) {
+  const refineStoreProfile = ((sp) => {
+    if (sp) {
+      if (typeof sp != "object") {
+        const name = String(sp);
+        sp = createDefaultStoreProfile();
+        sp.name = name;
+      }
+
+      if (!sp.name) {
+        sp = createDefaultStoreProfile();
+      }
+
+      let ok = false;
+      for (let i = 0; i < Constants.STOREPROFILES.length; ++i) {
+        if (sp.name == Constants.STOREPROFILES[i].name) {
+          ok = true;
+          break;
+        }
+      }
+      if (!ok) {
+        sp.name = Constants.CUSTOM_STOREPROFILE_NAME;
+      }
+
+      if (sp.computeEach != Constants.COMPUTE_EACH_FALSE &&
+        sp.computeEach != Constants.COMPUTE_EACH_TRUE) {
+        sp.computeEach = sp.computeEach ? Constants.COMPUTE_EACH_TRUE : Constants.COMPUTE_EACH_FALSE;
+      }
+      if (sp.hasuuSyori != Constants.HASUU_SYORI_ONCE &&
+        sp.hasuuSyori != Constants.HASUU_SYORI_ONEBYONE) {
+        sp.hasuuSyori = Constants.HASUU_SYORI_ONEBYONE;
+      }
+    }
+    return sp;
+  });
+
+  obj.selectedStoreProfile = refineStoreProfile(obj.selectedStoreProfile);
+  obj.customStoreProfile = refineStoreProfile(obj.customStoreProfile);
+
+  selectedStoreProfile.value = obj.selectedStoreProfile ?? createDefaultStoreProfile();
+  customStoreProfile.value = obj.customStoreProfile ?? createDefaultStoreProfile();
+  kaimonoItems.value = obj.kaimonoItems ?? [];
+  memo.value = obj.memo;
+  keisanki.value = obj.keisanki;
+
+  console.assert(isValidStoreProfile());
+}
 const loaded = loadFromLocalStorage(LOCALSTORAGE_DEFAULT);
-const kaimonoItems = ref(loaded.kaimonoItems ?? []);
-const customStoreProfile = ref(loaded.customStoreProfile ?? CCC);
-const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_UNIMPLEMENTED);
-const memo = ref(loaded.memo);
-const keisanki = ref(loaded.keisanki);
+applyObject(loaded);
 
 if (Constants.DEBUGGING) {
   function setItems(loaded) {
@@ -387,9 +438,6 @@ function isValidKaimonoitems(kis) {
   if (!kis.selectedStoreProfile) {
     return true;
   }
-  if (typeof kis.selectedStoreProfile != "object") {
-    return false;
-  }
   return true;
 }
 
@@ -402,13 +450,7 @@ function getSaveJson() {
     "keisanki": keisanki.value,
   });
 }
-function applyObject(obj) {
-  selectedStoreProfile.value = obj.selectedStoreProfile;
-  customStoreProfile.value = obj.customStoreProfile;
-  kaimonoItems.value = obj.kaimonoItems;
-  memo.value = obj.memo;
-  keisanki.value = obj.keisanki;
-}
+
 function saveonLocalStorage() {
   localStorage.setItem(LOCALSTORAGE_DEFAULT, getSaveJson());
 }
@@ -581,7 +623,7 @@ function isValidStoreProfile() {
       return true;
     }
   }
-  if (selectedStoreProfile.value.name == CCC.name) {
+  if (selectedStoreProfile.value.name == Constants.CUSTOM_STOREPROFILE_NAME) {
     return true;
   }
   return false;

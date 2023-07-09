@@ -24,6 +24,8 @@ const _c = {
     TAXRATE_KOMI_TEN: "込10",
     TAXRATE_EIGHTF8: "F8",
 
+    CUSTOM_STOREPROFILE_NAME: "カスタム",
+
     DISCOUNT_PROFILE_FLOOR: "割引率切り下げ",
     DISCOUNT_PROFILE_ROUND: "割引率四捨五入",
     DISCOUNT_PROFILE_CEAL: "割引率切り上げ",
