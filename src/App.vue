@@ -1059,9 +1059,9 @@ const calculatorChanged = ((v) => {
     </div>
 
     <div class="container-cell">
-      <button @click="clearAll">すべて削除</button>
-      <button @click="loadlocalFile">ロード</button>
-      <button @click="savelocalFile">セーブ</button>
+      <button @click="loadlocalFile">🚚ロード</button>
+      <button @click="savelocalFile">💾セーブ</button>
+      <button @click="clearAll">❌すべて削除</button>
     </div>
 
     <div class="help">
