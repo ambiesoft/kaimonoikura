@@ -569,6 +569,23 @@ function getDiscountRates(item) {
   return ret;
 }
 
+function isValidStoreProfile() {
+  if (!selectedStoreProfile.value) {
+    return false;
+  }
+  if (typeof selectedStoreProfile.value != "object") {
+    return false;
+  }
+  for (let i = 0; i < Constants.STOREPROFILES.length; ++i) {
+    if (selectedStoreProfile.value.name == Constants.STOREPROFILES[i].name) {
+      return true;
+    }
+  }
+  if (selectedStoreProfile.value.name == CCC.name) {
+    return true;
+  }
+  return false;
+}
 function getHasuuFunc() {
   switch (selectedStoreProfile.value.discountProfile) {
     case Constants.DISCOUNT_PROFILE_CEAL: return Math.ceil;
@@ -975,7 +992,10 @@ function isReadyMadeStoreProfile() {
       </div>
     </div>
 
-    <div class="container-cell" v-if="kaimonoItems.length == 0">
+    <div class="container-cell" v-if="!isValidStoreProfile()">
+      <p class="cell3columns">会計方式を選択してください</p>
+    </div>
+    <div class="container-cell" v-else-if="kaimonoItems.length == 0">
       <p class="cell3columns">追加を{{ Constants.tapORclick }}して商品を追加してください</p>
     </div>
     <transition-group name="fade">
