@@ -5,6 +5,7 @@ import { computeDiscountedPriceFromRate } from '@/utils';
 import { testFunc, clearTestResult, showTestResult, testData } from '@/debug';
 import { useFileDialog } from '@vueuse/core'
 import { saveAs } from 'file-saver';
+import Calculator from './Calculator.vue'
 
 const DEBUGGING = ref(Constants.DEBUGGING);
 console.log("DEBUGGING", Constants.DEBUGGING)
@@ -872,37 +873,12 @@ function onMemoChange() {
   console.log(memo.value);
 }
 
-function formatForEval(s) {
-  if (s.indexOf("=") >= 0) {
-    return "";
-  }
-  if (s.indexOf("'") >= 0) {
-    return "";
-  }
-  if (s.indexOf('"') >= 0) {
-    return "";
-  }
-  if (s.indexOf('`') >= 0) {
-    return "";
-  }
-  return s;
-}
-const keisanAnswer = computed(() => {
-  if (!keisanki.value) {
-    return;
-  }
-
-  try {
-    return "=" + eval(formatForEval(keisanki.value));
-  } catch (error) {
-    console.error(error);
-    return "計算式が不正です";
-  }
-});
 watch(keisanki, () => {
   saveonLocalStorage();
 })
-
+const calculatorChanged = ((v) => {
+  keisanki.value = v;
+});
 </script>
 
 
@@ -1078,10 +1054,7 @@ watch(keisanki, () => {
     </div>
     <div class="container-cell">
       <div class="cell3columns">
-        <input v-model="keisanki" placeholder="Javascript計算機　例：(123 + 10) * 0.05" />
-      </div>
-      <div class="keisanKekka">
-        {{ keisanAnswer }}
+        <Calculator :keisanki="keisanki" @keisan-changed="calculatorChanged" />
       </div>
     </div>
 
@@ -1284,9 +1257,7 @@ button {
   height: 5em;
 }
 
-.keisanKekka {
-  padding-top: 3px;
-}
+
 
 .help {
   margin-top: 10px;
