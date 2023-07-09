@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, computed, watch, onMounted, nextTick, toRefs } from "vue";
+import { ref, computed, watch, onMounted, nextTick, toRefs } from "vue";
 
 const props = defineProps([
     'keisanki',
