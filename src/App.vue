@@ -8,7 +8,11 @@ import { saveAs } from 'file-saver';
 import Calculator from './Calculator.vue'
 
 const DEBUGGING = ref(Constants.DEBUGGING);
-console.log("DEBUGGING", Constants.DEBUGGING)
+
+console.log(`${Constants.appName} v${Constants.appVersion}`);
+if (Constants.DEBUGGING) {
+  console.log("DEBUGGING", Constants.DEBUGGING);
+}
 
 const DISCOUNTRATE_SEPARATOR = ' ';
 const LOCALSTORAGE_DEFAULT = "defaultls";
@@ -27,22 +31,22 @@ function doTest() {
   clearTestResult();
 
   testFunc("compute", 208, computeDiscountedPriceFromRate(298, 1, [0.3], {
-    computeEach: false,
+    computeEach: Constants.COMPUTE_EACH_FALSE,
     hasuuSyori: Constants.HASUU_SYORI_ONCE,
     hasuuFunc: Math.ceil,
   }));
   testFunc("compute", 208, computeDiscountedPriceFromRate(298, 1, [0.3], {
-    computeEach: false,
+    computeEach: Constants.COMPUTE_EACH_FALSE,
     hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
     hasuuFunc: Math.ceil,
   }));
   testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountedPriceFromRate(235, 1, [0.2], {
-    computeEach: false,
+    computeEach: Constants.COMPUTE_EACH_FALSE,
     hasuuSyori: Constants.HASUU_SYORI_ONCE,
     hasuuFunc: Math.ceil,
   }));
   testFunc("compute maruetuManyWaribiki-niku", 188, computeDiscountedPriceFromRate(235, 1, [0.2], {
-    computeEach: false,
+    computeEach: Constants.COMPUTE_EACH_FALSE,
     hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
     hasuuFunc: Math.ceil,
   }));
@@ -269,13 +273,28 @@ function doTest() {
   testFunc("maruetsuManyDiscount zeis[0].allvalue()", 119, zeis.value[0].allvalue());
   testFunc("maruetsuManyDiscount goukei", 1610, goukei.value);
 
+  selectedStoreProfile.value = testData.okID500.selectedStoreProfile;
+  kaimonoItems.value = testData.okID500.kaimonoItems;
+  testFunc("okID500 syoukei", 464, syoukei.value);
+  testFunc("okID500 allItemHinCount", 6, allItemHinCount.value);
+  testFunc("okID500 allItemCount", 6, allItemCount.value);
+  testFunc("okID500 disp_syoukei", 464, disp_syoukei.value);
+  testFunc("okID500 zeis len", 2, zeis.value.length);
+  testFunc("okID500 zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("okID500 zeis[0].targetValue", 458, zeis.value[0].targetValue);
+  testFunc("okID500 zeis[0].allvalue()", 36, zeis.value[0].allvalue());
+  testFunc("okID500 zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+  testFunc("okID500 zeis[1].targetValue", 6, zeis.value[1].targetValue);
+  testFunc("okID500 zeis[1].allvalue()", 0, zeis.value[1].allvalue());
+  testFunc("okID500 goukei", 500, goukei.value);
+
 
   // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
   if (false) {
     const syouhinnsuu = 2;
     let allLoopCount = 0;
     [[0], [0.3], [3 / 103], [3 / 103, 0.3], [3 / 103, 0.5]].forEach(rate => {
-      [false, true].forEach(compeach => {
+      [Constants.COMPUTE_EACH_FALSE, Constants.COMPUTE_EACH_TRUE].forEach(compeach => {
         [Math.ceil, Math.round, Math.floor].forEach(func => {
           for (let i = 1; i < 10000; ++i) {
             allLoopCount++;
@@ -304,9 +323,16 @@ function doTest() {
   kaimonoItems.value = saveCurrentItems;
 }
 
+const CCC = {
+  name: "カスタム",
+  discountProfile: Constants.DISCOUNT_PROFILE_CEAL,
+  computeEach: Constants.COMPUTE_EACH_FALSE,
+  hasuuSyori: Constants.HASUU_SYORI_ONEBYONE,
+};
 const loaded = loadFromLocalStorage(LOCALSTORAGE_DEFAULT);
 const kaimonoItems = ref(loaded.kaimonoItems ?? []);
-const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_DEFAULT);
+const customStoreProfile = ref(loaded.customStoreProfile ?? CCC);
+const selectedStoreProfile = ref(loaded.selectedStoreProfile ?? Constants.STOREPROFILE_UNIMPLEMENTED);
 const memo = ref(loaded.memo);
 const keisanki = ref(loaded.keisanki);
 
@@ -371,12 +397,14 @@ function getSaveJson() {
   return JSON.stringify({
     "kaimonoItems": kaimonoItems.value,
     "selectedStoreProfile": selectedStoreProfile.value,
+    "customStoreProfile": customStoreProfile.value,
     "memo": memo.value,
     "keisanki": keisanki.value,
   });
 }
 function applyObject(obj) {
   selectedStoreProfile.value = obj.selectedStoreProfile;
+  customStoreProfile.value = obj.customStoreProfile;
   kaimonoItems.value = obj.kaimonoItems;
   memo.value = obj.memo;
   keisanki.value = obj.keisanki;
@@ -388,7 +416,12 @@ watch(kaimonoItems.value, (newItems) => {
   saveonLocalStorage();
 })
 watch(selectedStoreProfile, () => {
+  if (selectedStoreProfile.value.name == customStoreProfile.value.name) {
+    customStoreProfile.value = selectedStoreProfile.value;
+  }
   saveonLocalStorage();
+}, {
+  deep: true,
 })
 watch(memo, () => {
   saveonLocalStorage();
@@ -535,9 +568,7 @@ function getDiscountRates(item) {
   })
   return ret;
 }
-function isComputeEach() {
-  return selectedStoreProfile.value.computeEach;
-}
+
 function getHasuuFunc() {
   switch (selectedStoreProfile.value.discountProfile) {
     case Constants.DISCOUNT_PROFILE_CEAL: return Math.ceil;
@@ -552,6 +583,12 @@ function getHasuuSyori() {
 }
 function isItemOk3_103(item) {
   return isOKWithKaiinProfile() && item.ok3_103;
+}
+function getComputeEach() {
+  if (!selectedStoreProfile.value.computeEach) {
+    return Constants.COMPUTE_EACH_FALSE;
+  }
+  return selectedStoreProfile.value.computeEach;
 }
 function getItemSyoukei(item, withoutOK3_103) {
   if (item.disabled) {
@@ -575,7 +612,7 @@ function getItemSyoukei(item, withoutOK3_103) {
     }
 
     return computeDiscountedPriceFromRate(price, count, discountRates, {
-      computeEach: isComputeEach(),
+      computeEach: getComputeEach(),
       hasuuFunc: getHasuuFunc(),
       hasuuSyori: getHasuuSyori(),
     });
@@ -629,7 +666,7 @@ function getZeis() {
         },
       };
     }
-    // console.log(zeiGotoMap);
+
     zeiGotoMap[key].forEach((v) => {
       if (v.ratePercent != Constants.TAXRATE_ZERO) {
         shrinkMap[key].targetValue += v;
@@ -814,7 +851,6 @@ function loadlocalFile() {
           return;
         }
         const loadedObj = JSON.parse(reader.result);
-        console.log("onload-afterParse", loadedObj);
         if (!loadedObj.selectedStoreProfile &&
           !loadedObj.kaimonoItems) {
           alert("ファイルにデータがありません。");
@@ -832,7 +868,6 @@ function loadlocalFile() {
       alert(reader.error);
     };
     reader.onloadend = function () {
-      console.log("onloadend");
       resetFileDialog();
     };
   })
@@ -841,13 +876,11 @@ function savelocalFile() {
   const jsonString = getSaveJson();
   const blob = new Blob([jsonString], { type: 'application/json' });
 
-  // // ダウンロードリンクを作成
-  // const downloadLink = document.createElement('a');
-  // downloadLink.href = URL.createObjectURL(blob);
-  // downloadLink.download = 'kaimono.json'; // ダウンロード時のファイル名を指定
-  // downloadLink.click();
-
-  let filename = prompt("保存するファイル名を入力", 'kaimono');
+  const getDateString = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  }
+  let filename = prompt("保存するファイル名を入力", getDateString() + '買い物');
   if (!filename) {
     return;
   }
@@ -867,10 +900,12 @@ const discountRateRefs = ref([])
 const discountValueRefs = ref([])
 const taxRateRefs = ref([])
 const addButtonRef = ref()
-onMounted(() => console.log("onMounted"));
+onMounted(() => {
+
+});
 
 function onMemoChange() {
-  console.log(memo.value);
+
 }
 
 watch(keisanki, () => {
@@ -879,11 +914,19 @@ watch(keisanki, () => {
 const calculatorChanged = ((v) => {
   keisanki.value = v;
 });
+function isReadyMadeStoreProfile() {
+  if (!selectedStoreProfile.value) {
+    return false;
+  }
+  for (let i = 0; i < Constants.STOREPROFILES.length; ++i) {
+    if (selectedStoreProfile.value.name == Constants.STOREPROFILES[i].name) {
+      return true;
+    }
+  }
+  return false;
+}
+
 </script>
-
-
-
-
 
 <template>
   <div v-if="DEBUGGING">
@@ -893,11 +936,42 @@ const calculatorChanged = ((v) => {
     <h1>🛒買い物いくら🛒</h1>
 
     <div class="container-cell">
-      <div class="cell3columns storeprofile">
+      <div class="cell3columns">
         <label class="label_storeselect" for="storeselect_top">会計方式：</label>
         <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
+          <option disabled selected value="null">選択してください</option>
           <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
+          <option :value='customStoreProfile'>カスタム</option>
         </select>
+
+        <div v-if="!isReadyMadeStoreProfile()">
+          <div>
+            <label for="discountselect_top">割引率計算：</label>
+            <select id="discountselect_top" v-model="selectedStoreProfile.discountProfile">
+              <option v-for="dp in Constants.DISCOUNT_PROFILES" :key="dp" :value="dp">
+                {{ dp }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label for="computeeachselect_top">同じものを複数：</label>
+            <select id="computeeachselect_top" v-model="selectedStoreProfile.computeEach">
+              <option v-for="ce in Constants.COMPUTE_EACHES" :key="ce" :value="ce">
+                {{ ce }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label for="hasuusyoriselect_top">複数割引率：</label>
+            <select id="hasuusyoriselect_top" v-model="selectedStoreProfile.hasuuSyori">
+              <option v-for="hs in Constants.HASUU_SYORIS" :key="hs" :value="hs">
+                {{ hs }}
+              </option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1138,8 +1212,12 @@ p {
 }
 
 .storeselect {
-  height: 100%;
-  vertical-align: middle;
+  /* height: 100%; */
+  /* vertical-align: middle; */
+}
+
+.storeselect :invalid {
+  color: gray;
 }
 
 /* .container > :nth-child(odd) {

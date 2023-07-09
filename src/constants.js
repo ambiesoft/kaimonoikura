@@ -1,10 +1,6 @@
 
 
 const _c = {
-    ENUM_VALUE_1: 'Value 1',
-    ENUM_VALUE_2: 'Value 2',
-    ENUM_VALUE_3: 'Value 3',
-
     appName: "kaimonoikura",
     appVersion: __APP_VERSION__,
 
@@ -16,8 +12,8 @@ const _c = {
     DEBUGGING: (((new URL(location.href)).hostname) == "127.0.0.1" ||
         (new URL(location.href)).hostname == "localhost"),
 
-    HASUU_SYORI_ONCE: 1,
-    HASUU_SYORI_ONEBYONE: 2,
+    HASUU_SYORI_ONCE: "割引率を足して計算",
+    HASUU_SYORI_ONEBYONE: "割引率を１つづつ計算",
 
     DISCOUNT_RATE_OK_3_103_N: 3 / 103,
 
@@ -32,6 +28,8 @@ const _c = {
     DISCOUNT_PROFILE_ROUND: "割引率四捨五入",
     DISCOUNT_PROFILE_CEAL: "割引率切り上げ",
 
+    COMPUTE_EACH_TRUE: "１個づつ計算",
+    COMPUTE_EACH_FALSE: "まとめて計算",
 };
 
 _c.TAXRATEVALUES = [
@@ -41,59 +39,70 @@ _c.TAXRATEVALUES = [
     _c.TAXRATE_KOMI_EIGHT,
     _c.TAXRATE_KOMI_TEN,
 ];
-_c.DISCOUNT_PROFILES = [
-    _c.DISCOUNT_PROFILE_FLOOR,
-    _c.DISCOUNT_PROFILE_ROUND,
-    _c.DISCOUNT_PROFILE_CEAL,
-]
 
-_c.STOREPROFILE_DEFAULT = {
-    name: "デフォルト",
-    discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
-    computeEach: false,
-    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
-}
 _c.STOREPROFILE_AEON = {
     name: "イオン",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
-    computeEach: false,
+    computeEach: _c.COMPUTE_EACH_FALSE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 _c.STOREPROFILE_OKSTORE = {
     name: "オーケーストア",
     discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
-    computeEach: true,
-    hasuuSyori: _c.HASUU_SYORI_ONCE,
+    computeEach: _c.COMPUTE_EACH_TRUE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 _c.STOREPROFILE_OKSTOREWITHKAIIN = {
     name: "オーケーストアwith会員カード",
     discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
-    computeEach: true,
-    hasuuSyori: _c.HASUU_SYORI_ONCE,
+    computeEach: _c.COMPUTE_EACH_TRUE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
+_c.STOREPROFILE_BERX = {
+    name: "ベルクス",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: _c.COMPUTE_EACH_FALSE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 _c.STOREPROFILE_MARINEPIA = {
     name: "マリンピア",
     discountProfile: _c.DISCOUNT_PROFILE_ROUND,
-    computeEach: false,
+    computeEach: _c.COMPUTE_EACH_FALSE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 _c.STOREPROFILE_MARUETSU = {
     name: "マルエツ",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
-    computeEach: false,
+    computeEach: _c.COMPUTE_EACH_FALSE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
+_c.STOREPROFILE_UNIMPLEMENTED = {
+    name: "未実装",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: _c.COMPUTE_EACH_FALSE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 
+_c.DISCOUNT_PROFILES = [
+    _c.DISCOUNT_PROFILE_CEAL,
+    _c.DISCOUNT_PROFILE_ROUND,
+    _c.DISCOUNT_PROFILE_FLOOR,
+]
 _c.STOREPROFILES = [
-
-
-    _c.STOREPROFILE_DEFAULT,
+    _c.STOREPROFILE_AEON,
     _c.STOREPROFILE_OKSTORE,
     _c.STOREPROFILE_OKSTOREWITHKAIIN,
     _c.STOREPROFILE_MARINEPIA,
     _c.STOREPROFILE_MARUETSU,
 ];
-
+_c.COMPUTE_EACHES = [
+    _c.COMPUTE_EACH_TRUE,
+    _c.COMPUTE_EACH_FALSE,
+]
+_c.HASUU_SYORIS = [
+    _c.HASUU_SYORI_ONEBYONE,
+    _c.HASUU_SYORI_ONCE,
+]
 const deepFreeze = (object) => {
     Object.freeze(object);
 

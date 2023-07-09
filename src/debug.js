@@ -36,7 +36,7 @@ export const testData = {
 
     /** berxNormal */
     berxNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_DEFAULT,
+        selectedStoreProfile: Constants.STOREPROFILE_BERX,
         kaimonoItems: [
             {
                 goods: "エッセルS",
@@ -56,7 +56,7 @@ export const testData = {
 
     /** PARLIAMENT */
     parliamentNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_DEFAULT,
+        selectedStoreProfile: Constants.STOREPROFILE_UNIMPLEMENTED,
         kaimonoItems: [
             {
                 goods: "パーラメント",
@@ -69,7 +69,7 @@ export const testData = {
 
     /** SeiyuNormal */
     seiyuNormal: {
-        selectedStoreProfile: Constants.STOREPROFILE_DEFAULT,
+        selectedStoreProfile: Constants.STOREPROFILE_UNIMPLEMENTED,
         kaimonoItems: [
             {
                 goods: "ふくろ",
@@ -1073,6 +1073,75 @@ export const testData = {
 
         "memo": null,
         "keisanki": null
+    },
+
+    /** okID500 */
+    okID500: {
+        "selectedStoreProfile": Constants.STOREPROFILE_OKSTORE,
+        "kaimonoItems": [
+            {
+                "goods": "ホームカフェ無糖",
+                "price": 178,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "（Yスイートブレッド",
+                "price": 111,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "おかめ納豆",
+                "price": 66,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "センタン いちごフロート",
+                "price": 60,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "ガリガリ君ソーダ",
+                "price": 43,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "レジ袋",
+                "price": 6,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "10",
+                "message": null
+            }
+        ],
+        "memo": "ぴったり",
+        "keisanki": ""
     },
 };
 
