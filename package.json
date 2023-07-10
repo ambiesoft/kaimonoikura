@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "publicize": "npm run build && /bin/rm -rfv ~/html/virtual/kaimonoikura/* && /bin/cp -a -f -v ./dist/. ~/html/virtual/kaimonoikura/"
+    "publicize": "npm run build && /bin/rm -rfv ~/html/virtual/kaimonoikura/* && /bin/cp ./sw.js ~/html/virtual/kaimonoikura/ && /bin/cp -a -f -v ./dist/. ~/html/virtual/kaimonoikura/"
   },
   "dependencies": {
     "@vueuse/core": "^10.2.1",
