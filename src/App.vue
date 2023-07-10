@@ -346,6 +346,8 @@ const selectedStoreProfile = ref();
 const memo = ref();
 const keisanki = ref();
 
+const showCustomVisible = ref(true);
+
 function createDefaultStoreProfile() {
   return {
     name: Constants.CUSTOM_STOREPROFILE_NAME,
@@ -474,7 +476,12 @@ function saveonLocalStorage() {
 watch(kaimonoItems.value, (newItems) => {
   saveonLocalStorage();
 })
-watch(selectedStoreProfile, () => {
+watch(selectedStoreProfile, (newProfile, oldProfile) => {
+  if (oldProfile.name != customStoreProfile.value.name &&
+    newProfile.name == customStoreProfile.value.name) {
+    // user selected 'カスタム'
+    showCustomVisible.value = true;
+  }
   if (selectedStoreProfile.value.name == customStoreProfile.value.name) {
     customStoreProfile.value = selectedStoreProfile.value;
   }
@@ -576,7 +583,15 @@ function decrementTaxRate(index) {
   incrementOrdecrementTaxRate(index, INCORDEC_DEC);
 }
 
+
 function addItem(event) {
+  function getDefaultTaxRate() {
+    console.assert(selectedStoreProfile.value);
+    if (!selectedStoreProfile.value.defaultZeiritsu) {
+      return Constants.TAXRATE_EIGHT;
+    }
+    return selectedStoreProfile.value.defaultZeiritsu;
+  }
   kaimonoItems.value.push({
     goods: "",
     price: null,
@@ -584,7 +599,7 @@ function addItem(event) {
     discountRate: null,
     ok3_103: isOKWithKaiinProfile(),
     discountValue: null,
-    taxRate: Constants.TAXRATE_EIGHT,
+    taxRate: getDefaultTaxRate(),
   });
   const buttonRect = addButtonRef.value.getBoundingClientRect();
   const buttonPosWidth = buttonRect.right - buttonRect.left;
@@ -1012,17 +1027,28 @@ function isReadyMadeStoreProfile() {
     <h1>🛒買い物いくら🛒</h1>
 
     <div class="container-cell">
-      <div class="cell3columns">
-        <label class="label_storeselect" for="storeselect_top">会計方式：</label>
-        <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
-          <option disabled selected value="null">選択してください</option>
-          <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
-          <option :value='customStoreProfile'>カスタム</option>
-        </select>
+      <div class="cell3columns storeprofile">
+        <div>
+          <label class="label_storeselect" for="storeselect_top">会計方式：</label>
+          <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
+            <option disabled selected value="null">選択してください</option>
+            <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
+            <option :value='customStoreProfile'>カスタム</option>
+          </select>
+        </div>
 
-        <div v-if="!isReadyMadeStoreProfile()">
+        <div v-if="!isReadyMadeStoreProfile() && showCustomVisible">
           <div>
-            <label for="discountselect_top">割引率計算：</label>
+            <label class="label_storeselect" for="defaultzeiritsuselect_top">デフォルト税率：</label>
+            <select id="defaultzeiritsuselect_top" v-model="selectedStoreProfile.defaultZeiritsu">
+              <option v-for="tv in Constants.TAXRATEVALUES" :key="tv" :value="tv">
+                {{ tv }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label_storeselect" for="discountselect_top">割引率計算：</label>
             <select id="discountselect_top" v-model="selectedStoreProfile.discountProfile">
               <option v-for="dp in Constants.DISCOUNT_PROFILES" :key="dp" :value="dp">
                 {{ dp }}
@@ -1031,7 +1057,7 @@ function isReadyMadeStoreProfile() {
           </div>
 
           <div>
-            <label for="computeeachselect_top">同じものを複数：</label>
+            <label class="label_storeselect" for="computeeachselect_top">同じものを複数：</label>
             <select id="computeeachselect_top" v-model="selectedStoreProfile.computeEach">
               <option v-for="ce in Constants.COMPUTE_EACHES" :key="ce" :value="ce">
                 {{ ce }}
@@ -1040,13 +1066,15 @@ function isReadyMadeStoreProfile() {
           </div>
 
           <div>
-            <label for="hasuusyoriselect_top">複数割引率：</label>
+            <label class="label_storeselect" for="hasuusyoriselect_top">複数割引率：</label>
             <select id="hasuusyoriselect_top" v-model="selectedStoreProfile.hasuuSyori">
               <option v-for="hs in Constants.HASUU_SYORIS" :key="hs" :value="hs">
                 {{ hs }}
               </option>
             </select>
           </div>
+
+          <button @click="showCustomVisible = false">閉じる</button>
         </div>
       </div>
     </div>
@@ -1172,10 +1200,14 @@ function isReadyMadeStoreProfile() {
 
     <div class="container-cell">
       <div class="cell3columns storeprofile">
-        <label class="label_storeselect" for="storeselect_top">会計方式：</label>
-        <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
-          <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
-        </select>
+        <div>
+          <label class="label_storeselect" for="storeselect_top">会計方式：</label>
+          <select id="storeselect_top" class="storeselect" v-model="selectedStoreProfile">
+            <option disabled selected value="null">選択してください</option>
+            <option v-for="sp in Constants.STOREPROFILES" :key="sp" :value="sp">{{ sp.name }}</option>
+            <option :value='customStoreProfile'>カスタム</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -1298,14 +1330,6 @@ p {
 .storeselect :invalid {
   color: gray;
 }
-
-/* .container > :nth-child(odd) {
-  background-color: lightblue;
-}
-
-.container > :nth-child(even) {
-  background-color: lightgray;
-} */
 
 .empty_container_cell {
   background-color: lightcoral;

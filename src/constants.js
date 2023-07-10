@@ -48,6 +48,13 @@ _c.STOREPROFILE_AEON = {
     computeEach: _c.COMPUTE_EACH_FALSE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
+_c.STOREPROFILE_ITOYOKADO = {
+    name: "イトーヨーカドー",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: _c.COMPUTE_EACH_FALSE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+    defaultZeiritsu: _c.TAXRATE_KOMI_EIGHT,
+}
 _c.STOREPROFILE_OKSTORE = {
     name: "オーケーストア",
     discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
@@ -92,6 +99,7 @@ _c.DISCOUNT_PROFILES = [
 ]
 _c.STOREPROFILES = [
     _c.STOREPROFILE_AEON,
+    _c.STOREPROFILE_ITOYOKADO,
     _c.STOREPROFILE_OKSTORE,
     _c.STOREPROFILE_OKSTOREWITHKAIIN,
     _c.STOREPROFILE_MARINEPIA,
