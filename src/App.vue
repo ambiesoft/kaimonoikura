@@ -1390,6 +1390,7 @@ button {
 
 .goukei {
   font-size: x-large;
+  font-weight: bold;
 }
 
 #t_message {

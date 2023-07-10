@@ -1,4 +1,4 @@
-const cacheName = 'kaimonoikuraCache' + 'v1.1.0';
+const cacheName = 'kaimonoikuraCache' + 'v1.1.1';
 console.log('cache name', cacheName);
 
 self.addEventListener('install', (event) => {
