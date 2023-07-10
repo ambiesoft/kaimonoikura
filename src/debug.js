@@ -1143,6 +1143,64 @@ export const testData = {
         "memo": "ぴったり",
         "keisanki": ""
     },
+    cocos: {
+        "kaimonoItems": [
+            {
+                "goods": "Lデミココット",
+                "price": 790,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "10",
+                "message": null
+            },
+            {
+                "goods": "おろしバーグ",
+                "price": 790,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "10",
+                "message": null
+            },
+            {
+                "goods": "Lバーセット",
+                "price": 190,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "10",
+                "message": null
+            },
+            {
+                "goods": "バーセット",
+                "price": 290,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "10",
+                "message": null
+            }
+        ],
+        "selectedStoreProfile": {
+            "name": "カスタム",
+            "discountProfile": "割引率切り上げ",
+            "computeEach": "まとめて計算",
+            "hasuuSyori": "割引率を１つづつ計算"
+        },
+        "customStoreProfile": {
+            "name": "カスタム",
+            "discountProfile": "割引率切り上げ",
+            "computeEach": "まとめて計算",
+            "hasuuSyori": "割引率を１つづつ計算"
+        },
+        "memo": "COCOS",
+        "keisanki": null
+    },
 };
 
 let okCount = 0;

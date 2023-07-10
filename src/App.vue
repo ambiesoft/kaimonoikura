@@ -26,6 +26,7 @@ function getTaxRateIndex(trv) {
 
 function doTest() {
   const saveCurrentStoreProfile = selectedStoreProfile.value;
+  const saveCurrentCustomProfile = customStoreProfile.value;
   const saveCurrentItems = kaimonoItems.value;
 
   clearTestResult();
@@ -288,6 +289,21 @@ function doTest() {
   testFunc("okID500 zeis[1].allvalue()", 0, zeis.value[1].allvalue());
   testFunc("okID500 goukei", 500, goukei.value);
 
+  selectedStoreProfile.value = testData.cocos.selectedStoreProfile;
+  customStoreProfile.value = testData.cocos.customStoreProfile;
+  kaimonoItems.value = testData.cocos.kaimonoItems;
+  testFunc("cocos syoukei", 2060, syoukei.value);
+  testFunc("cocos allItemHinCount", 4, allItemHinCount.value);
+  testFunc("cocos allItemCount", 4, allItemCount.value);
+  testFunc("cocos disp_syoukei", 2060, disp_syoukei.value);
+  testFunc("cocos zeis len", 1, zeis.value.length);
+  testFunc("cocos zeis[0].ratePercent", "10", zeis.value[0].ratePercent);
+  testFunc("cocos zeis[0].targetValue", 2060, zeis.value[0].targetValue);
+  testFunc("cocos zeis[0].allvalue()", 206, zeis.value[0].allvalue());
+  testFunc("cocos goukei", 2266, goukei.value);
+
+
+
 
   // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
   if (false) {
@@ -320,6 +336,7 @@ function doTest() {
   showTestResult();
 
   selectedStoreProfile.value = saveCurrentStoreProfile;
+  customStoreProfile.value = saveCurrentCustomProfile;
   kaimonoItems.value = saveCurrentItems;
 }
 
