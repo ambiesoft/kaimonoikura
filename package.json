@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "publicize": "npm run build && /bin/rm -rfv /home/ebisu/html/virtual.kaimono.ambiesoft.com/* && /bin/cp ./sw.js ./manifest.json /home/ebisu/html/virtual.kaimono.ambiesoft.com/ && /bin/cp -a -f -v ./dist/. /home/ebisu/html/virtual.kaimono.ambiesoft.com/"
+    "publicize": "npm run build && /bin/rm -rfv /home/ebisu/html/virtual.kaimono.ambiesoft.com/* && /bin/cp ./sw.js ./manifest.json /home/ebisu/html/virtual.kaimono.ambiesoft.com/ && /bin/cp -a -f -v ./dist/. /home/ebisu/html/virtual.kaimono.ambiesoft.com/ && /bin/cp -afv ./AppImages/ /home/ebisu/html/virtual.kaimono.ambiesoft.com/assets/AppImages/"
   },
   "dependencies": {
     "@vueuse/core": "^10.2.1",
