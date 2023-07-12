@@ -28,6 +28,30 @@ function formatForEval(s) {
     s = s.replace(/－/g, '-');
     s = s.replace(/⁻/g, '-');
     s = s.replace(/　/g, ' ');
+
+    s = s.replace(/\[/g, '(');
+    s = s.replace(/\]/g, ')');
+
+    s = s.replace(/【/g, '(');
+    s = s.replace(/\】/g, ')');
+
+    s = s.replace(/『/g, '(');
+    s = s.replace(/』/g, ')');
+
+    s = s.replace(/「/g, '(');
+    s = s.replace(/」/g, ')');
+
+    s = s.replace(/《》/g, '(');
+    s = s.replace(/\]/g, ')');
+
+    s = s.replace(/{/g, '(');
+    s = s.replace(/}/g, ')');
+
+    s = s.replace(/｛/g, '(');
+    s = s.replace(/｝/g, ')');
+
+    s = s.replace(/〔/g, '(');
+    s = s.replace(/〕/g, ')');
     return s;
 }
 
