@@ -37,7 +37,7 @@ const keisanAnswer = computed(() => {
     }
 
     try {
-        return "=" + eval(formatForEval(keisanki.value));
+        return "= " + eval(formatForEval(keisanki.value));
     } catch (error) {
         console.error(error);
         return "計算式が不正です";
@@ -57,5 +57,6 @@ const keisanAnswer = computed(() => {
 <style>
 .keisanKekka {
     padding-top: 3px;
+    font-family: serif;
 }
 </style>
