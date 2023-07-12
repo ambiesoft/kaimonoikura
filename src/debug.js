@@ -1201,6 +1201,172 @@ export const testData = {
         "memo": "COCOS",
         "keisanki": null
     },
+    AEON20230712_AEONwithWaribiki: {
+        "kaimonoItems": [
+            {
+                "goods": "BP北海道バニラバー",
+                "price": 178,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "スウィーティオバナナ",
+                "price": 180,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "地場産メークイン",
+                "price": 99,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "もやし",
+                "price": 30,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "ふぞろいのきゅうりぬか",
+                "price": 278,
+                "count": 1,
+                "discountRate": "30",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "TVBPフレッシュ４５",
+                "price": 178,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "BPピーナッツクリーム",
+                "price": 138,
+                "count": 1,
+                "discountRate": "10",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "パンケーキメープル",
+                "price": 98,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "TVBPいちごジャム",
+                "price": 90,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "鶏レバー煮",
+                "price": 213,
+                "count": 1,
+                "discountRate": "50",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "フライドポテト",
+                "price": 122,
+                "count": 1,
+                "discountRate": "10",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "TVオムライスおにぎり",
+                "price": 128,
+                "count": 1,
+                "discountRate": "10",
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "お肉屋さんのコロッケ",
+                "price": 120,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "きゅうり",
+                "price": 48,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            },
+            {
+                "goods": "こまつな",
+                "price": 64,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null
+            }
+        ],
+        "selectedStoreProfile": {
+            "name": "イオン",
+            "discountProfile": "割引率切り上げ",
+            "computeEach": "まとめて計算",
+            "hasuuSyori": "割引率を１つづつ計算"
+        },
+        "customStoreProfile": {
+            "name": "カスタム",
+            "discountProfile": "割引率切り上げ",
+            "computeEach": "まとめて計算",
+            "hasuuSyori": "割引率を１つづつ計算"
+        }
+    },
 };
 
 let okCount = 0;

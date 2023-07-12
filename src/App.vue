@@ -302,6 +302,19 @@ function doTest() {
   testFunc("cocos zeis[0].allvalue()", 206, zeis.value[0].allvalue());
   testFunc("cocos goukei", 2266, goukei.value);
 
+  selectedStoreProfile.value = testData.AEON20230712_AEONwithWaribiki.selectedStoreProfile;
+  customStoreProfile.value = testData.AEON20230712_AEONwithWaribiki.customStoreProfile;
+  kaimonoItems.value = testData.AEON20230712_AEONwithWaribiki.kaimonoItems;
+  testFunc("AEON20230712_AEONwithWaribiki syoukei", 1733, syoukei.value);
+  testFunc("AEON20230712_AEONwithWaribiki allItemHinCount", 15, allItemHinCount.value);
+  testFunc("AEON20230712_AEONwithWaribiki allItemCount", 15, allItemCount.value);
+  testFunc("AEON20230712_AEONwithWaribiki disp_syoukei", 1733, disp_syoukei.value);
+  testFunc("AEON20230712_AEONwithWaribiki zeis len", 1, zeis.value.length);
+  testFunc("AEON20230712_AEONwithWaribiki zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+  testFunc("AEON20230712_AEONwithWaribiki zeis[0].targetValue", 1733, zeis.value[0].targetValue);
+  testFunc("AEON20230712_AEONwithWaribiki zeis[0].allvalue()", 138, zeis.value[0].allvalue());
+  testFunc("AEON20230712_AEONwithWaribiki goukei", 1871, goukei.value);
+
 
 
 
