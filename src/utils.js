@@ -33,3 +33,11 @@ export function computeDiscountedPriceFromRate(price, count, rates, option = {})
 
     return price;
 }
+
+// https://www.yoheim.net/blog.php?q=20191101
+export function zenkaku2Hankaku(str) {
+    return str.replace(/[０-９]/g, function (s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+}
+

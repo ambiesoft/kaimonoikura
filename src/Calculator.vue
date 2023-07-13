@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted, nextTick, toRefs } from "vue";
+import { zenkaku2Hankaku } from '@/utils';
 
 const props = defineProps([
     'keisanki',
@@ -13,20 +14,19 @@ const emits = defineEmits([
 ]);
 
 function formatForEval(s) {
-    if (s.indexOf("=") >= 0) {
-        return "";
+    if (s.indexOf("=") >= 0 ||
+        s.indexOf("'") >= 0 ||
+        s.indexOf('"') >= 0 ||
+        s.indexOf('`') >= 0) {
+        return { result: "", error: "不正な文字が含まれています" };
     }
-    if (s.indexOf("'") >= 0) {
-        return "";
-    }
-    if (s.indexOf('"') >= 0) {
-        return "";
-    }
-    if (s.indexOf('`') >= 0) {
-        return "";
+
+    if (/[a-zA-Z]/.test(s)) {
+        return { result: "", error: "アルファベットは使えません" };
     }
 
     s = s.replace(/合計/g, 'goukei.value');
+    s = zenkaku2Hankaku(s);
 
     s = s.replace(/÷/g, '/');
     s = s.replace(/×/g, '*');
@@ -58,7 +58,8 @@ function formatForEval(s) {
 
     s = s.replace(/〔/g, '(');
     s = s.replace(/〕/g, ')');
-    return s;
+
+    return { result: s, error: "" };
 }
 
 function touchGoukei() {
@@ -72,7 +73,11 @@ const keisanAnswer = computed(() => {
 
     try {
         touchGoukei();
-        return "= " + eval(formatForEval(keisanki.value));
+        let ret = formatForEval(keisanki.value);
+        if (ret.error) {
+            return ret.error;
+        }
+        return "= " + eval(ret.result);
     } catch (error) {
         console.error(error);
         return "計算式が不正です";
