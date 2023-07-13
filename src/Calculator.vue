@@ -61,12 +61,17 @@ function formatForEval(s) {
     return s;
 }
 
+function touchGoukei() {
+    let a = goukei.value;
+    return a + 1;
+}
 const keisanAnswer = computed(() => {
     if (!keisanki.value) {
         return;
     }
 
     try {
+        touchGoukei();
         return "= " + eval(formatForEval(keisanki.value));
     } catch (error) {
         console.error(error);
