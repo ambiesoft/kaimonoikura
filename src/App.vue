@@ -1247,12 +1247,13 @@ function isReadyMadeStoreProfile() {
 
     <div class="container-cell">
       <div class="cell3columns">
-        <textarea v-model="memo" @change="onMemoChange" id="t_message" name="message" placeholder="メモを記入"></textarea>
+        <Calculator :keisanki="keisanki" :goukei="goukei" :key="goukei" @keisan-changed="calculatorChanged" />
       </div>
     </div>
+
     <div class="container-cell">
       <div class="cell3columns">
-        <Calculator :keisanki="keisanki" @keisan-changed="calculatorChanged" />
+        <textarea v-model="memo" @change="onMemoChange" id="t_message" name="message" placeholder="メモを記入"></textarea>
       </div>
     </div>
 

@@ -3,11 +3,14 @@ import { ref, computed, watch, onMounted, nextTick, toRefs } from "vue";
 
 const props = defineProps([
     'keisanki',
+    'goukei',
 ]);
+const keisanki = ref(props.keisanki);
+const goukei = ref(props.goukei);
+
 const emits = defineEmits([
     'keisanChanged',
 ]);
-const keisanki = ref(props.keisanki);
 
 function formatForEval(s) {
     if (s.indexOf("=") >= 0) {
@@ -22,6 +25,9 @@ function formatForEval(s) {
     if (s.indexOf('`') >= 0) {
         return "";
     }
+
+    s = s.replace(/合計/g, 'goukei.value');
+
     s = s.replace(/÷/g, '/');
     s = s.replace(/×/g, '*');
     s = s.replace(/＋/g, '+');
@@ -71,7 +77,7 @@ const keisanAnswer = computed(() => {
 
 <template>
     <div>
-        <input v-model="keisanki" placeholder="簡易計算機　例：(123 + 10) * 0.05" @change="emits('keisanChanged', keisanki)" />
+        <input v-model="keisanki" placeholder="簡易計算機　例：合計 - 100" @change="emits('keisanChanged', keisanki)" />
     </div>
     <div class="keisanKekka">
         {{ keisanAnswer }}
