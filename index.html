@@ -14,7 +14,6 @@
     // Don't register the service worker
     // until the page has fully loaded
     window.addEventListener('load', () => {
-      console.log('load')
       // Is service worker available?
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').then(() => {

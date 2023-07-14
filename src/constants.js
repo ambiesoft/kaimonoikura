@@ -17,7 +17,7 @@ const _c = {
 
     DISCOUNT_RATE_OK_3_103_N: 3 / 103,
 
-    TAXRATE_ZERO: 0,
+    TAXRATE_ZERO: "0",
     TAXRATE_EIGHT: "8",
     TAXRATE_TEN: "10",
     TAXRATE_KOMI_EIGHT: "込8",

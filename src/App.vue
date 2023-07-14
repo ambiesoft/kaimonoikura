@@ -596,15 +596,15 @@ function decrementTaxRate(index) {
   incrementOrdecrementTaxRate(index, INCORDEC_DEC);
 }
 
+function getDefaultTaxRate() {
+  console.assert(selectedStoreProfile.value);
+  if (!selectedStoreProfile.value.defaultZeiritsu) {
+    return Constants.TAXRATE_EIGHT;
+  }
+  return selectedStoreProfile.value.defaultZeiritsu;
+}
 
 function addItem(event) {
-  function getDefaultTaxRate() {
-    console.assert(selectedStoreProfile.value);
-    if (!selectedStoreProfile.value.defaultZeiritsu) {
-      return Constants.TAXRATE_EIGHT;
-    }
-    return selectedStoreProfile.value.defaultZeiritsu;
-  }
   kaimonoItems.value.push({
     goods: "",
     price: null,
@@ -995,8 +995,21 @@ const kakaku_placeholder = computed(() => {
   if (isOKWithKaiinProfile() || isOKWithoutKaiinProfile()) {
     return "非会員の税抜価格";
   }
-  return "税抜価格";
+
+  switch (getDefaultTaxRate()) {
+    case Constants.TAXRATE_ZERO:
+      return "";
+    case Constants.TAXRATE_EIGHT:
+    case Constants.TAXRATE_TEN:
+      return "税抜価格";
+    case Constants.TAXRATE_KOMI_EIGHT:
+    case Constants.TAXRATE_KOMI_TEN:
+      return "税込価格";
+  }
+  console.assert(false);
+  return "";
 });
+
 const nameRefs = ref([])
 const kakakuRefs = ref([])
 const countRefs = ref([])
