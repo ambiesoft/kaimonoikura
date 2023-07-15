@@ -972,7 +972,7 @@ function loadlocalFile() {
       alert(reader.error);
     };
     reader.onloadend = function () {
-      resetFileDialog();
+      // resetFileDialog();
     };
   })
 }
