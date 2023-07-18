@@ -9,9 +9,6 @@ const _c = {
 
     tapORclick: navigator.userAgent.match(/iPhone|Android.+Mobile/) ? "タップ" : "クリック",
 
-    DEBUGGING: (((new URL(location.href)).hostname) == "127.0.0.1" ||
-        (new URL(location.href)).hostname == "localhost"),
-
     HASUU_SYORI_ONCE: "割引率を足して計算",
     HASUU_SYORI_ONEBYONE: "割引率を１つづつ計算",
 

@@ -10,6 +10,7 @@ export default defineConfig({
   ],
   define: {
     '__APP_VERSION__': JSON.stringify(process.env.npm_package_version),
+    '__DEBUG__': process.env.NODE_ENV !== 'production',
   },
   resolve: {
     alias: {
