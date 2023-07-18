@@ -39,12 +39,27 @@ _c.TAXRATEVALUES = [
     _c.TAXRATE_KOMI_TEN,
 ];
 
+_c.STOREPROFILE_DEFAULT_WITHOUTTAX = {
+    name: "税抜デフォルト",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: _c.COMPUTE_EACH_FALSE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+    defaultZeiritsu: _c.TAXRATE_EIGHT,
+}
+_c.STOREPROFILE_DEFAULT_WITHTAX = {
+    name: "税込デフォルト",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: _c.COMPUTE_EACH_FALSE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+    defaultZeiritsu: _c.TAXRATE_KOMI_EIGHT,
+}
 _c.STOREPROFILE_AEON = {
     name: "イオン",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
     computeEach: _c.COMPUTE_EACH_FALSE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
+
 _c.STOREPROFILE_ITOYOKADO = {
     name: "イトーヨーカドー",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
@@ -95,6 +110,8 @@ _c.DISCOUNT_PROFILES = [
     _c.DISCOUNT_PROFILE_FLOOR,
 ]
 _c.STOREPROFILES = [
+    _c.STOREPROFILE_DEFAULT_WITHOUTTAX,
+    _c.STOREPROFILE_DEFAULT_WITHTAX,
     _c.STOREPROFILE_AEON,
     _c.STOREPROFILE_ITOYOKADO,
     _c.STOREPROFILE_OKSTORE,
