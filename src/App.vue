@@ -1263,7 +1263,7 @@ function isDebug() {
 
     <div class="container-cell">
       <div class="cell3columns">
-        <Calculator :keisanki="keisanki" :goukei="goukei" :key="goukei" @keisan-changed="calculatorChanged" />
+        <Calculator :keisanki="keisanki" :goukei="goukei" :key="[goukei, keisanki]" @keisan-changed="calculatorChanged" />
       </div>
     </div>
 
