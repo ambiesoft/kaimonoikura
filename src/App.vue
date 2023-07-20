@@ -1115,8 +1115,8 @@ function isDebug() {
       <p class="cell3columns">追加を{{ Constants.tapORclick }}して商品を追加してください</p>
     </div>
     <transition-group name="fade">
-      <div class="container-cell" :class="getContainerCellClass(item, index)" v-for="(item, index) in kaimonoItems"
-        :key="item">
+      <div class="container-cell container-cell-item" :class="getContainerCellClass(item, index)"
+        v-for="(item, index) in kaimonoItems" :key="item">
         <div class="cell">
           <div class="setumei">商品 {{ index + 1 }}</div>
           <div class="goods">
@@ -1224,7 +1224,7 @@ function isDebug() {
     <!-- end of loop -->
 
     <div class="container-cell">
-      <button ref="addButtonRef" @click="addItem" class="cell3columns">追加</button>
+      <button ref="addButtonRef" @click="addItem" class="cell3columns" accesskey="a">追加</button>
     </div>
 
     <div class="container-cell">
@@ -1345,6 +1345,10 @@ p {
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+}
+
+.container-cell-item {
+  padding-bottom: 0;
 }
 
 .storeprofile {

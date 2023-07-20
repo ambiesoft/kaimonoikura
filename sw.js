@@ -1,4 +1,4 @@
-const cacheVer = '2.1.8';
+const cacheVer = '2.1.9';
 const cacheName = 'kaimonoikuraCache' + 'v' + cacheVer;
 console.log('cache name', cacheName);
 
@@ -32,12 +32,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(caches.open(cacheName).then((cache) => {
         // Go to the network first
         return fetch(event.request.url).then((fetchedResponse) => {
-            console.log('fetch put', event.request.url);
+            // console.log('fetch put', event.request.url);
             cache.put(event.request, fetchedResponse.clone());
 
             return fetchedResponse;
         }).catch(() => {
-            console.log('fetch exeption');
+            // console.log('fetch exeption');
             // If the network is unavailable, get
             return cache.match(event.request.url);
         });
