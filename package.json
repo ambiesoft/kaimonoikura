@@ -1,6 +1,6 @@
 {
   "name": "kaimonoikura",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
   "dependencies": {
     "@vueuse/core": "^10.2.1",
     "file-saver": "^2.0.5",
+    "mathjs": "^11.9.0",
     "vue": "^3.3.4"
   },
   "devDependencies": {
