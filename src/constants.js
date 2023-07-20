@@ -13,6 +13,7 @@ const _c = {
     HASUU_SYORI_ONEBYONE: "割引率を１つづつ計算",
 
     DISCOUNT_RATE_OK_3_103_N: 3 / 103,
+    DISCOUNT_RATE_AEON2030_N: 0.05,
 
     TAXRATE_ZERO: "0",
     TAXRATE_EIGHT: "8",
@@ -56,10 +57,15 @@ _c.STOREPROFILE_DEFAULT_WITHTAX = {
 _c.STOREPROFILE_AEON = {
     name: "イオン",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
-    computeEach: _c.COMPUTE_EACH_FALSE,
+    computeEach: _c.COMPUTE_EACH_TRUE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
-
+_c.STOREPROFILE_AEON_2030_5_OFF = {
+    name: "イオン ５％オフデー",
+    discountProfile: _c.DISCOUNT_PROFILE_CEAL,
+    computeEach: _c.COMPUTE_EACH_TRUE,
+    hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
+}
 _c.STOREPROFILE_ITOYOKADO = {
     name: "イトーヨーカドー",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
@@ -113,6 +119,7 @@ _c.STOREPROFILES = [
     _c.STOREPROFILE_DEFAULT_WITHOUTTAX,
     _c.STOREPROFILE_DEFAULT_WITHTAX,
     _c.STOREPROFILE_AEON,
+    _c.STOREPROFILE_AEON_2030_5_OFF,
     _c.STOREPROFILE_ITOYOKADO,
     _c.STOREPROFILE_OKSTORE,
     _c.STOREPROFILE_OKSTOREWITHKAIIN,

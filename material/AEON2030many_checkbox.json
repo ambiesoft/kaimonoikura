@@ -1,0 +1,139 @@
+{
+    "kaimonoItems": [
+        {
+            "goods": "TVバニラアイス",
+            "price": 598,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "脂肪控えたビフィズス",
+            "price": 138,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "絶賛肉餃子",
+            "price": 120,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "TVBPカレーメンケー",
+            "price": 88,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "TVBPシーフード",
+            "price": 88,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "さばみそ煮",
+            "price": 148,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "TVBPいちごジャム",
+            "price": 90,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "S＆Bドライカレー",
+            "price": 53,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "生ドーナツミルク",
+            "price": 108,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "山崎ふわふわ",
+            "price": 88,
+            "count": 1,
+            "discountRate": 10,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "エクセラボトル",
+            "price": 88,
+            "count": 2,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null,
+            "aeon2030": true
+        }
+    ],
+    "selectedStoreProfile": {
+        "name": "イオン ５％オフデー",
+        "discountProfile": "割引率切り上げ",
+        "computeEach": "１個づつ計算",
+        "hasuuSyori": "割引率を１つづつ計算"
+    },
+    "customStoreProfile": {
+        "name": "カスタム",
+        "discountProfile": "割引率切り上げ",
+        "computeEach": "まとめて計算",
+        "hasuuSyori": "割引率を１つづつ計算"
+    },
+    "memo": "イオン２０３０自分で割引を設定。あたらしいチェックタイプのプロファイル",
+    "keisanki": null
+}

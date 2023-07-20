@@ -315,8 +315,57 @@ if (__DEBUG__) {
     testFunc("AEON20230712_AEONwithWaribiki zeis[0].allvalue()", 138, zeis.value[0].allvalue());
     testFunc("AEON20230712_AEONwithWaribiki goukei", 1871, goukei.value);
 
+    selectedStoreProfile.value = testData.AEON2030_some_byself.selectedStoreProfile;
+    customStoreProfile.value = testData.AEON2030_some_byself.customStoreProfile;
+    kaimonoItems.value = testData.AEON2030_some_byself.kaimonoItems;
+    testFunc("AEON2030_some_byself syoukei", 1642, syoukei.value);
+    testFunc("AEON2030_some_byself allItemHinCount", 5, allItemHinCount.value);
+    testFunc("AEON2030_some_byself allItemCount", 5, allItemCount.value);
+    testFunc("AEON2030_some_byself disp_syoukei", 1642, disp_syoukei.value);
+    testFunc("AEON2030_some_byself zeis len", 1, zeis.value.length);
+    testFunc("AEON2030_some_byself zeis[0].ratePercent", "10", zeis.value[0].ratePercent);
+    testFunc("AEON2030_some_byself zeis[0].targetValue", 1642, zeis.value[0].targetValue);
+    testFunc("AEON2030_some_byself zeis[0].allvalue()", 164, zeis.value[0].allvalue());
+    testFunc("AEON2030_some_byself goukei", 1806, goukei.value);
 
+    selectedStoreProfile.value = testData.AEON2030_some_checkbox.selectedStoreProfile;
+    customStoreProfile.value = testData.AEON2030_some_checkbox.customStoreProfile;
+    kaimonoItems.value = testData.AEON2030_some_checkbox.kaimonoItems;
+    testFunc("AEON2030_some_checkbox syoukei", 1642, syoukei.value);
+    testFunc("AEON2030_some_checkbox allItemHinCount", 5, allItemHinCount.value);
+    testFunc("AEON2030_some_checkbox allItemCount", 5, allItemCount.value);
+    testFunc("AEON2030_some_checkbox disp_syoukei", 1642, disp_syoukei.value);
+    testFunc("AEON2030_some_checkbox zeis len", 1, zeis.value.length);
+    testFunc("AEON2030_some_checkbox zeis[0].ratePercent", "10", zeis.value[0].ratePercent);
+    testFunc("AEON2030_some_checkbox zeis[0].targetValue", 1642, zeis.value[0].targetValue);
+    testFunc("AEON2030_some_checkbox zeis[0].allvalue()", 164, zeis.value[0].allvalue());
+    testFunc("AEON2030_some_checkbox goukei", 1806, goukei.value);
 
+    selectedStoreProfile.value = testData.AEON2030many_byself.selectedStoreProfile;
+    customStoreProfile.value = testData.AEON2030many_byself.customStoreProfile;
+    kaimonoItems.value = testData.AEON2030many_byself.kaimonoItems;
+    testFunc("AEON2030many_byself syoukei", 1597, syoukei.value);
+    testFunc("AEON2030many_byself allItemHinCount", 11, allItemHinCount.value);
+    testFunc("AEON2030many_byself allItemCount", 12, allItemCount.value);
+    testFunc("AEON2030many_byself disp_syoukei", 1597, disp_syoukei.value);
+    testFunc("AEON2030many_byself zeis len", 1, zeis.value.length);
+    testFunc("AEON2030many_byself zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+    testFunc("AEON2030many_byself zeis[0].targetValue", 1597, zeis.value[0].targetValue);
+    testFunc("AEON2030many_byself zeis[0].allvalue()", 127, zeis.value[0].allvalue());
+    testFunc("AEON2030many_byself goukei", 1724, goukei.value);
+
+    selectedStoreProfile.value = testData.AEON2030many_checkbox.selectedStoreProfile;
+    customStoreProfile.value = testData.AEON2030many_checkbox.customStoreProfile;
+    kaimonoItems.value = testData.AEON2030many_checkbox.kaimonoItems;
+    testFunc("AEON2030many_checkbox syoukei", 1597, syoukei.value);
+    testFunc("AEON2030many_checkbox allItemHinCount", 11, allItemHinCount.value);
+    testFunc("AEON2030many_checkbox allItemCount", 12, allItemCount.value);
+    testFunc("AEON2030many_checkbox disp_syoukei", 1597, disp_syoukei.value);
+    testFunc("AEON2030many_checkbox zeis len", 1, zeis.value.length);
+    testFunc("AEON2030many_checkbox zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+    testFunc("AEON2030many_checkbox zeis[0].targetValue", 1597, zeis.value[0].targetValue);
+    testFunc("AEON2030many_checkbox zeis[0].allvalue()", 127, zeis.value[0].allvalue());
+    testFunc("AEON2030many_checkbox goukei", 1724, goukei.value);
 
     // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
     if (false) {
@@ -446,7 +495,9 @@ function isOKWithKaiinProfile() {
 function isOKWithoutKaiinProfile() {
   return selectedStoreProfile.value.name == Constants.STOREPROFILE_OKSTORE.name;
 }
-
+function isAEON2030() {
+  return selectedStoreProfile.value.name == Constants.STOREPROFILE_AEON_2030_5_OFF.name;
+}
 function loadFromLocalStorage(storageKey) {
   let ls = localStorage.getItem(storageKey);
   if (ls && ls[0] != "{") {
@@ -612,6 +663,7 @@ function addItem(event) {
     count: 1,
     discountRate: null,
     ok3_103: isOKWithKaiinProfile(),
+    aeon2030: isAEON2030(),
     discountValue: null,
     taxRate: getDefaultTaxRate(),
   });
@@ -689,6 +741,9 @@ function getHasuuSyori() {
 function isItemOk3_103(item) {
   return isOKWithKaiinProfile() && item.ok3_103;
 }
+function isItemAeon2030(item) {
+  return isAEON2030() && item.aeon2030;
+}
 function getComputeEach() {
   if (!selectedStoreProfile.value.computeEach) {
     return Constants.COMPUTE_EACH_FALSE;
@@ -715,7 +770,9 @@ function getItemSyoukei(item, withoutOK3_103) {
     if (isItemOk3_103(item) && !withoutOK3_103) {
       discountRates.push(Constants.DISCOUNT_RATE_OK_3_103_N);
     }
-
+    if (isItemAeon2030(item)) {
+      discountRates.push(Constants.DISCOUNT_RATE_AEON2030_N);
+    }
     return computeDiscountedPriceFromRate(price, count, discountRates, {
       computeEach: getComputeEach(),
       hasuuFunc: getHasuuFunc(),
@@ -1202,6 +1259,13 @@ function isDebug() {
               <input :id="'ok3_103_check' + index" type="checkbox" @click="item.ok3_103 = !item.ok3_103"
                 :checked="item.ok3_103" />
               <label :for="'ok3_103_check' + index">3/103</label>
+            </div>
+          </div>
+          <div v-if="isAEON2030()">
+            <div class="checklabel">
+              <input :id="'aeon_2030_check' + index" type="checkbox" @click="item.aeon2030 = !item.aeon2030"
+                :checked="item.aeon2030" />
+              <label :for="'aeon_2030_check' + index">5%OFF</label>
             </div>
           </div>
           <div class="checklabel">

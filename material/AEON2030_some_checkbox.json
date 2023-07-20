@@ -1,0 +1,73 @@
+{
+    "kaimonoItems": [
+        {
+            "goods": "キュキュット替え",
+            "price": 308,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "ビオレ拭くだけ",
+            "price": 378,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "アルミホイル",
+            "price": 98,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "TVBPムテンカ",
+            "price": 125,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null,
+            "aeon2030": true
+        },
+        {
+            "goods": "ビューティ消化仕入",
+            "price": 780,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null,
+            "aeon2030": false
+        }
+    ],
+    "selectedStoreProfile": {
+        "name": "イオン ５％オフデー",
+        "discountProfile": "割引率切り上げ",
+        "computeEach": "１個づつ計算",
+        "hasuuSyori": "割引率を１つづつ計算"
+    },
+    "customStoreProfile": {
+        "name": "カスタム",
+        "discountProfile": "割引率切り上げ",
+        "computeEach": "まとめて計算",
+        "hasuuSyori": "割引率を１つづつ計算"
+    },
+    "memo": "イオンの２０３０のあたらいいプロファイル",
+    "keisanki": null
+}
