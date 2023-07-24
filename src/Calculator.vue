@@ -68,44 +68,62 @@ function formatForEval(s) {
     return { result: s, error: "" };
 }
 
-function touchGoukei() {
-    let a = goukei.value;
-    return a + 1;
-}
+const keisanError = ref();
 const keisanAnswer = computed(() => {
+    keisanError.value = "";
     if (!keisanki.value) {
         return;
     }
-
+    const nazo = "?";
     try {
-        touchGoukei();
         let formatted = formatForEval(keisanki.value);
         if (formatted.error) {
-            return formatted.error;
+            keisanError.value = formatted.error;
+            return nazo;
         }
         const context = {
             goukei: goukei.value,
         };
         return math.evaluate(formatted.result, context);
-    } catch (keisanError) {
-        console.error(keisanError);
-        return "計算式が不正です";
+    } catch (err) {
+        console.error(err);
+        keisanError.value = "計算式が不正です";
+        return nazo;
     }
 });
 </script>
 
 <template>
-    <div>
-        <input v-model="keisanki" placeholder="簡易計算機　例：合計 - 100" @change="emits('keisanChanged', keisanki)" />
+    <div class="calccontainer">
+        <input v-model="keisanki" class="kesankiInput" placeholder="簡易計算機　例：合計 - 100"
+            @change="emits('keisanChanged', keisanki)" />
+        <div class="keisanKekka">
+            ={{ keisanAnswer }}
+        </div>
     </div>
-    <div class="keisanKekka">
-        {{ keisanAnswer }}
+    <div class="keisanError">
+        {{ keisanError }}
     </div>
 </template>
 
 <style>
+.calccontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.kesankiInput {
+    text-align: right;
+}
+
 .keisanKekka {
     padding-top: 3px;
-    font-family: serif;
+    padding-left: 3px;
+}
+
+.keisanError {
+    color: red;
+    text-align: center;
 }
 </style>
