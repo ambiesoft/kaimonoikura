@@ -39,6 +39,7 @@ function formatForEval(s) {
     s = s.replace(/ー/g, '-');
     s = s.replace(/⁻/g, '-');
     s = s.replace(/％/g, '%');
+    s = s.replace(/＊/g, '*');
 
     s = s.replace(/　/g, ' ');
 
