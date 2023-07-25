@@ -408,6 +408,7 @@ const customStoreProfile = ref();
 const selectedStoreProfile = ref();
 const memo = ref();
 const keisanki = ref();
+let keisankiInputted;
 
 const showCustomVisible = ref(true);
 
@@ -531,12 +532,14 @@ function getSaveJson() {
     "selectedStoreProfile": selectedStoreProfile.value,
     "customStoreProfile": customStoreProfile.value,
     "memo": memo.value,
-    "keisanki": keisanki.value,
+    "keisanki": keisankiInputted ?? keisanki.value,
   });
 }
 
 function saveonLocalStorage() {
-  localStorage.setItem(LOCALSTORAGE_DEFAULT, getSaveJson());
+  const json = getSaveJson();
+  console.log(json);
+  localStorage.setItem(LOCALSTORAGE_DEFAULT, json);
 }
 watch(kaimonoItems.value, (newItems) => {
   saveonLocalStorage();
@@ -1086,7 +1089,12 @@ function onMemoChange() {
 watch(keisanki, () => {
   saveonLocalStorage();
 })
+const calculatorInputted = ((v) => {
+  keisankiInputted = v;
+  saveonLocalStorage();
+});
 const calculatorChanged = ((v) => {
+  keisankiInputted = null;
   keisanki.value = v;
 });
 function isReadyMadeStoreProfile() {
@@ -1208,8 +1216,8 @@ function isDebug() {
         <div class="cell">
           <div class="setumei">割引円</div>
           <div class="discount-value">
-            <input ref="discountValueRefs" class="numberinput" placeholder="割引円" type="number" v-model="item.discountValue"
-              @keypress="isNumber($event)" />
+            <input ref="discountValueRefs" class="numberinput" placeholder="割引円" type="number"
+              v-model="item.discountValue" @keypress="isNumber($event)" />
           </div>
           <div>
             <button class="twobutton" @click="decrementDiscountValue(item, index)">
@@ -1224,8 +1232,8 @@ function isDebug() {
         <div class="cell">
           <div class="setumei">割引％</div>
           <div class="discount-rate">
-            <input ref="discountRateRefs" class="numberinput" placeholder="割引％" inputmode="decimal" v-model="item.discountRate"
-              @keypress="isNumberOrSpace($event)" />
+            <input ref="discountRateRefs" class="numberinput" placeholder="割引％" inputmode="decimal"
+              v-model="item.discountRate" @keypress="isNumberOrSpace($event)" />
           </div>
           <div>
             <button class="twobutton" @click="decrementDiscountRate(item, index)">
@@ -1327,7 +1335,8 @@ function isDebug() {
 
     <div class="container-cell">
       <div class="cell3columns">
-        <Calculator :keisanki="keisanki" :goukei="goukei" :key="[goukei, keisanki]" @keisan-changed="calculatorChanged" />
+        <Calculator :keisanki.sync="keisanki" :goukei="goukei" :key="[goukei, keisanki]"
+          @keisan-changed="calculatorChanged" @keisan-inputted="calculatorInputted" />
       </div>
     </div>
 

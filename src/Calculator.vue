@@ -14,6 +14,7 @@ const goukei = ref(props.goukei);
 
 const emits = defineEmits([
     'keisanChanged',
+    'keisanInputted',
 ]);
 
 function formatForEval(s) {
@@ -96,7 +97,7 @@ const keisanAnswer = computed(() => {
 <template>
     <div class="calccontainer">
         <input v-model="keisanki" class="kesankiInput" placeholder="簡易計算機　例：合計 - 100"
-            @change="emits('keisanChanged', keisanki)" />
+            @change="emits('keisanChanged', keisanki)" @input="emits('keisanInputted', keisanki)" />
         <div class="keisanKekka">
             ={{ keisanAnswer }}
         </div>
