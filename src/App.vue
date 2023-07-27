@@ -538,7 +538,6 @@ function getSaveJson() {
 
 function saveonLocalStorage() {
   const json = getSaveJson();
-  console.log(json);
   localStorage.setItem(LOCALSTORAGE_DEFAULT, json);
 }
 watch(kaimonoItems.value, (newItems) => {

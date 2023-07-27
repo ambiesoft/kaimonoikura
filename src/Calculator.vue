@@ -1,9 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted, nextTick, toRefs } from "vue";
 import { zenkaku2Hankaku } from '@/utils';
-import { create, all } from 'mathjs';
-
-const math = create(all);
 
 const props = defineProps([
     'keisanki',
@@ -29,7 +26,8 @@ function formatForEval(s) {
         return { result: "", error: "アルファベットは使えません" };
     }
 
-    s = s.replace(/合計/g, 'goukei');
+    // s = s.replace(/合計/g, 'goukei');
+    s = s.replace(/合計/g, "(" + goukei.value + ")");
     s = zenkaku2Hankaku(s);
 
     s = s.replace(/÷/g, '/');
@@ -83,10 +81,8 @@ const keisanAnswer = computed(() => {
             keisanError.value = formatted.error;
             return nazo;
         }
-        const context = {
-            goukei: goukei.value,
-        };
-        return math.evaluate(formatted.result, context);
+        console.log("計算式", formatted.result);
+        return new Function('return ' + formatted.result)();
     } catch (err) {
         console.error(err);
         keisanError.value = "計算式が不正です";
