@@ -81,7 +81,7 @@ const keisanAnswer = computed(() => {
             keisanError.value = formatted.error;
             return nazo;
         }
-        console.log("計算式", formatted.result);
+        // console.log("計算式", formatted.result);
         return new Function('return ' + formatted.result)();
     } catch (err) {
         console.error(err);

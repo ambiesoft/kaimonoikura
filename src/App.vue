@@ -459,9 +459,12 @@ function applyObject(obj) {
   obj.selectedStoreProfile = refineStoreProfile(obj.selectedStoreProfile);
   obj.customStoreProfile = refineStoreProfile(obj.customStoreProfile);
 
+  function removeNullFromArray(array) {
+    return array.filter((item) => !!item);
+  }
   selectedStoreProfile.value = obj.selectedStoreProfile ?? createDefaultStoreProfile();
   customStoreProfile.value = obj.customStoreProfile ?? createDefaultStoreProfile();
-  kaimonoItems.value = obj.kaimonoItems ?? [];
+  kaimonoItems.value = removeNullFromArray(obj.kaimonoItems) ?? [];
   memo.value = obj.memo;
   keisanki.value = obj.keisanki;
 
@@ -575,6 +578,30 @@ function isNumberOrSpace(evt) {
   }
   return isNumber(evt);
 }
+
+function array_move(arr, old_index, new_index) {
+  if (new_index >= arr.length) {
+    var k = new_index - arr.length + 1;
+    while (k--) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+  return arr; // for testing
+};
+function moveItemDown(index) {
+  if (kaimonoItems.value.length <= (index + 1)) {
+    return;
+  }
+  array_move(kaimonoItems.value, index, index + 1);
+}
+function moveItemUp(index) {
+  if (index <= 0) {
+    return;
+  }
+  array_move(kaimonoItems.value, index, index - 1);
+}
+
 function incrementCount(item, index) {
   countRefs.value[index].focus();
   item.count++;
@@ -792,7 +819,7 @@ function getItemSyoukei(item, withoutOK3_103) {
 function getSyoukei(withoutOK3_103) {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
-    if (!item.disabled) {
+    if (item && !item.disabled) {
       ret += getItemSyoukei(item, withoutOK3_103);
     }
   });
@@ -802,7 +829,7 @@ function getSyoukei(withoutOK3_103) {
 function getZeis() {
   let zeiGotoMap = {};
   kaimonoItems.value.forEach((item) => {
-    if (!item.disabled) {
+    if (item && !item.disabled) {
       let rate = item.taxRate;
       if (isItemOk3_103(item)) {
         console.assert(rate == Constants.TAXRATE_EIGHT);
@@ -890,6 +917,9 @@ function setItemInfoMessage(item, v) {
   item.message = v;
 }
 function getItemErrorMessage(item) {
+  if (!item) {
+    return "nullです";
+  }
   if (item.disabled) {
     return "無効です";
   }
@@ -951,7 +981,7 @@ const allZei = computed(() => {
 const allItemCount = computed(() => {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
-    if (!item.disabled) {
+    if (item && !item.disabled) {
       ret += item.count;
     }
   })
@@ -960,7 +990,7 @@ const allItemCount = computed(() => {
 const allItemHinCount = computed(() => {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
-    if (!item.disabled) {
+    if (item && !item.disabled) {
       ret += 1
     }
   })
@@ -974,6 +1004,12 @@ function getContainerCellClass(item, index) {
     return 'empty_container_cell';
   }
   return index % 2 == 0 ? 'even_bg' : 'odd_bg';
+}
+function getSyohinDownButtonClass(index) {
+  return (kaimonoItems.value.length <= (index + 1)) ? 'button_invisible' : 'button_visible';
+}
+function getSyohinUpButtonClass(index) {
+  return index <= 0 ? 'button_invisible' : 'button_visible';
 }
 const ok3_100kei = computed(() => {
   if (!isOKWithKaiinProfile()) {
@@ -1185,6 +1221,14 @@ function isDebug() {
           <div class="setumei">商品 {{ index + 1 }}</div>
           <div class="goods">
             <input ref="nameRefs" class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
+          </div>
+          <div v-if="item.disabled">
+            <button class="twobutton" :class="getSyohinDownButtonClass(index)" @click="moveItemDown(index)">
+              {{ Constants.downChar }}
+            </button>
+            <button class="twobutton" :class="getSyohinUpButtonClass(index)" @click="moveItemUp(index)">
+              {{ Constants.upChar }}
+            </button>
           </div>
         </div>
 
@@ -1450,6 +1494,14 @@ p {
 
 .odd_bg {
   background-color: lightgray;
+}
+
+.button_visible {
+  visibility: visible;
+}
+
+.button_invisible {
+  visibility: hidden;
 }
 
 .cell {
