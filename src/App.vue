@@ -421,6 +421,14 @@ function createDefaultStoreProfile() {
   }
 }
 function applyObject(obj) {
+  try {
+    return applyObject2(obj);
+  } catch (err) {
+    alert(err);
+  }
+  return null;
+}
+function applyObject2(obj) {
   const refineStoreProfile = ((sp) => {
     if (sp) {
       if (typeof sp != "object") {
@@ -460,6 +468,9 @@ function applyObject(obj) {
   obj.customStoreProfile = refineStoreProfile(obj.customStoreProfile);
 
   function removeNullFromArray(array) {
+    if (!array) {
+      return null;
+    }
     return array.filter((item) => !!item);
   }
   selectedStoreProfile.value = obj.selectedStoreProfile ?? createDefaultStoreProfile();
