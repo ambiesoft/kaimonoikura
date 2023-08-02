@@ -1413,7 +1413,11 @@ function isDebug() {
       </ul>
     </div>
     <footer>
-      {{ Constants.appName }} v{{ Constants.appVersion }} <a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a>
+      <ul id="footeritems">
+        <li>{{ Constants.appName }} v{{ Constants.appVersion }}</li>
+        <li><a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a></li>
+        <li><a href="https://github.com/ambiesoft/kaimonoikura" target="_blank">github</a></li>
+      </ul>
     </footer>
   </div> <!-- end of container -->
   <div v-if="isDebug()">
@@ -1612,10 +1616,6 @@ ul {
   padding-left: 30px;
 }
 
-ul li {
-  list-style-type: square;
-}
-
 
 ul.ulhelp {
   margin: 0 +10px 0 0;
@@ -1628,5 +1628,14 @@ ul.ulhelp li {
 footer {
   padding-top: 10px;
   text-align: right;
+}
+
+#footeritems {
+  list-style: none;
+}
+
+#footeritems>li {
+  display: inline;
+  margin-right: 2px;
 }
 </style>
