@@ -411,6 +411,7 @@ const keisanki = ref();
 let keisankiInputted;
 
 const showCustomVisible = ref(true);
+const showTsukaikata = ref(false);
 
 function createDefaultStoreProfile() {
   return {
@@ -1407,8 +1408,8 @@ function isDebug() {
     </div>
 
     <div class="help">
-      <h2>使い方</h2>
-      <ul class="ulhelp">
+      <h2 id="tsukaikatatext" @click="showTsukaikata = !showTsukaikata">使い方</h2>
+      <ul v-if="showTsukaikata" class="ulhelp">
         <li>
           店舗によって割引（％）の端数の計算方法が違います。「会計方式」から適切なものを選択してください。
         </li>
@@ -1421,6 +1422,7 @@ function isDebug() {
         <li>
           簡易計算機では四則演算を行うことができ、カッコを使うこともできます。「合計」と記述することで合計を参照することができます。ほかにも例えば「合計 ％
           ２００」と記述すると、合計を２００で割ったあまりを求めることができます。</li>
+        <li>商品の順番を入れ替えるには、一旦無効にしてから商品名の下の矢印を{{ Constants.tapORclick }}します。</li>
       </ul>
     </div>
     <footer>
@@ -1634,6 +1636,11 @@ ul.ulhelp {
 
 ul.ulhelp li {
   padding-bottom: 15px;
+}
+
+#tsukaikatatext {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 footer {
