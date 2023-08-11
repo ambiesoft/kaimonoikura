@@ -1158,6 +1158,13 @@ function isReadyMadeStoreProfile() {
 function isDebug() {
   return __DEBUG__;
 }
+const zeigakuAll = computed(() => {
+  let ret = 0;
+  zeis.value.forEach((z) => {
+    ret += z.allvalue();
+  });
+  return ret;
+});
 </script>
 
 <template>
@@ -1390,8 +1397,8 @@ function isDebug() {
 
     <div class="container-cell">
       <div class="cell3columns">
-        <Calculator :keisanki.sync="keisanki" :goukei="goukei" :key="[goukei, keisanki]"
-          @keisan-changed="calculatorChanged" @keisan-inputted="calculatorInputted" />
+        <Calculator :keisanki.sync="keisanki" :syoukei="disp_syoukei" :goukei="goukei" :zeigaku="zeigakuAll"
+          :key="[goukei, keisanki]" @keisan-changed="calculatorChanged" @keisan-inputted="calculatorInputted" />
       </div>
     </div>
 
@@ -1421,7 +1428,8 @@ function isDebug() {
         </li>
         <li>
           簡易計算機では四則演算を行うことができ、カッコを使うこともできます。「合計」と記述することで合計を参照することができます。ほかにも例えば「合計 ％
-          ２００」と記述すると、合計を２００で割ったあまりを求めることができます。</li>
+          ２００」と記述すると、合計を２００で割ったあまりを求めることができます。「合計」の他に「小計」と「税額」も利用できます。計算式として「切上」、「四捨五入」、「切下」を利用できます。例えば「切下（合計÷３）」とします。
+        </li>
         <li>商品の順番を入れ替えるには、一旦無効にしてから商品名の下の矢印を{{ Constants.tapORclick }}します。</li>
       </ul>
     </div>

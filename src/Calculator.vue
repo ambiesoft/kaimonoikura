@@ -5,9 +5,13 @@ import { zenkaku2Hankaku } from '@/utils';
 const props = defineProps([
     'keisanki',
     'goukei',
+    'syoukei',
+    'zeigaku',
 ]);
 const keisanki = ref(props.keisanki);
 const goukei = ref(props.goukei);
+const syoukei = ref(props.syoukei);
+const zeigaku = ref(props.zeigaku);
 
 const emits = defineEmits([
     'keisanChanged',
@@ -26,8 +30,13 @@ function formatForEval(s) {
         return { result: "", error: "アルファベットは使えません" };
     }
 
-    // s = s.replace(/合計/g, 'goukei');
     s = s.replace(/合計/g, "(" + goukei.value + ")");
+    s = s.replace(/小計/g, "(" + syoukei.value + ")");
+    s = s.replace(/税額/g, "(" + zeigaku.value + ")");
+    s = s.replace(/切上/g, " Math.ceil ");
+    s = s.replace(/四捨五入/g, " Math.round ");
+    s = s.replace(/切下/g, " Math.floor ");
+
     s = zenkaku2Hankaku(s);
 
     s = s.replace(/÷/g, '/');
@@ -65,6 +74,9 @@ function formatForEval(s) {
     s = s.replace(/〔/g, '(');
     s = s.replace(/〕/g, ')');
 
+    s = s.replace(/（/g, '(');
+    s = s.replace(/）/g, ')');
+
     return { result: s, error: "" };
 }
 
@@ -81,7 +93,7 @@ const keisanAnswer = computed(() => {
             keisanError.value = formatted.error;
             return nazo;
         }
-        // console.log("計算式", formatted.result);
+        console.log("計算式", formatted.result);
         return new Function('return ' + formatted.result)();
     } catch (err) {
         console.error(err);
