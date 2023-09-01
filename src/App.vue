@@ -367,6 +367,21 @@ if (__DEBUG__) {
     testFunc("AEON2030many_checkbox zeis[0].allvalue()", 127, zeis.value[0].allvalue());
     testFunc("AEON2030many_checkbox goukei", 1724, goukei.value);
 
+    selectedStoreProfile.value = testData.OKMany6767.selectedStoreProfile;
+    kaimonoItems.value = testData.OKMany6767.kaimonoItems;
+    testFunc("OKMany6767 syoukei", 6241, syoukei.value);
+    testFunc("OKMany6767 allItemHinCount", 26, allItemHinCount.value);
+    testFunc("OKMany6767 allItemCount", 26, allItemCount.value);
+    testFunc("OKMany6767 disp_syoukei", 6241, disp_syoukei.value);
+    testFunc("OKMany6767 zeis len", 2, zeis.value.length);
+    testFunc("OKMany6767 zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+    testFunc("OKMany6767 zeis[0].targetValue", 4852, zeis.value[0].targetValue);
+    testFunc("OKMany6767 zeis[0].allvalue()", 388, zeis.value[0].allvalue());
+    testFunc("OKMany6767 zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+    testFunc("OKMany6767 zeis[1].targetValue", 1389, zeis.value[1].targetValue);
+    testFunc("OKMany6767 zeis[1].allvalue()", 138, zeis.value[1].allvalue());
+    testFunc("OKMany6767 goukei", 6767, goukei.value);
+
     // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
     if (false) {
       const syouhinnsuu = 2;

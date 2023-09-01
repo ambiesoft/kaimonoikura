@@ -1,0 +1,302 @@
+{
+    "kaimonoItems": [
+        {
+            "goods": "チラシ",
+            "price": 399,
+            "count": 1,
+            "discountRate": "10",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "えび天重",
+            "price": 399,
+            "count": 1,
+            "discountRate": "20",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "Jオイルユーロリーブ",
+            "price": 794,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "KMしぼりたて生醤油",
+            "price": 307,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "タカナシ無脂肪ヨーグルト",
+            "price": 131,
+            "count": 1,
+            "discountRate": "3",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "Nドレダイエットまろやかゴマ",
+            "price": 119,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "稲葉スーパーノンオイル",
+            "price": 428,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "ホウコウイワシウメジソ",
+            "price": 163,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "こだわりきんぴらごぼう",
+            "price": 126,
+            "count": 1,
+            "discountRate": "20",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "おかめ納豆極粒",
+            "price": 110,
+            "count": 1,
+            "discountRate": "3",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "カヘイヤアラビキアワシダンゴ",
+            "price": 159,
+            "count": 1,
+            "discountRate": "30",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "オーマイミニスパゲッティ",
+            "price": 199,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "QPからしマヨネーズ",
+            "price": 195,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "稲葉常温グリーンカレー",
+            "price": 242,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "SBディナーカレー中辛",
+            "price": 234,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "杜仲茶",
+            "price": 269,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "オーマイ芳醇チーズクリーム",
+            "price": 134,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "チーズワッフル",
+            "price": 225,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "オグリキザミアブラアゲ",
+            "price": 100,
+            "count": 1,
+            "discountRate": "10",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "ブロッコリー",
+            "price": 158,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "カヘイヤハンペン",
+            "price": 98,
+            "count": 1,
+            "discountRate": "3",
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "ニッスイイキチクワ",
+            "price": 71,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "8",
+            "message": null
+        },
+        {
+            "goods": "キルシェティッシュ",
+            "price": 215,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null
+        },
+        {
+            "goods": "フワハナトイレット",
+            "price": 347,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null
+        },
+        {
+            "goods": "アタック抗菌",
+            "price": 328,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null
+        },
+        {
+            "goods": "アースジェット",
+            "price": 499,
+            "count": 1,
+            "discountRate": null,
+            "ok3_103": false,
+            "aeon2030": false,
+            "discountValue": null,
+            "taxRate": "10",
+            "message": null
+        }
+    ],
+    "selectedStoreProfile": {
+        "name": "オーケーストア",
+        "discountProfile": "割引率切り下げ",
+        "computeEach": "１個づつ計算",
+        "hasuuSyori": "割引率を１つづつ計算"
+    },
+    "customStoreProfile": {
+        "name": "カスタム",
+        "discountProfile": "割引率切り上げ",
+        "computeEach": "まとめて計算",
+        "hasuuSyori": "割引率を１つづつ計算"
+    }
+}
