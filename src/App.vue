@@ -1184,7 +1184,7 @@ const zeigakuAll = computed(() => {
 
 <template>
   <div v-if="isDebug()">
-    <button @click="doTest">doTest</button>
+    <button @click="doTest" id="doTest">doTest</button>
   </div>
   <div class="container">
     <h1>🛒買い物いくら🛒</h1>
@@ -1678,5 +1678,8 @@ footer {
 #footeritems>li {
   display: inline;
   margin-right: 2px;
+}
+#doTest {
+  background-color: red;
 }
 </style>
