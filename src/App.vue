@@ -1114,9 +1114,14 @@ function savelocalFile() {
   saveAs(blob, filename);
 }
 
+function getsyohin_placeholder(item) {
+  return item.goods ? item.goods : "商品名（任意）";
+  // return "商品名（任意）";
+}
+
 const kakaku_placeholder = computed(() => {
   if (isOKWithKaiinProfile() || isOKWithoutKaiinProfile()) {
-    return "非会員の税抜価格";
+    return "非会員の税抜価格を入力";
   }
 
   switch (getDefaultTaxRate()) {
@@ -1124,10 +1129,10 @@ const kakaku_placeholder = computed(() => {
       return "";
     case Constants.TAXRATE_EIGHT:
     case Constants.TAXRATE_TEN:
-      return "税抜価格";
+      return "税抜価格を入力";
     case Constants.TAXRATE_KOMI_EIGHT:
     case Constants.TAXRATE_KOMI_TEN:
-      return "税込価格";
+      return "税込価格を入力";
   }
   console.assert(false);
   return "";
@@ -1254,7 +1259,9 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">商品 {{ index + 1 }}</div>
           <div class="goods">
-            <input ref="nameRefs" class="stringinput" placeholder="商品名（任意）" v-model="item.goods" />
+            <input ref="nameRefs" class="stringinput" v-model="item.goods" 
+            @focus="setItemInfoMessage(item, getsyohin_placeholder(item))" @blur="setItemInfoMessage(item, null)"
+            :placeholder="getsyohin_placeholder(item)" />
           </div>
           <div v-if="item.disabled">
             <button class="twobutton" :class="getSyohinDownButtonClass(index)" @click="moveItemDown(index)">
@@ -1500,7 +1507,8 @@ p {
   border: skyblue 1px solid;
 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr 1fr; */
+  grid-template-columns: 33.3% 33.3% 33.3%;
 }
 
 .container-cell-item {
@@ -1566,7 +1574,7 @@ p {
 .cell3rows {
   grid-row: 1/4;
   align-self: center;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .setumei {

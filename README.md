@@ -1,5 +1,6 @@
 # kaimonoikura
-スーパーなどで買い物をするときに商品ごとに価格を入力して、会計時の支払金額がわかるようにしたWEBアプリです。動作サイトは[こちら](https://ambiesoft.github.io/webjumper/?target=kaimonoikura)
+
+スーパーなどで買い物をするときに商品ごとに価格を入力して、会計時の支払金額がわかるようにした WEB アプリです。動作サイトは[こちら](https://ambiesoft.github.io/webjumper/?target=kaimonoikura)
 
 This template should help get you started developing with Vue 3 in Vite.
 
@@ -28,3 +29,7 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Update
+
+Change version on both package.json and sw.js
