@@ -62,7 +62,7 @@
         }
     ],
     "selectedStoreProfile": {
-        "name": "オーケーストア",
+        "name": "オーケー",
         "discountProfile": "割引率切り下げ",
         "computeEach": true,
         "hasuuSyori": 1

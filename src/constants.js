@@ -61,7 +61,7 @@ _c.STOREPROFILE_AEON = {
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 _c.STOREPROFILE_AEON_2030_5_OFF = {
-    name: "イオン ５％オフデー",
+    name: "イオン(5%オフ)",
     discountProfile: _c.DISCOUNT_PROFILE_CEAL,
     computeEach: _c.COMPUTE_EACH_TRUE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
@@ -74,13 +74,13 @@ _c.STOREPROFILE_ITOYOKADO = {
     defaultZeiritsu: _c.TAXRATE_KOMI_EIGHT,
 }
 _c.STOREPROFILE_OKSTORE = {
-    name: "オーケーストア",
+    name: "オーケー",
     discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
     computeEach: _c.COMPUTE_EACH_TRUE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,
 }
 _c.STOREPROFILE_OKSTOREWITHKAIIN = {
-    name: "オーケーストアwith会員カード",
+    name: "オーケー(3/103)",
     discountProfile: _c.DISCOUNT_PROFILE_FLOOR,
     computeEach: _c.COMPUTE_EACH_TRUE,
     hasuuSyori: _c.HASUU_SYORI_ONEBYONE,

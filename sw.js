@@ -1,4 +1,4 @@
-const cacheVer = '2.1.20';
+const cacheVer = '2.2.1';
 const cacheName = 'kaimonoikuraCache' + 'v' + cacheVer;
 console.log('cache name', cacheName);
 

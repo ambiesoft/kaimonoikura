@@ -1494,7 +1494,7 @@ export const testData = {
             }
         ],
         "selectedStoreProfile": {
-            "name": "イオン ５％オフデー",
+            "name": "イオン(5%オフ)",
             "discountProfile": "割引率切り上げ",
             "computeEach": "１個づつ計算",
             "hasuuSyori": "割引率を１つづつ計算"
@@ -1762,7 +1762,7 @@ export const testData = {
             }
         ],
         "selectedStoreProfile": {
-            "name": "イオン ５％オフデー",
+            "name": "イオン(5%オフ)",
             "discountProfile": "割引率切り上げ",
             "computeEach": "１個づつ計算",
             "hasuuSyori": "割引率を１つづつ計算"
@@ -2066,7 +2066,7 @@ export const testData = {
             }
         ],
         "selectedStoreProfile": {
-            "name": "オーケーストア",
+            "name": "オーケー",
             "discountProfile": "割引率切り下げ",
             "computeEach": "１個づつ計算",
             "hasuuSyori": "割引率を１つづつ計算"

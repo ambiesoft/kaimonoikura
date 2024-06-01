@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import Constants from './constants';
 import { computeDiscountedPriceFromRate } from '@/utils';
 import { useFileDialog } from '@vueuse/core'
@@ -13,7 +13,7 @@ if (__DEBUG__) {
 }
 
 const DISCOUNTRATE_SEPARATOR = ' ';
-const LOCALSTORAGE_DEFAULT = "defaultls";
+const STORAGE_DEFAULT = "defaultls";
 
 function formatSpace(s) {
   return s.replace(/　/g, ' ');
@@ -497,7 +497,11 @@ function applyObject2(obj) {
 
   console.assert(isValidStoreProfile());
 }
-const loaded = loadFromLocalStorage(LOCALSTORAGE_DEFAULT);
+const isEmptyObject = (obj) => {
+  return Object.keys(obj).length === 0;
+};
+
+const loaded = !isEmptyObject(loadFromSessionStorage()) ? loadFromSessionStorage():loadFromLocalStorage() ;
 applyObject(loaded);
 
 if (__DEBUG__) {
@@ -529,8 +533,9 @@ function isOKWithoutKaiinProfile() {
 function isAEON2030() {
   return selectedStoreProfile.value.name == Constants.STOREPROFILE_AEON_2030_5_OFF.name;
 }
-function loadFromLocalStorage(storageKey) {
-  let ls = localStorage.getItem(storageKey);
+
+function loadFromStorageCommon(storage, storageKey) {
+  let ls = storage.getItem(storageKey);
   if (ls && ls[0] != "{") {
     ls = undefined;
   }
@@ -540,6 +545,13 @@ function loadFromLocalStorage(storageKey) {
   }
   return ret;
 }
+function loadFromSessionStorage() {
+  return loadFromStorageCommon(sessionStorage, STORAGE_DEFAULT);
+}
+function loadFromLocalStorage() {
+  return loadFromStorageCommon(localStorage, STORAGE_DEFAULT);
+}
+
 function isValidKaimonoitems(kis) {
   if (!kis) {
     return true;
@@ -566,12 +578,19 @@ function getSaveJson() {
   });
 }
 
-function saveonLocalStorage() {
+function saveonStorageCommon(storage) {
   const json = getSaveJson();
-  localStorage.setItem(LOCALSTORAGE_DEFAULT, json);
+  storage.setItem(STORAGE_DEFAULT, json);
 }
+function saveonSessionStorage() {
+  saveonStorageCommon(sessionStorage);
+}
+function saveonLocalStorage() {
+  saveonStorageCommon(localStorage);
+}
+
 watch(kaimonoItems.value, (newItems) => {
-  saveonLocalStorage();
+  saveonSessionStorage();
 })
 watch(selectedStoreProfile, (newProfile, oldProfile) => {
   if (oldProfile.name != customStoreProfile.value.name &&
@@ -582,12 +601,12 @@ watch(selectedStoreProfile, (newProfile, oldProfile) => {
   if (selectedStoreProfile.value.name == customStoreProfile.value.name) {
     customStoreProfile.value = selectedStoreProfile.value;
   }
-  saveonLocalStorage();
+  saveonSessionStorage();
 }, {
   deep: true,
 })
 watch(memo, () => {
-  saveonLocalStorage();
+  saveonSessionStorage();
 })
 function isNumber(evt) {
   evt = evt ? evt : window.event;
@@ -1084,7 +1103,7 @@ function loadlocalFile() {
           return;
         }
         applyObject(loadedObj);
-        saveonLocalStorage();
+        saveonSessionStorage();
       } catch (error) {
         console.error(error);
         alert("JSONの解析に失敗しました\n\n" + error);
@@ -1146,19 +1165,25 @@ const discountValueRefs = ref([])
 const taxRateRefs = ref([])
 const addButtonRef = ref()
 onMounted(() => {
-
+  window.addEventListener('beforeunload', handleBeforeUnload);
 });
 
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload);
+});
+function handleBeforeUnload(event) {
+  saveonLocalStorage();
+}
 function onMemoChange() {
 
 }
 
 watch(keisanki, () => {
-  saveonLocalStorage();
+  saveonSessionStorage();
 })
 const calculatorInputted = ((v) => {
   keisankiInputted = v;
-  saveonLocalStorage();
+  saveonSessionStorage();
 });
 const calculatorChanged = ((v) => {
   keisankiInputted = null;
@@ -1188,10 +1213,17 @@ const zeigakuAll = computed(() => {
 </script>
 
 <template>
-  <div v-if="isDebug()">
-    <button @click="doTest" id="doTest">doTest</button>
-  </div>
-  <div class="container">
+    <div class="fixed-header-container">
+      <div class="fixed-content">
+        {{ selectedStoreProfile.name }} 合計 ¥{{ goukei }}
+      </div>
+    </div>
+
+    <div class="container">
+      <div v-if="isDebug()">
+        <button @click="doTest" id="doTest">doTest</button>
+      </div>
+
     <h1>🛒買い物いくら🛒</h1>
 
     <div class="container-cell">
@@ -1357,7 +1389,7 @@ const zeigakuAll = computed(() => {
             <div class="checklabel">
               <input :id="'aeon_2030_check' + index" type="checkbox" @click="item.aeon2030 = !item.aeon2030"
                 :checked="item.aeon2030" />
-              <label :for="'aeon_2030_check' + index">5%OFF</label>
+              <label :for="'aeon_2030_check' + index">5%オフ</label>
             </div>
           </div>
           <div class="checklabel">
@@ -1446,7 +1478,7 @@ const zeigakuAll = computed(() => {
           ２つ以上の割引がある場合があります。例えば１つめの商品そのものの割引でもう１つは会員割引などです。２つが例として２０％、５％の場合は「割引％」欄に「20 5」と２つの値をスペースで区切って指定してください。
         </li>
         <li>
-          オーケーストアでは会員カードを提示して現金で支払うと3/103割引を受けられる食料品があります。その場合は「3/103」をチェックしてください。このような商品の場合値札には４つの価格が示されています。価格の欄に入力する値は割引前でかつ税抜きの価格です。通常は４つの価格のうち左下に表示されている価格です。
+          オーケーでは会員カードを提示して現金で支払うと3/103割引を受けられる食料品があります。その場合は「3/103」をチェックしてください。このような商品の場合値札には４つの価格が示されています。価格の欄に入力する値は割引前でかつ税抜きの価格です。通常は４つの価格のうち左下に表示されている価格です。
         </li>
         <li>
           簡易計算機では四則演算を行うことができ、カッコを使うこともできます。「合計」と記述することで合計を参照することができます。ほかにも例えば「合計 ％
@@ -1469,11 +1501,31 @@ const zeigakuAll = computed(() => {
 </template>
 
 <style>
+        .fixed-header-container {
+          font-family: Arial, Helvetica, sans-serif;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            padding: 10px 0;
+            background-color: white; /* 背景色を白に設定 */
+            color: black; /* テキストカラーを黒に設定 */
+            z-index: 1000; /* 他の要素より前面に表示 */
+        }
+        .fixed-content {
+          width: 100%;
+          max-width: 680px;
+          margin: 0 auto;
+          text-align: right;
+          padding-right: 10px;
+        }
 .container {
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
   max-width: 680px;
-  padding: 10px;
+  padding-top: 40px;
+  padding-bottom: 20px;
   display: grid;
   margin: 0 auto;
 }
