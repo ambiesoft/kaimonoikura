@@ -1333,7 +1333,7 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">割引円</div>
           <div class="discount-value">
-            <input ref="discountValueRefs" class="numberinput" placeholder="割引円" type="number"
+            <input ref="discountValueRefs" class="numberinput" type="number"
               v-model="item.discountValue" @keypress="isNumber($event)" />
           </div>
           <div>
@@ -1349,7 +1349,7 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">割引％</div>
           <div class="discount-rate">
-            <input ref="discountRateRefs" class="numberinput" placeholder="割引％" inputmode="decimal"
+            <input ref="discountRateRefs" class="numberinput" inputmode="decimal"
               v-model="item.discountRate" @keypress="isNumberOrSpace($event)" />
           </div>
           <div>
