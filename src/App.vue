@@ -501,7 +501,7 @@ const isEmptyObject = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
-const loaded = !isEmptyObject(loadFromSessionStorage()) ? loadFromSessionStorage():loadFromLocalStorage() ;
+const loaded = !isEmptyObject(loadFromSessionStorage()) ? loadFromSessionStorage() : loadFromLocalStorage();
 applyObject(loaded);
 
 if (__DEBUG__) {
@@ -1213,16 +1213,16 @@ const zeigakuAll = computed(() => {
 </script>
 
 <template>
-    <div class="fixed-header-container">
-      <div class="fixed-content">
-        {{ selectedStoreProfile.name }} 合計 ¥{{ goukei }}
-      </div>
+  <div class="fixed-header-container">
+    <div class="fixed-content">
+      {{ selectedStoreProfile.name }} 合計 ¥{{ goukei }}
     </div>
+  </div>
 
-    <div class="container">
-      <div v-if="isDebug()">
-        <button @click="doTest" id="doTest">doTest</button>
-      </div>
+  <div class="container">
+    <div v-if="isDebug()">
+      <button @click="doTest" id="doTest">doTest</button>
+    </div>
 
     <h1>🛒買い物いくら🛒</h1>
 
@@ -1291,9 +1291,9 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">商品 {{ index + 1 }}</div>
           <div class="goods">
-            <input ref="nameRefs" class="stringinput" v-model="item.goods" 
-            @focus="setItemInfoMessage(item, getsyohin_placeholder(item))" @blur="setItemInfoMessage(item, null)"
-            :placeholder="getsyohin_placeholder(item)" />
+            <input ref="nameRefs" class="stringinput" v-model="item.goods"
+              @focus="setItemInfoMessage(item, getsyohin_placeholder(item))" @blur="setItemInfoMessage(item, null)"
+              :placeholder="getsyohin_placeholder(item)" />
           </div>
           <div v-if="item.disabled">
             <button class="twobutton" :class="getSyohinDownButtonClass(index)" @click="moveItemDown(index)">
@@ -1317,7 +1317,8 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">個数</div>
           <div class="count">
-            <input ref="countRefs" class="numberinput" type="number" v-model="item.count" @keypress="isNumber($event)" />
+            <input ref="countRefs" class="numberinput" type="number" v-model="item.count"
+              @keypress="isNumber($event)" />
           </div>
           <div>
             <button class="twobutton" @click="decrementCount(item, index)">
@@ -1501,25 +1502,30 @@ const zeigakuAll = computed(() => {
 </template>
 
 <style>
-        .fixed-header-container {
-          font-family: Arial, Helvetica, sans-serif;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 40px;
-            padding: 10px 0;
-            background-color: white; /* 背景色を白に設定 */
-            color: black; /* テキストカラーを黒に設定 */
-            z-index: 1000; /* 他の要素より前面に表示 */
-        }
-        .fixed-content {
-          width: 100%;
-          max-width: 680px;
-          margin: 0 auto;
-          text-align: right;
-          padding-right: 10px;
-        }
+.fixed-header-container {
+  font-family: Arial, Helvetica, sans-serif;
+  position: fixed;
+
+  top: 2;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  padding: 10px 0;
+  background-color: white;
+  color: black;
+
+  /* 他の要素より前面に表示 */
+  z-index: 1000;
+}
+
+.fixed-content {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: right;
+  padding-right: 10px;
+}
+
 .container {
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
@@ -1739,6 +1745,7 @@ footer {
   display: inline;
   margin-right: 2px;
 }
+
 #doTest {
   background-color: red;
 }
