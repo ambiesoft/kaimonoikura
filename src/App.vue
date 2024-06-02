@@ -1215,7 +1215,7 @@ const zeigakuAll = computed(() => {
 <template>
   <div class="fixed-header-container">
     <div class="fixed-content">
-      {{ selectedStoreProfile.name }} 合計 ¥{{ goukei }}
+      {{ selectedStoreProfile.name }} {{ allItemHinCount }}品 {{ allItemCount }}点 <span class="top-goukei">合計 ¥{{ goukei }}</span>
     </div>
   </div>
 
@@ -1696,6 +1696,9 @@ button {
   text-align: right;
 }
 
+.top-goukei {
+  font-weight: bold;
+}
 .goukei {
   font-size: x-large;
   font-weight: bold;
