@@ -13,6 +13,8 @@ const goukei = ref(props.goukei);
 const syoukei = ref(props.syoukei);
 const zeigaku = ref(props.zeigaku);
 
+const keisankiRef = ref();
+
 const emits = defineEmits([
     'keisanChanged',
     'keisanInputted',
@@ -164,6 +166,7 @@ watch(selectedSpecialInput, (newItems) => {
     // Reset the option list after this function
     nextTick(() => {
         selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
+        keisankiRef.value.focus();
     });
 
     if (newItems.id == "label")
@@ -187,7 +190,7 @@ watch(selectedSpecialInput, (newItems) => {
             </option>
         </select>
 
-        <input v-model="keisanki" class="kesankiInput" placeholder="簡易計算機　例：合計 - 100"
+        <input ref="keisankiRef" v-model="keisanki" class="kesankiInput" placeholder="簡易計算機　例：合計 - 100"
             @change="emits('keisanChanged', keisanki)" @input="emits('keisanInputted', keisanki)" />
         <div class="keisanKekka">
             ={{ keisanAnswer }}
