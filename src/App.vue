@@ -6,6 +6,7 @@ import { useFileDialog } from '@vueuse/core'
 import { saveAs } from 'file-saver';
 import Calculator from './Calculator.vue'
 import { testFunc, clearTestResult, showTestResult, testData } from '@/debug';
+import { setCookie, getCookie } from '@/useCookies';
 
 console.log(`${Constants.appName} v${Constants.appVersion}`);
 if (__DEBUG__) {
@@ -427,6 +428,7 @@ let keisankiInputted;
 
 const showCustomVisible = ref(true);
 const showTsukaikata = ref(false);
+const showSettings = ref(false);
 
 function createDefaultStoreProfile() {
   return {
@@ -649,11 +651,15 @@ function moveItemUp(index) {
 }
 
 function incrementCount(item, index) {
-  countRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    countRefs.value[index].focus();
+
   item.count++;
 }
 function decrementCount(item, index) {
-  countRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    countRefs.value[index].focus();
+
   if (item.count == 0) {
     return;
   }
@@ -661,7 +667,9 @@ function decrementCount(item, index) {
 }
 
 function incrementDiscountRate(item, index) {
-  discountRateRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    discountRateRefs.value[index].focus();
+
   if ((String(item.discountRate)).indexOf(':') >= 0) {
     return;
   }
@@ -671,7 +679,9 @@ function incrementDiscountRate(item, index) {
   item.discountRate++;
 }
 function decrementDiscountRate(item, index) {
-  discountRateRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    discountRateRefs.value[index].focus();
+
   if ((String(item.discountRate)).indexOf(':') >= 0) {
     return;
   }
@@ -685,14 +695,18 @@ function decrementDiscountRate(item, index) {
 }
 
 function incrementDiscountValue(item, index) {
-  discountValueRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    discountValueRefs.value[index].focus();
+
   if (!item.discountValue) {
     item.discountValue = 0;
   }
   item.discountValue++;
 }
 function decrementDiscountValue(item, index) {
-  discountValueRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    discountValueRefs.value[index].focus();
+
   if (!item.discountValue) {
     return;
   }
@@ -705,7 +719,8 @@ function decrementDiscountValue(item, index) {
 const INCORDEC_INC = 1;
 const INCORDEC_DEC = 2;
 function incrementOrdecrementTaxRate(index, inc_or_dec) {
-  taxRateRefs.value[index].focus();
+  if (focus_on_increment_Checked.value)
+    taxRateRefs.value[index].focus();
 
   let curRate = kaimonoItems.value[index].taxRate;
   const curIndex = Constants.TAXRATEVALUES.findIndex((v) => curRate == v);
@@ -1036,7 +1051,7 @@ const allItemCount = computed(() => {
 const allItemHinCount = computed(() => {
   let ret = 0;
   kaimonoItems.value.forEach((item) => {
-    if (item && !item.disabled) {
+    if (item && !item.disabled && item.count != 0) {
       ret += 1
     }
   })
@@ -1134,7 +1149,7 @@ function savelocalFile() {
 }
 
 function getsyohin_placeholder(item) {
-  return item.goods ? item.goods : "商品名（任意）";
+  return item.goods ? item.goods : "商品名(任意)";
   // return "商品名（任意）";
 }
 
@@ -1148,10 +1163,10 @@ const kakaku_placeholder = computed(() => {
       return "";
     case Constants.TAXRATE_EIGHT:
     case Constants.TAXRATE_TEN:
-      return "税抜価格を入力";
+      return "税抜価格";
     case Constants.TAXRATE_KOMI_EIGHT:
     case Constants.TAXRATE_KOMI_TEN:
-      return "税込価格を入力";
+      return "税込価格";
   }
   console.assert(false);
   return "";
@@ -1164,14 +1179,29 @@ const discountRateRefs = ref([])
 const discountValueRefs = ref([])
 const taxRateRefs = ref([])
 const addButtonRef = ref()
+
+// Checkbox state of Focus on Increment
+const focus_on_increment_Checked = ref(false);
+
 onMounted(() => {
   window.addEventListener('beforeunload', handleBeforeUnload);
+
+  const cookieValue = getCookie('setting_focus_on_increment');
+  if (cookieValue) {
+    focus_on_increment_Checked.value = (cookieValue === 'true');
+  }
+
+});
+
+watch(focus_on_increment_Checked, (newValue) => {
+  setCookie('setting_focus_on_increment', newValue, 365 * 20);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload);
 });
 function handleBeforeUnload(event) {
+  // Save Session storage that keeps kaimono data into local storage
   saveonLocalStorage();
 }
 function onMemoChange() {
@@ -1215,15 +1245,12 @@ const zeigakuAll = computed(() => {
 <template>
   <div class="fixed-header-container">
     <div class="fixed-content">
-      {{ selectedStoreProfile.name }} {{ allItemHinCount }}品 {{ allItemCount }}点 <span class="top-goukei">合計 ¥{{ goukei }}</span>
+      {{ selectedStoreProfile.name }} {{ allItemHinCount }}品 {{ allItemCount }}点 <span class="top-goukei">合計 ¥{{ goukei
+        }}</span>
     </div>
   </div>
 
   <div class="container">
-    <div v-if="isDebug()">
-      <button @click="doTest" id="doTest">doTest</button>
-    </div>
-
     <h1>🛒買い物いくら🛒</h1>
 
     <div class="container-cell">
@@ -1333,8 +1360,8 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">割引円</div>
           <div class="discount-value">
-            <input ref="discountValueRefs" class="numberinput" type="number"
-              v-model="item.discountValue" @keypress="isNumber($event)" />
+            <input ref="discountValueRefs" class="numberinput" type="number" v-model="item.discountValue"
+              @keypress="isNumber($event)" />
           </div>
           <div>
             <button class="twobutton" @click="decrementDiscountValue(item, index)">
@@ -1349,8 +1376,8 @@ const zeigakuAll = computed(() => {
         <div class="cell">
           <div class="setumei">割引％</div>
           <div class="discount-rate">
-            <input ref="discountRateRefs" class="numberinput" inputmode="decimal"
-              v-model="item.discountRate" @keypress="isNumberOrSpace($event)" />
+            <input ref="discountRateRefs" class="numberinput" inputmode="decimal" v-model="item.discountRate"
+              @keypress="isNumberOrSpace($event)" />
           </div>
           <div>
             <button class="twobutton" @click="decrementDiscountRate(item, index)">
@@ -1413,7 +1440,7 @@ const zeigakuAll = computed(() => {
     <!-- end of loop -->
 
     <div class="container-cell">
-      <button ref="addButtonRef" @click="addItem" class="cell3columns" accesskey="a">＋追加＋</button>
+      <button ref="addButtonRef" @click="addItem" class="cell3columns" accesskey="a">➕️追加➕️</button>
     </div>
 
     <div class="container-cell">
@@ -1470,7 +1497,7 @@ const zeigakuAll = computed(() => {
     </div>
 
     <div class="help">
-      <h2 id="tsukaikatatext" @click="showTsukaikata = !showTsukaikata">使い方</h2>
+      <h2 class="userclickshow" @click="showTsukaikata = !showTsukaikata">使い方</h2>
       <ul v-if="showTsukaikata" class="ulhelp">
         <li>
           店舗によって割引（％）の端数の計算方法が違います。「会計方式」から適切なものを選択してください。
@@ -1487,6 +1514,14 @@ const zeigakuAll = computed(() => {
         </li>
         <li>商品の順番を入れ替えるには、一旦無効にしてから商品名の下の矢印を{{ Constants.tapORclick }}します。</li>
       </ul>
+
+      <h2 class="userclickshow" @click="showSettings = !showSettings">設定</h2>
+      <div v-if="showSettings" class="setting_section">
+        <div>
+          <input type="checkbox" id="setting_focus_on_increment"
+            v-model="focus_on_increment_Checked">↑や↓をクリック（タップ）したときフォーカスする
+        </div>
+      </div>
     </div>
     <footer>
       <ul id="footeritems">
@@ -1699,6 +1734,7 @@ button {
 .top-goukei {
   font-weight: bold;
 }
+
 .goukei {
   font-size: x-large;
   font-weight: bold;
@@ -1730,8 +1766,15 @@ ul.ulhelp li {
   padding-bottom: 15px;
 }
 
-#tsukaikatatext {
+
+.setting_section {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.userclickshow {
   text-decoration: underline;
+  text-align: center;
   cursor: pointer;
 }
 

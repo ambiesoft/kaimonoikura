@@ -93,7 +93,7 @@ const keisanAnswer = computed(() => {
             keisanError.value = formatted.error;
             return nazo;
         }
-        console.log("計算式", formatted.result);
+        // console.log("計算式", formatted.result);
         return new Function('return ' + formatted.result)();
     } catch (err) {
         console.error(err);
@@ -101,10 +101,92 @@ const keisanAnswer = computed(() => {
         return nazo;
     }
 });
+
+const selectedSpecialInput = ref();
+
+const SPECIAL_SELECTIONS = [
+    {
+        id: "label",
+        name: "特殊値入力",
+        enabled: false,
+    },
+    {
+        id: "goukei",
+        name: "合計",
+        enabled: true,
+    },
+    {
+        id: "syoukei",
+        name: "小計",
+        enabled: true,
+    },
+    {
+        id: "zeigaku",
+        name: "税額",
+        enabled: true,
+    },
+    {
+        id: "kiriage",
+        name: "切上",
+        enabled: true,
+        isfunc: true,
+    },
+    {
+        id: "sisyagonyuu",
+        name: "四捨五入",
+        enabled: true,
+        isfunc: true,
+    },
+    {
+        id: "kirisage",
+        name: "切下",
+        enabled: true,
+        isfunc: true,
+    },
+    {
+        id: "label",
+        name: "-------------",
+        enabled: false,
+    },
+    {
+        id: "clear",
+        name: "クリア",
+        enabled: true,
+    },
+];
+
+// Initial Selection
+selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
+
+watch(selectedSpecialInput, (newItems) => {
+    // newItems is one of SPECIAL_SELECTIONS
+
+    // Reset the option list after this function
+    nextTick(() => {
+        selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
+    });
+
+    if (newItems.id == "label")
+        return;
+    if (newItems.id == "clear") {
+        keisanki.value = "";
+        return;
+    }
+    keisanki.value += newItems.name;
+    if (newItems.isfunc) {
+        keisanki.value += "(123.45)";
+    }
+})
+
 </script>
 
 <template>
     <div class="calccontainer">
+        <select id="aaa" class="nnnn" v-model="selectedSpecialInput">
+            <option v-for="sp in SPECIAL_SELECTIONS" :key="sp" :value="sp" :disabled="!sp.enabled">{{ sp.name }}
+            </option>
+        </select>
+
         <input v-model="keisanki" class="kesankiInput" placeholder="簡易計算機　例：合計 - 100"
             @change="emits('keisanChanged', keisanki)" @input="emits('keisanInputted', keisanki)" />
         <div class="keisanKekka">
