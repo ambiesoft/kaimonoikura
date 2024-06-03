@@ -162,7 +162,7 @@ selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
 
 watch(selectedSpecialInput, (newItems) => {
     // newItems is one of SPECIAL_SELECTIONS
-
+    console.log(newItems);
     // Reset the option list after this function
     nextTick(() => {
         selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
@@ -175,7 +175,9 @@ watch(selectedSpecialInput, (newItems) => {
         keisanki.value = "";
         return;
     }
-    keisanki.value += newItems.name;
+
+    // Prevent to insert 'null' if keisanki.value is null
+    keisanki.value = (keisanki.value ?? "") + newItems.name;
     if (newItems.isfunc) {
         keisanki.value += "(123.45)";
     }
