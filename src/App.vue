@@ -1189,11 +1189,15 @@ onMounted(() => {
   const cookieValue = getCookie('setting_focus_on_increment');
   if (cookieValue) {
     focus_on_increment_Checked.value = (cookieValue === 'true');
+  } else {
+    // Initial value
+    focus_on_increment_Checked.value = true;
   }
 
 });
 
 watch(focus_on_increment_Checked, (newValue) => {
+  console.log(newValue);
   setCookie('setting_focus_on_increment', newValue, 365 * 20);
 });
 
