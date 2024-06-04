@@ -162,11 +162,15 @@ selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
 
 watch(selectedSpecialInput, (newItems) => {
     // newItems is one of SPECIAL_SELECTIONS
-    console.log(newItems);
+    // console.log(newItems);
+
     // Reset the option list after this function
     nextTick(() => {
         selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
         keisankiRef.value.focus();
+
+        // refrect keisanki value to upstream (keisanki in App.vue)
+        emits('keisanChanged', keisanki);
     });
 
     if (newItems.id == "label")
