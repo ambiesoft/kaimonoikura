@@ -503,6 +503,8 @@ const isEmptyObject = (obj) => {
   return Object.keys(obj).length === 0;
 };
 
+// If the browser is refreshed, sessionStorage has data.
+// If the browser is opened, sessionStorage has no data.
 const loaded = !isEmptyObject(loadFromSessionStorage()) ? loadFromSessionStorage() : loadFromLocalStorage();
 applyObject(loaded);
 
@@ -580,19 +582,29 @@ function getSaveJson() {
   });
 }
 
-function saveonStorageCommon(storage) {
+function isSmartPhone() {
+  if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function saveToStorageCommon(storage) {
   const json = getSaveJson();
   storage.setItem(STORAGE_DEFAULT, json);
 }
-function saveonSessionStorage() {
-  saveonStorageCommon(sessionStorage);
+function saveToSessionStorage() {
+  saveToStorageCommon(sessionStorage);
+  console.log('Saved to session storage');
 }
-function saveonLocalStorage() {
-  saveonStorageCommon(localStorage);
+function saveToLocalStorage() {
+  saveToStorageCommon(localStorage);
+  console.log('Saved to local storage');
 }
 
 watch(kaimonoItems.value, (newItems) => {
-  saveonSessionStorage();
+  saveToSessionStorage();
 })
 watch(selectedStoreProfile, (newProfile, oldProfile) => {
   if (oldProfile.name != customStoreProfile.value.name &&
@@ -603,12 +615,12 @@ watch(selectedStoreProfile, (newProfile, oldProfile) => {
   if (selectedStoreProfile.value.name == customStoreProfile.value.name) {
     customStoreProfile.value = selectedStoreProfile.value;
   }
-  saveonSessionStorage();
+  saveToSessionStorage();
 }, {
   deep: true,
 })
 watch(memo, () => {
-  saveonSessionStorage();
+  saveToSessionStorage();
 })
 function isNumber(evt) {
   evt = evt ? evt : window.event;
@@ -1118,7 +1130,7 @@ function loadlocalFile() {
           return;
         }
         applyObject(loadedObj);
-        saveonSessionStorage();
+        saveToSessionStorage();
       } catch (error) {
         console.error(error);
         alert("JSONの解析に失敗しました\n\n" + error);
@@ -1185,6 +1197,7 @@ const focus_on_increment_Checked = ref(false);
 
 onMounted(() => {
   window.addEventListener('beforeunload', handleBeforeUnload);
+  window.addEventListener('visibilitychange', handleVisibilityChange);
 
   const cookieValue = getCookie('setting_focus_on_increment');
   if (cookieValue) {
@@ -1196,28 +1209,38 @@ onMounted(() => {
 
 });
 
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', handleBeforeUnload);
+  window.removeEventListener('visibilitychange', handleVisibilityChange);
+});
+
+function handleBeforeUnload(event) {
+  saveToLocalStorage();
+}
+
+function handleVisibilityChange(event) {
+  if (document.visibilityState === 'hidden') {
+    if (isSmartPhone()) {
+      saveToLocalStorage();
+    }
+  }
+}
+
 watch(focus_on_increment_Checked, (newValue) => {
-  console.log(newValue);
+  // console.log(newValue);
   setCookie('setting_focus_on_increment', newValue, 365 * 20);
 });
 
-onBeforeUnmount(() => {
-  window.removeEventListener('beforeunload', handleBeforeUnload);
-});
-function handleBeforeUnload(event) {
-  // Save Session storage that keeps kaimono data into local storage
-  saveonLocalStorage();
-}
 function onMemoChange() {
 
 }
 
 watch(keisanki, () => {
-  saveonSessionStorage();
+  saveToSessionStorage();
 })
 const calculatorInputted = ((v) => {
   keisankiInputted = v;
-  saveonSessionStorage();
+  saveToSessionStorage();
 });
 const calculatorChanged = ((v) => {
   keisankiInputted = null;
