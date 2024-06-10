@@ -1555,6 +1555,7 @@ const zeigakuAll = computed(() => {
         <li>{{ Constants.appName }} v{{ Constants.appVersion }}</li>
         <li><a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a></li>
         <li><a href="https://github.com/ambiesoft/kaimonoikura" target="_blank">github</a></li>
+        <li><a href="https://ambiesoft.github.io/webjumper/?target=bbs" target="_blank">掲示板</a></li>
       </ul>
     </footer>
   </div> <!-- end of container -->
@@ -1807,6 +1808,7 @@ ul.ulhelp li {
 
 footer {
   padding-top: 10px;
+  padding-right: 10px;
   text-align: right;
 }
 

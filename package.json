@@ -1,6 +1,6 @@
 {
   "name": "kaimonoikura",
-  "version": "2.11.1",
+  "version": "2.12.1",
   "private": true,
   "scripts": {
     "dev": "vite",
