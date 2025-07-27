@@ -1511,9 +1511,9 @@ const zeigakuAll = computed(() => {
     </div>
 
     <div class="container-cell">
-      <button @click="loadlocalFile">🚚ロード</button>
-      <button @click="savelocalFile">💾セーブ</button>
-      <button @click="clearAll">❌すべて削除</button>
+      <button @click="loadlocalFile">🚚</button>
+      <button @click="savelocalFile">💾</button>
+      <button @click="clearAll">🚮</button>
     </div>
 
     <div class="help">
