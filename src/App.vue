@@ -1817,7 +1817,7 @@ footer {
 #doTest {
   background-color: red;
 }
-<style>
+
 body {
   background: #e3f2fd;
 }
