@@ -1470,6 +1470,7 @@ const zeigakuAll = computed(() => {
       <button ref="addButtonRef" @click="addItem" class="cell3columns" accesskey="a">➕️追加➕️</button>
     </div>
 
+
     <div class="container-cell">
       <div class="cell3columns storeprofile">
         <div>
@@ -1483,19 +1484,11 @@ const zeigakuAll = computed(() => {
       </div>
     </div>
 
-    <div class="container-cell" v-if="isOKWithKaiinProfile()">
-      <div class="kei cell3columns">割引前合計 ¥{{ syoukei }}</div>
-    </div>
-    <div class="container-cell" v-if="isOKWithKaiinProfile()">
-      <div class="kei cell3columns">F食料品3/103割引 -{{ ok3_100kei }}</div>
-    </div>
-
     <div class="container-cell">
+      <div class="kei cell3columns" v-if="isOKWithKaiinProfile()">割引前合計 ¥{{ syoukei }}</div>
+      <div class="kei cell3columns" v-if="isOKWithKaiinProfile()">F食料品3/103割引 -{{ ok3_100kei }}</div>
       <div class="kei cell3columns">小計 {{ allItemHinCount }}品 {{ allItemCount }}点 ¥{{ disp_syoukei }}</div>
-    </div>
-
-    <div class="container-cell" v-if="zeis.length">
-      <div class="kei cell3columns" v-for="(zei, index) in zeis">
+      <div class="kei cell3columns" v-if="zeis.length" v-for="(zei, index) in zeis">
         税{{ zei.ratePercent }}% 対象額 ¥{{ zei.targetValue }} 税額 ¥{{ zei.allvalue() }}
       </div>
     </div>
@@ -1821,6 +1814,235 @@ footer {
   margin-right: 2px;
 }
 
+#doTest {
+  background-color: red;
+}
+<style>
+body {
+  background: #e3f2fd;
+}
+
+.fixed-header-container {
+  font-family: 'Segoe UI', 'Roboto', Arial, Helvetica, sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  padding: 10px 0;
+  background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+  color: #fff;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.10);
+}
+
+.fixed-content {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: right;
+  padding-right: 18px;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.container {
+  font-family: 'Segoe UI', 'Roboto', Arial, Helvetica, sans-serif;
+  width: 100%;
+  max-width: 700px;
+  padding-top: 56px;
+  padding-bottom: 32px;
+  display: grid;
+  margin: 0 auto;
+  background: #f5f7fa;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(33,150,243,0.06);
+}
+
+.container-cell {
+  /* background: #fff; */
+  font-size: 20px;
+  padding: 18px 14px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.06);
+  border: none;
+  margin-bottom: 18px;
+  display: grid;
+  grid-template-columns: 33.3% 33.3% 33.3%;
+  transition: box-shadow 0.2s;
+}
+.container-cell:hover {
+  box-shadow: 0 4px 16px rgba(33,150,243,0.18), 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.container-cell-item {
+  padding-bottom: 0;
+}
+
+.storeprofile {
+  margin: 0 auto;
+}
+
+.label_storeselect {
+  vertical-align: middle;
+}
+
+.storeselect :invalid {
+  color: gray;
+}
+
+.even_bg {
+  background-color: #e3f2fd;
+}
+.odd_bg {
+  background-color: #f1f8e9;
+}
+
+.cell {
+  display: grid;
+  grid-template-columns: 1fr;
+  text-align: center;
+  padding-left: 6px;
+}
+
+.cell2columns {
+  grid-column: 1/3;
+}
+.cell3columns {
+  grid-column: 1/4;
+}
+.cell2rows {
+  grid-row: 1/3;
+}
+.cell3rows {
+  grid-row: 1/4;
+  align-self: center;
+}
+
+.setumei {
+  font-size: medium;
+}
+
+.checklabel {
+  width: 100%;
+  text-align: left;
+}
+
+input {
+  font-size: large;
+  padding: 8px 10px;
+  width: 100%;
+  border: 1.5px solid #bdbdbd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+input:focus {
+  border: 1.5px solid #2196f3;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(33,150,243,0.10);
+}
+input[type="checkbox"] {
+  font-size: large;
+  width: auto;
+  margin-left: 3px;
+}
+
+button {
+  padding: 0.5em 0.8em;
+  height: 2.2em;
+  width: 100%;
+  background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1em;
+  box-shadow: 0 1px 4px rgba(33,150,243,0.10);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+button:hover, button:focus {
+  background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
+  box-shadow: 0 2px 8px rgba(33,150,243,0.18);
+}
+.twobutton {
+  width: 48%;
+  margin: 1%;
+}
+.threebutton {
+  width: 32%;
+  margin: 1%;
+}
+.stringinput, .numberinput {
+  text-align: center;
+}
+.kei {
+  width: 100%;
+  text-align: right;
+}
+.top-goukei {
+  font-weight: bold;
+}
+.goukei {
+  font-size: 2em;
+  font-weight: bold;
+  color: #1976d2;
+  letter-spacing: 0.04em;
+}
+#t_message {
+  width: 100%;
+  height: 5em;
+  border-radius: 8px;
+  border: 1.5px solid #bdbdbd;
+  background: #f9f9f9;
+  padding: 8px 10px;
+  font-size: 1em;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+#t_message:focus {
+  border: 1.5px solid #2196f3;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(33,150,243,0.10);
+}
+.help {
+  margin-top: 10px;
+  width: 100%;
+}
+ul {
+  margin: 0;
+  padding-left: 30px;
+}
+ul.ulhelp {
+  margin: 0 10px 0 0;
+}
+ul.ulhelp li {
+  padding-bottom: 15px;
+}
+.setting_section {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.userclickshow {
+  text-decoration: underline;
+  text-align: center;
+  cursor: pointer;
+}
+footer {
+  padding-top: 10px;
+  padding-right: 10px;
+  text-align: right;
+}
+#footeritems {
+  list-style: none;
+}
+#footeritems>li {
+  display: inline;
+  margin-right: 2px;
+}
 #doTest {
   background-color: red;
 }
