@@ -196,7 +196,7 @@ watch(selectedSpecialInput, (newItems) => {
             </option>
         </select>
 
-        <input ref="keisankiRef" v-model="keisanki" class="kesankiInput" placeholder="簡易計算機　例：合計 - 100"
+        <input ref="keisankiRef" v-model="keisanki" class="kesankiInput" placeholder="計算機 例：合計 - 100"
             @change="emits('keisanChanged', keisanki)" @input="emits('keisanInputted', keisanki)" />
         <div class="keisanKekka">
             ={{ keisanAnswer }}
