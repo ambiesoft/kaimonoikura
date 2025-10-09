@@ -1,25 +1,22 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-  ],
+  plugins: [vue()],
   define: {
-    '__APP_VERSION__': JSON.stringify(process.env.npm_package_version),
-    '__DEBUG__': process.env.NODE_ENV !== 'production',
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    __DEBUG__: process.env.NODE_ENV !== 'production',
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
-  base: process.env.NODE_ENV === 'production'
-    ? '/'
-    : '/',
-
-})
-
+  base:
+    process.env.NODE_ENV === 'production'
+      ? '/kaimonoikura/' // GitHub Pages用にリポジトリ名を指定
+      : '/',
+});
