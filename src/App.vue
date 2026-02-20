@@ -383,6 +383,27 @@ if (__DEBUG__) {
     testFunc("OKMany6767 zeis[1].allvalue()", 138, zeis.value[1].allvalue());
     testFunc("OKMany6767 goukei", 6767, goukei.value);
 
+    selectedStoreProfile.value = testData.seven.selectedStoreProfile;
+    kaimonoItems.value = testData.seven.kaimonoItems;
+    testFunc("seven syoukei", 983, syoukei.value);
+    testFunc("seven allItemHinCount", 7, allItemHinCount.value);
+    testFunc("seven allItemCount", 7, allItemCount.value);
+    testFunc("seven disp_syoukei", 983, disp_syoukei.value);
+    testFunc("seven zeis len", 4, zeis.value.length);
+    testFunc("seven zeis[0].ratePercent", "8", zeis.value[0].ratePercent);
+    testFunc("seven zeis[0].targetValue", 253, zeis.value[0].targetValue);
+    testFunc("seven zeis[0].allvalue()", 20, zeis.value[0].allvalue());
+    testFunc("seven zeis[1].ratePercent", "10", zeis.value[1].ratePercent);
+    testFunc("seven zeis[1].targetValue", 4, zeis.value[1].targetValue);
+    testFunc("seven zeis[1].allvalue()", 0, zeis.value[1].allvalue());
+    testFunc("seven zeis[2].ratePercent", "込8", zeis.value[2].ratePercent);
+    testFunc("seven zeis[2].targetValue", 106, zeis.value[2].targetValue);
+    testFunc("seven zeis[2].allvalue()", 7, zeis.value[2].allvalue());
+    testFunc("seven zeis[3].ratePercent", "込10", zeis.value[3].ratePercent);
+    testFunc("seven zeis[3].targetValue", 620, zeis.value[3].targetValue);
+    testFunc("seven zeis[3].allvalue()", 56, zeis.value[3].allvalue());
+    testFunc("seven goukei", 1003, goukei.value);
+
     // 商品数1個の場合は、どんな場合でも２つのHASUU＿SYORIは同じ値になる
     if (false) {
       const syouhinnsuu = 2;
@@ -1273,7 +1294,7 @@ const zeigakuAll = computed(() => {
   <div class="fixed-header-container">
     <div class="fixed-content">
       {{ selectedStoreProfile.name }} {{ allItemHinCount }}品 {{ allItemCount }}点 <span class="top-goukei">合計 ¥{{ goukei
-        }}</span>
+      }}</span>
     </div>
   </div>
 
@@ -1833,7 +1854,7 @@ body {
   background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
   color: #fff;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(33,150,243,0.10);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.10);
 }
 
 .fixed-content {
@@ -1856,7 +1877,7 @@ body {
   margin: 0 auto;
   background: #f5f7fa;
   border-radius: 18px;
-  box-shadow: 0 2px 12px rgba(33,150,243,0.06);
+  box-shadow: 0 2px 12px rgba(33, 150, 243, 0.06);
 }
 
 .container-cell {
@@ -1864,15 +1885,16 @@ body {
   font-size: 20px;
   padding: 18px 14px;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1.5px 4px rgba(0, 0, 0, 0.06);
   border: none;
   margin-bottom: 18px;
   display: grid;
   grid-template-columns: 33.3% 33.3% 33.3%;
   transition: box-shadow 0.2s;
 }
+
 .container-cell:hover {
-  box-shadow: 0 4px 16px rgba(33,150,243,0.18), 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.18), 0 2px 8px rgba(0, 0, 0, 0.10);
 }
 
 .container-cell-item {
@@ -1894,6 +1916,7 @@ body {
 .even_bg {
   background-color: #e3f2fd;
 }
+
 .odd_bg {
   background-color: #f1f8e9;
 }
@@ -1908,12 +1931,15 @@ body {
 .cell2columns {
   grid-column: 1/3;
 }
+
 .cell3columns {
   grid-column: 1/4;
 }
+
 .cell2rows {
   grid-row: 1/3;
 }
+
 .cell3rows {
   grid-row: 1/4;
   align-self: center;
@@ -1938,12 +1964,14 @@ input {
   transition: border 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
+
 input:focus {
   border: 1.5px solid #2196f3;
   outline: none;
   background: #fff;
-  box-shadow: 0 0 0 2px rgba(33,150,243,0.10);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.10);
 }
+
 input[type="checkbox"] {
   font-size: large;
   width: auto;
@@ -1960,38 +1988,48 @@ button {
   border-radius: 8px;
   font-weight: 600;
   font-size: 1em;
-  box-shadow: 0 1px 4px rgba(33,150,243,0.10);
+  box-shadow: 0 1px 4px rgba(33, 150, 243, 0.10);
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
 }
-button:hover, button:focus {
+
+button:hover,
+button:focus {
   background: linear-gradient(90deg, #1976d2 0%, #00bcd4 100%);
-  box-shadow: 0 2px 8px rgba(33,150,243,0.18);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.18);
 }
+
 .twobutton {
   width: 48%;
   margin: 1%;
 }
+
 .threebutton {
   width: 32%;
   margin: 1%;
 }
-.stringinput, .numberinput {
+
+.stringinput,
+.numberinput {
   text-align: center;
 }
+
 .kei {
   width: 100%;
   text-align: right;
 }
+
 .top-goukei {
   font-weight: bold;
 }
+
 .goukei {
   font-size: 2em;
   font-weight: bold;
   color: #1976d2;
   letter-spacing: 0.04em;
 }
+
 #t_message {
   width: 100%;
   height: 5em;
@@ -2002,47 +2040,58 @@ button:hover, button:focus {
   font-size: 1em;
   transition: border 0.2s, box-shadow 0.2s;
 }
+
 #t_message:focus {
   border: 1.5px solid #2196f3;
   outline: none;
   background: #fff;
-  box-shadow: 0 0 0 2px rgba(33,150,243,0.10);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.10);
 }
+
 .help {
   margin-top: 10px;
   width: 100%;
 }
+
 ul {
   margin: 0;
   padding-left: 30px;
 }
+
 ul.ulhelp {
   margin: 0 10px 0 0;
 }
+
 ul.ulhelp li {
   padding-bottom: 15px;
 }
+
 .setting_section {
   padding-left: 10px;
   padding-right: 10px;
 }
+
 .userclickshow {
   text-decoration: underline;
   text-align: center;
   cursor: pointer;
 }
+
 footer {
   padding-top: 10px;
   padding-right: 10px;
   text-align: right;
 }
+
 #footeritems {
   list-style: none;
 }
+
 #footeritems>li {
   display: inline;
   margin-right: 2px;
 }
+
 #doTest {
   background-color: red;
 }

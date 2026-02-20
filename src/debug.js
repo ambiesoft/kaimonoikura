@@ -2078,6 +2078,108 @@ export const testData = {
             "hasuuSyori": "割引率を１つづつ計算"
         }
     },
+    "seven": {
+        "kaimonoItems": [
+            {
+                "goods": "やさい",
+                "price": 156,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": 50,
+                "taxRate": "込8",
+                "message": null,
+                "disabled": false
+            },
+            {
+                "goods": "もやし",
+                "price": 50,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": 30,
+                "taxRate": "8",
+                "message": null,
+                "disabled": false
+            },
+            {
+                "goods": "キャベツ太郎",
+                "price": 130,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": 30,
+                "taxRate": "8",
+                "message": null,
+                "disabled": false
+            },
+            {
+                "goods": "カステラ",
+                "price": 118,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": "",
+                "taxRate": "8",
+                "message": null,
+                "disabled": false
+            },
+            {
+                "goods": "うまい棒",
+                "price": 15,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": null,
+                "taxRate": "8",
+                "message": null,
+                "disabled": false
+            },
+            {
+                "goods": "レジ袋",
+                "price": 4,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": null,
+                "taxRate": "10",
+                "message": null,
+                "disabled": false
+            },
+            {
+                "goods": "たばこ",
+                "price": 620,
+                "count": 1,
+                "discountRate": null,
+                "ok3_103": false,
+                "aeon2030": false,
+                "discountValue": null,
+                "taxRate": "込10",
+                "message": null
+            }
+        ],
+        "selectedStoreProfile": {
+            "name": "税抜デフォルト",
+            "discountProfile": "割引率切り上げ",
+            "computeEach": "まとめて計算",
+            "hasuuSyori": "割引率を１つづつ計算",
+            "defaultZeiritsu": "8"
+        },
+        "customStoreProfile": {
+            "name": "カスタム",
+            "discountProfile": "割引率切り上げ",
+            "computeEach": "まとめて計算",
+            "hasuuSyori": "割引率を１つづつ計算"
+        },
+        "memo": null,
+        "keisanki": null
+    },
 };
 
 let okCount = 0;
@@ -2111,6 +2213,7 @@ export function testFunc(name, expect, actual) {
 export function showTestResult() {
     console.log(separator);
     console.log(`done testing. OK=${okCount}, NG=${ngCount}`);
+    console.log(separator);
     if (firstError) {
         console.log(separator);
         console.error(firstError);
