@@ -805,13 +805,13 @@ function addItem(event) {
   });
 }
 function clearAll() {
-  if (kaimonoItems.value.length == 0 && !memo.value && !keisanki.value) {
+  if (kaimonoItems.value.length == 0) {
     return;
   }
   if (window.confirm('アイテムをすべて削除しますか？')) {
     kaimonoItems.value.splice(0, kaimonoItems.value.length);
-    memo.value = null;
-    keisanki.value = null;
+    // memo.value = null;
+    // keisanki.value = null;
   }
 }
 function deleteItem(index) {
@@ -1541,6 +1541,15 @@ const zeigakuAll = computed(() => {
       <h2 class="userclickshow" @click="showTsukaikata = !showTsukaikata">使い方</h2>
       <ul v-if="showTsukaikata" class="ulhelp">
         <li>
+          このアプリは買い物をしながら合計金額を確認するためのアプリです。
+        </li>
+        <li>
+          あらかじめ商品名を入力して起き、店舗では価格だけを入力することで、買い物リストとしても使えます。
+        </li>
+        <li>
+          インストールしておけばネット環境がなくても使うことができます。
+        </li>
+        <li>
           店舗によって割引（％）の端数の計算方法が違います。「会計方式」から適切なものを選択してください。
         </li>
         <li>
@@ -1554,6 +1563,15 @@ const zeigakuAll = computed(() => {
           ２００」と記述すると、合計を２００で割ったあまりを求めることができます。「合計」の他に「小計」と「税額」も利用できます。計算式として「切上」、「四捨五入」、「切下」を利用できます。例えば「切下（合計÷３）」とします。
         </li>
         <li>商品の順番を入れ替えるには、一旦無効にしてから商品名の下の矢印を{{ Constants.tapORclick }}します。</li>
+        <li>
+          🚚ボタンで保存された買い物アイテムを読み込むことができます。
+        </li>
+        <li>
+          💾ボタンで保存することができます。
+        </li>
+        <li>
+          🚮ボタンでアイテムをすべて削除します。
+        </li>
       </ul>
 
       <h2 class="userclickshow" @click="showSettings = !showSettings">設定</h2>
@@ -1567,9 +1585,9 @@ const zeigakuAll = computed(() => {
     <footer>
       <ul id="footeritems">
         <li>{{ Constants.appName }} v{{ Constants.appVersion }}</li>
-        <li><a href="https://ambiesoft.com/" target="_blank">Ambiesoft</a></li>
-        <li><a href="https://github.com/ambiesoft/kaimonoikura" target="_blank">github</a></li>
-        <li><a href="https://ambiesoft.github.io/webjumper/?target=bbs" target="_blank">掲示板</a></li>
+        <li><a href="https://ambiesoft.github.io/webjumper/" target="_blank">Ambiesoft</a></li>
+        <li><a href="https://github.com/ambiesoft/kaimonoikura" target="_blank">DEV</a></li>
+        <li><a href="https://ambiesoft.github.io/webjumper/?target=bbs" target="_blank">BBS</a></li>
       </ul>
     </footer>
   </div> <!-- end of container -->
@@ -1658,10 +1676,10 @@ p {
   vertical-align: middle;
 }
 
-.storeselect {
+/* .storeselect { */
   /* height: 100%; */
   /* vertical-align: middle; */
-}
+/* } */
 
 .storeselect :invalid {
   color: gray;
@@ -1828,11 +1846,17 @@ footer {
 
 #footeritems {
   list-style: none;
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0;
+  margin: 0;
 }
 
 #footeritems>li {
-  display: inline;
-  margin-right: 2px;
+  display: inline-block;
+  margin: 0;
 }
 
 #doTest {
