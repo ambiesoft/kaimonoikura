@@ -1,4 +1,4 @@
-const cacheVer = '2.13.2';
+const cacheVer = '2.13.3';
 const cacheName = 'kaimonoikuraCache' + 'v' + cacheVer;
 console.log('cache name', cacheName);
 
@@ -23,9 +23,9 @@ self.addEventListener('activate', (event) => {
             console.log('cache delete', key);
             return caches.delete(key);
           }
-        })
+        }),
       );
-    })
+    }),
   );
 });
 
@@ -48,6 +48,6 @@ self.addEventListener('fetch', (event) => {
           // If the network is unavailable, get
           return cache.match(event.request.url);
         });
-    })
+    }),
   );
 });

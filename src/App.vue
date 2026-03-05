@@ -1023,7 +1023,7 @@ function getItemErrorMessage(item) {
   if (!item.count || item.count == 0) {
     return "個数がゼロです";
   }
-  if (isOKWithoutKaiinProfile()) {
+  if (isOKWithKaiinProfile()) {
     if (item.taxRate != 8 && isItemOk3_103(item)) {
       return "税率が８％でないのに3/103が有効です"
     }
@@ -1294,7 +1294,7 @@ const zeigakuAll = computed(() => {
   <div class="fixed-header-container">
     <div class="fixed-content">
       {{ selectedStoreProfile.name }} {{ allItemHinCount }}品 {{ allItemCount }}点 <span class="top-goukei">合計 ¥{{ goukei
-      }}</span>
+        }}</span>
     </div>
   </div>
 
@@ -1677,8 +1677,8 @@ p {
 }
 
 /* .storeselect { */
-  /* height: 100%; */
-  /* vertical-align: middle; */
+/* height: 100%; */
+/* vertical-align: middle; */
 /* } */
 
 .storeselect :invalid {
