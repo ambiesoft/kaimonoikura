@@ -599,7 +599,7 @@ function getSaveJson() {
     "selectedStoreProfile": toRaw(selectedStoreProfile.value),
     "customStoreProfile": toRaw(customStoreProfile.value),
     "memo": toRaw(memo.value),
-    "keisanki": toRaw(keisankiInputted ?? keisanki.value),
+    "keisanki": toRaw(keisankiInputted ?? keisanki.value.value),
   });
 }
 
