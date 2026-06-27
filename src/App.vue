@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, toRaw } from "vue";
 import Constants from './constants';
 import { computeDiscountedPriceFromRate } from '@/utils';
 import { useFileDialog } from '@vueuse/core'
@@ -595,11 +595,11 @@ function isValidKaimonoitems(kis) {
 
 function getSaveJson() {
   return JSON.stringify({
-    "kaimonoItems": kaimonoItems.value,
-    "selectedStoreProfile": selectedStoreProfile.value,
-    "customStoreProfile": customStoreProfile.value,
-    "memo": memo.value,
-    "keisanki": keisankiInputted ?? keisanki.value,
+    "kaimonoItems": toRaw(kaimonoItems.value),
+    "selectedStoreProfile": toRaw(selectedStoreProfile.value),
+    "customStoreProfile": toRaw(customStoreProfile.value),
+    "memo": toRaw(memo.value),
+    "keisanki": toRaw(keisankiInputted ?? keisanki.value),
   });
 }
 
