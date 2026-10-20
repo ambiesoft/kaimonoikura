@@ -9,11 +9,13 @@ const props = defineProps([
     'zeigaku',
 ]);
 const keisanki = ref(props.keisanki);
-const goukei = ref(props.goukei);
-const syoukei = ref(props.syoukei);
-const zeigaku = ref(props.zeigaku);
+const { goukei, syoukei, zeigaku } = toRefs(props);
 
 const keisankiRef = ref();
+
+watch(() => props.keisanki, (value) => {
+    keisanki.value = value;
+});
 
 const emits = defineEmits([
     'keisanChanged',
@@ -189,7 +191,7 @@ watch(selectedSpecialInput, (newItems) => {
         input.setSelectionRange(cursorPosition, cursorPosition);
 
         // refrect keisanki value to upstream (keisanki in App.vue)
-        emits('keisanChanged', keisanki);
+        emits('keisanChanged', keisanki.value);
     });
 })
 

@@ -445,7 +445,6 @@ const customStoreProfile = ref();
 const selectedStoreProfile = ref();
 const memo = ref();
 const keisanki = ref();
-let keisankiInputted;
 
 const showCustomVisible = ref(true);
 const showTsukaikata = ref(false);
@@ -599,7 +598,7 @@ function getSaveJson() {
     "selectedStoreProfile": toRaw(selectedStoreProfile.value),
     "customStoreProfile": toRaw(customStoreProfile.value),
     "memo": toRaw(memo.value),
-    "keisanki": toRaw(keisankiInputted ?? keisanki?.value?.value),
+    "keisanki": toRaw(keisanki.value),
   });
 }
 
@@ -1260,11 +1259,10 @@ watch(keisanki, () => {
   saveToSessionStorage();
 })
 const calculatorInputted = ((v) => {
-  keisankiInputted = v;
+  keisanki.value = v;
   saveToSessionStorage();
 });
 const calculatorChanged = ((v) => {
-  keisankiInputted = null;
   keisanki.value = v;
 });
 function isReadyMadeStoreProfile() {
@@ -1521,7 +1519,7 @@ const zeigakuAll = computed(() => {
     <div class="container-cell">
       <div class="cell3columns">
         <Calculator :keisanki.sync="keisanki" :syoukei="disp_syoukei" :goukei="goukei" :zeigaku="zeigakuAll"
-          :key="[goukei, keisanki]" @keisan-changed="calculatorChanged" @keisan-inputted="calculatorInputted" />
+          @keisan-changed="calculatorChanged" @keisan-inputted="calculatorInputted" />
       </div>
     </div>
 
