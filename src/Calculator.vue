@@ -164,27 +164,33 @@ watch(selectedSpecialInput, (newItems) => {
     // newItems is one of SPECIAL_SELECTIONS
     // console.log(newItems);
 
+    const input = keisankiRef.value;
+    const value = keisanki.value ?? "";
+    const selectionStart = input?.selectionStart ?? value.length;
+    const selectionEnd = input?.selectionEnd ?? selectionStart;
+
+    if (newItems.id === "clear") {
+        keisanki.value = "";
+    } else if (newItems.id !== "label") {
+        keisanki.value = value.slice(0, selectionStart)
+            + newItems.name
+            + value.slice(selectionEnd);
+    }
+
     // Reset the option list after this function
     nextTick(() => {
         selectedSpecialInput.value = SPECIAL_SELECTIONS[0];
-        keisankiRef.value.focus();
+        input.focus();
+        const cursorPosition = newItems.id === "clear"
+            ? 0
+            : newItems.id === "label"
+                ? selectionStart
+                : selectionStart + newItems.name.length;
+        input.setSelectionRange(cursorPosition, cursorPosition);
 
         // refrect keisanki value to upstream (keisanki in App.vue)
         emits('keisanChanged', keisanki);
     });
-
-    if (newItems.id == "label")
-        return;
-    if (newItems.id == "clear") {
-        keisanki.value = "";
-        return;
-    }
-
-    // Prevent to insert 'null' if keisanki.value is null
-    keisanki.value = (keisanki.value ?? "") + newItems.name;
-    if (newItems.isfunc) {
-        keisanki.value += "(123.45)";
-    }
 })
 
 </script>
