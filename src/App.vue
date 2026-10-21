@@ -1582,7 +1582,7 @@ const zeigakuAll = computed(() => {
     </div>
     <footer>
       <ul id="footeritems">
-        <li>{{ Constants.appName }} v{{ Constants.appVersion }}</li>
+        <li>{{ Constants.appName }} <a :href="`https://github.com/ambiesoft/kaimonoikura/releases/tag/v${Constants.appVersion}`" target="_blank" rel="noopener noreferrer">v{{ Constants.appVersion }}</a></li>
         <li><a href="https://ambiesoft.github.io/webjumper/" target="_blank">Ambiesoft</a></li>
         <li><a href="https://github.com/ambiesoft/kaimonoikura" target="_blank">DEV</a></li>
         <li><a href="https://ambiesoft.github.io/webjumper/?target=bbs" target="_blank">BBS</a></li>
